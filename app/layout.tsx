@@ -3,6 +3,7 @@ import "./globals.css";
 import type { Metadata } from "next";
 import NextTopLoader from "nextjs-toploader";
 import { Suspense } from "react";
+import { BreakPointIndicator } from "@/components/shared/BreakPointIndicator";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -33,6 +34,7 @@ export default function RootLayout({
       >
         <NextTopLoader showSpinner={false} />
         <Suspense>{children}</Suspense>
+        <BreakPointIndicator />
       </body>
     </html>
   );
