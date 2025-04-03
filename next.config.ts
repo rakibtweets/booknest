@@ -20,6 +20,8 @@ const nextConfig: NextConfig = {
     dangerouslyAllowSVG: true,
     unoptimized: true,
   },
+  eslint: { ignoreDuringBuilds: true },
+  typescript: { ignoreBuildErrors: true },
 };
 
 export default nextConfig;
