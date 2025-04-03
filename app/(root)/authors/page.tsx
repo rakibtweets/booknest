@@ -5,6 +5,7 @@ import Filter from "@/components/shared/Filter";
 import { authorFilters } from "@/constants";
 import Link from "next/link";
 import { AuthorsCard } from "@/components/cards/AuthorsCard";
+import Authors from "@/components/sections/Authors";
 
 export const metadata: Metadata = {
   title: "Authors",
@@ -36,7 +37,7 @@ const Page = () => {
       {/* Authors */}
       <div className="grid mt-9 grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
         <Suspense fallback={<div>Loading...</div>}>
-          <AuthorsCard />
+          <Authors />
         </Suspense>
       </div>
     </>
