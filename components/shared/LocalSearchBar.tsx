@@ -51,7 +51,7 @@ const LocalSearchBar = ({
   }, [query, search, route, router, pathname, searchParams]);
   return (
     <div
-      className={`flex min-h-[56px] grow justify-center items-center gap-4 rounded-[10px] px-4 ${otherClasses}`}
+      className={`flex min-h-[56px] grow justify-center items-center gap-4 rounded-[10px] px-0 ${otherClasses}`}
     >
       <div className="relative w-full">
         {iconPosition === "left" && (

@@ -72,7 +72,6 @@ export default function RecommendedBooks() {
                   alt={book.title}
                   fill
                   className="object-cover"
-                  // sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
                 />
               </AspectRatio>
               <div className="mt-2">
