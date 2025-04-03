@@ -2,6 +2,7 @@ import { Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
 import type { Metadata } from "next";
 import NextTopLoader from "nextjs-toploader";
+import { Suspense } from "react";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -31,7 +32,7 @@ export default function RootLayout({
         className={`${inter.variable} ${spaceGrotesk.variable} antialiased`}
       >
         <NextTopLoader showSpinner={false} />
-        {children}
+        <Suspense>{children}</Suspense>
       </body>
     </html>
   );
