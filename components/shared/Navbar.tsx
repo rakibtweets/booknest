@@ -22,7 +22,7 @@ const Navbar = () => {
             </p>
           </Link>
 
-          <nav className="hidden space-x-8 md:flex">
+          <nav className="hidden space-x-8 lg:flex">
             {navLinks.map((item) => {
               const isActive =
                 (pathname.includes(item.path) && item.path.length > 1) ||
@@ -34,7 +34,7 @@ const Navbar = () => {
                   className={`inline-flex h-16 items-center border-b-2 px-1 pt-1 text-sm font-medium ${
                     isActive
                       ? "border-indigo-600 text-gray-900"
-                      : "border-transparent text-gray-500 hover:border-gray-300 hover:text-gray-700"
+                      : " text-gray-500 hover:border-gray-300 hover:text-gray-700"
                   }`}
                   // onClick={() => setActiveTab(item)}
                 >
@@ -62,7 +62,7 @@ const Navbar = () => {
               <ProfileAvatar />
             </div>
           </div>
-          <div className="relative md:hidden space-x-8 block ">
+          <div className="relative lg:hidden space-x-8 ">
             <MobileNav />
           </div>
         </div>

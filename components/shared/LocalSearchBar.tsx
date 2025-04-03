@@ -66,7 +66,7 @@ const LocalSearchBar = ({
           placeholder={placeholder}
           value={search}
           onChange={(e) => setSearch(e.target.value)}
-          className={`font-normal min-h-[56px] no-focus placeholder bg-transparent shadow-none outline-none w-full ${
+          className={`font-normal min-h-[56px] no-focus placeholder  shadow-none outline-none w-full ${
             iconPosition === "left"
               ? "pl-10"
               : iconPosition === "right"

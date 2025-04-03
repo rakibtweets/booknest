@@ -28,8 +28,8 @@ const NavContent = () => {
             <Link
               href={item.path}
               className={`${
-                isActive ? "rounded-lg bg-orange-500 text-white" : ""
-              } flex items-center justify-start gap-4 bg-transparent p-4`}
+                isActive ? "rounded-lg bg-gray-500 text-white" : ""
+              } flex items-center justify-start gap-4 p-4`}
             >
               {/* <Image
                 src={item.imgURL}
