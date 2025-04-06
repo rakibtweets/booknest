@@ -1,3 +1,5 @@
+import { title } from "process";
+
 // Mock data for dashboard
 export const dashboardData = {
   stats: {
@@ -298,7 +300,6 @@ export const orders = [
   },
 ];
 
-// Mock books data
 export const books = [
   {
     id: "1",
@@ -312,6 +313,12 @@ export const books = [
     isbn: "978-0525559474",
     featured: true,
     lowStock: false,
+    description:
+      "A novel about all the lives we could live and finding the one that makes us happiest.",
+    language: "English",
+    categories: ["Fiction", "Philosophy", "Fantasy"],
+    pages: 304,
+    publishDate: "2020-08-13",
   },
   {
     id: "2",
@@ -325,6 +332,12 @@ export const books = [
     isbn: "978-0593318171",
     featured: true,
     lowStock: false,
+    description:
+      "A story about an Artificial Friend observing the world and exploring human emotions.",
+    language: "English",
+    categories: ["Science Fiction", "Drama", "AI"],
+    pages: 304,
+    publishDate: "2020-08-13",
   },
   {
     id: "3",
@@ -338,6 +351,12 @@ export const books = [
     isbn: "978-0593135204",
     featured: false,
     lowStock: true,
+    description:
+      "A lone astronaut must save Earth from disaster in this gripping science fiction novel.",
+    language: "English",
+    categories: ["Science Fiction", "Adventure", "Thriller"],
+    pages: 304,
+    publishDate: "2020-08-13",
   },
   {
     id: "4",
@@ -351,6 +370,12 @@ export const books = [
     isbn: "978-1250178602",
     featured: false,
     lowStock: false,
+    description:
+      "A powerful American epic about love, heroism, and hope during the Great Depression.",
+    language: "English",
+    categories: ["Historical Fiction", "Drama", "Family"],
+    pages: 304,
+    publishDate: "2020-08-13",
   },
   {
     id: "5",
@@ -364,6 +389,12 @@ export const books = [
     isbn: "978-0765387561",
     featured: true,
     lowStock: true,
+    description:
+      "A fantasy novel about a woman cursed to be forgotten by everyone she meets.",
+    language: "English",
+    categories: ["Fantasy", "Romance", "Adventure"],
+    pages: 304,
+    publishDate: "2020-08-13",
   },
   {
     id: "6",
@@ -377,6 +408,12 @@ export const books = [
     isbn: "978-0525536291",
     featured: false,
     lowStock: false,
+    description:
+      "A multi-generational family saga about identity, race, and the secrets we keep.",
+    language: "English",
+    categories: ["Fiction", "Drama", "Family"],
+    pages: 304,
+    publishDate: "2020-08-13",
   },
   {
     id: "7",
@@ -390,6 +427,12 @@ export const books = [
     isbn: "978-1472223791",
     featured: false,
     lowStock: false,
+    description:
+      "A moving story about the life and death of Shakespeare's son, Hamnet.",
+    language: "English",
+    categories: ["Historical Fiction", "Drama", "Literature"],
+    pages: 304,
+    publishDate: "2020-08-13",
   },
   {
     id: "8",
@@ -403,5 +446,11 @@ export const books = [
     isbn: "978-0062060624",
     featured: true,
     lowStock: true,
+    description:
+      "A retelling of the Iliad, focusing on the relationship between Achilles and Patroclus.",
+    language: "English",
+    categories: ["Historical Fiction", "Mythology", "Romance"],
+    pages: 304,
+    publishDate: "2020-08-13",
   },
 ];
