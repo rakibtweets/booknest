@@ -5,6 +5,8 @@ import {
   Layers,
   Settings,
   ListOrdered,
+  UserRoundPen,
+  Warehouse,
 } from "lucide-react";
 
 import {
@@ -40,9 +42,20 @@ const items = [
     icon: Layers,
   },
   {
+    title: "Authors",
+    url: "/admin/authors",
+    icon: UserRoundPen,
+  },
+  {
     title: "Users",
     url: "/admin/users",
     icon: Users,
+  },
+
+  {
+    title: "Publishers",
+    url: "/admin/publishers",
+    icon: Warehouse,
   },
   {
     title: "Orders",
