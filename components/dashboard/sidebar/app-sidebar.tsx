@@ -19,6 +19,7 @@ import {
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
 import Link from "next/link";
+import LogoutButton from "@/components/buttons/LogoutButton";
 
 // Menu items.
 const items = [
@@ -76,8 +77,7 @@ export function DashboardSidebar() {
         <SidebarMenu>
           <SidebarMenuItem>
             <SidebarMenuButton>
-              <LogOut className="mr-2 size-4" />
-              Logout
+              <LogoutButton />
             </SidebarMenuButton>
           </SidebarMenuItem>
         </SidebarMenu>
