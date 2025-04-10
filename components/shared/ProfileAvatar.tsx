@@ -15,10 +15,10 @@ import Link from "next/link";
 import { LayoutDashboardIcon, LogOutIcon, UserCheck } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
 import { SignedIn, SignedOut, useUser, SignOutButton } from "@clerk/nextjs";
+import UserAuthMenu from "@/components/buttons/UserAuthMenu";
 
 const ProfileAvatar = () => {
   const { user, isLoaded } = useUser();
-  console.log("user infor", user);
   const isAdmin = true;
 
   return (
@@ -100,12 +100,9 @@ const ProfileAvatar = () => {
       </SignedIn>
 
       <SignedOut>
-        <Button size="sm">
-          <Link href="/sign-in">
-            Sign In
-            <span className="sr-only">Sign In</span>
-          </Link>
-        </Button>
+        <div>
+          <UserAuthMenu />
+        </div>
       </SignedOut>
     </>
   );
