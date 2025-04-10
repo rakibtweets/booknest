@@ -4,6 +4,7 @@ import type { Metadata } from "next";
 import NextTopLoader from "nextjs-toploader";
 import { Suspense } from "react";
 import { BreakPointIndicator } from "@/components/shared/BreakPointIndicator";
+import { ClerkProvider } from "@clerk/nextjs";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -33,7 +34,9 @@ export default function RootLayout({
         className={`${inter.variable} ${spaceGrotesk.variable} antialiased`}
       >
         <NextTopLoader showSpinner={false} />
-        <Suspense>{children}</Suspense>
+        <Suspense>
+          <ClerkProvider dynamic>{children}</ClerkProvider>
+        </Suspense>
         <BreakPointIndicator />
       </body>
     </html>

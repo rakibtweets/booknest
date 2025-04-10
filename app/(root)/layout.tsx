@@ -2,7 +2,7 @@ import Navbar from "@/components/shared/Navbar";
 import React from "react";
 import { Toaster } from "@/components/ui/sonner";
 
-const Layout = ({ children }: { children: React.ReactNode }) => {
+const Layout = async ({ children }: { children: React.ReactNode }) => {
   return (
     <main className="relative">
       <Navbar />
