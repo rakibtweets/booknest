@@ -13,20 +13,12 @@ export async function POST(req: Request) {
     console.log(
       `Received webhook with ID ${id} and event type of ${eventType}`
     );
-    console.log("Webhook payload:", evt.data);
-
+    // console.log("Webhook payload:", evt.data);
     // Handle to event
     if (eventType === "user.created") {
       // get user data
       const { id, email_addresses, image_url, first_name, last_name } =
         evt.data;
-      console.log("user.created", {
-        id,
-        email_addresses,
-        image_url,
-        first_name,
-        last_name,
-      });
 
       // create a server action to create a user in the database
 
@@ -37,7 +29,7 @@ export async function POST(req: Request) {
         picture: image_url,
         roles: ["user"],
       });
-      console.log("mongodb", mongoUser);
+      console.log("mongo user", mongoUser);
 
       return NextResponse.json({ messsage: "OK", user: mongoUser });
     }
@@ -46,13 +38,6 @@ export async function POST(req: Request) {
       // get user data
       const { id, email_addresses, image_url, first_name, last_name } =
         evt.data;
-      console.log("user.created", {
-        id,
-        email_addresses,
-        image_url,
-        first_name,
-        last_name,
-      });
 
       // create a server action to create a user in the database
 

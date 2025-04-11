@@ -7,13 +7,24 @@ import {
   CreateUserParams,
   DeleteUserParams,
 } from "@/types/action";
-import { AwardIcon } from "lucide-react";
+
+export const getUsers = async () => {
+  try {
+    await dbConnect();
+    const users = await User.find({}).sort({ createdAt: -1 });
+    console.log("users", users);
+    return { success: true, data: JSON.parse(JSON.stringify(users)) };
+  } catch (error) {
+    console.log(error);
+  }
+};
 
 export const createUser = async (userData: CreateUserParams) => {
   try {
     await dbConnect();
     const newUser = await User.create(userData);
-    await newUser.save();
+
+    console.log("newUser", newUser);
     return { success: true, data: JSON.parse(JSON.stringify(newUser)) };
   } catch (error) {
     console.log(error);
