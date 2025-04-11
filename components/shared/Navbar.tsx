@@ -45,7 +45,7 @@ const Navbar = () => {
           </nav>
         </div>
 
-        <div className="flex items-center space-x-4">
+        <div className="flex items-center justify-center space-x-3">
           <div className="relative max-w-lg">
             <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
               <Search className="h-4 w-4 text-gray-400" />
@@ -57,11 +57,10 @@ const Navbar = () => {
             />
           </div>
 
-          <div className=" ml-3">
-            <div className="flex  rounded-full bg-white text-sm cursor-pointer">
-              <ProfileAvatar />
-            </div>
+          <div className="flex  rounded-full  cursor-pointer">
+            <ProfileAvatar />
           </div>
+
           <div className=" lg:hidden space-x-8 ">
             <MobileNav />
           </div>

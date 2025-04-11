@@ -55,7 +55,7 @@ const MobileNav = () => {
       <SheetTrigger asChild>
         <Button
           variant="ghost"
-          className="mr-2 px-0 text-base hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 "
+          className=" px-0 text-base hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 "
         >
           <AlignJustifyIcon
             className="size-7 text-gray-400 hover:text-gray-500"
