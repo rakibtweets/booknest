@@ -6,7 +6,6 @@ export interface IUser extends Document {
   clerkId: string; // Clerk ID for authentication
   name: string;
   email: string;
-  password: string;
   roles: string[];
   image: string;
   orders?: mongoose.Types.ObjectId[]; // Reference to orders
@@ -26,7 +25,6 @@ const UserSchema = new Schema<IUser>({
   clerkId: { type: String, required: true, unique: true },
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
-  password: { type: String, required: true },
   roles: { type: [String], default: ["user"] },
   orders: [{ type: Schema.Types.ObjectId, ref: "Order" }],
   wishlist: [{ type: Schema.Types.ObjectId, ref: "Book" }],

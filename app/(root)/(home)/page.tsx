@@ -11,7 +11,7 @@ export const metadata: Metadata = {
   description: "BookNest Home page",
 };
 
-const Home = () => {
+const Home = async () => {
   return (
     <>
       <Hero />
