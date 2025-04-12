@@ -83,7 +83,7 @@ export function AuthorForm({ initialData, genres }: AuthorFormProps) {
           toast.success("The author has been created successfully.");
           router.push("/admin/authors");
         } else {
-          toast.error(result.error || "Failed to create author");
+          toast.error(result.error?.message || "Failed to create author");
         }
       }
     } catch (error) {
