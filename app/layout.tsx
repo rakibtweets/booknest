@@ -5,6 +5,7 @@ import NextTopLoader from "nextjs-toploader";
 import { Suspense } from "react";
 import { BreakPointIndicator } from "@/components/shared/BreakPointIndicator";
 import { ClerkProvider } from "@clerk/nextjs";
+import { Toaster } from "@/components/ui/sonner";
 
 const inter = Inter({
   subsets: ["latin"],
@@ -37,6 +38,7 @@ export default function RootLayout({
         <Suspense>
           <ClerkProvider dynamic>{children}</ClerkProvider>
         </Suspense>
+        <Toaster />
         <BreakPointIndicator />
       </body>
     </html>
