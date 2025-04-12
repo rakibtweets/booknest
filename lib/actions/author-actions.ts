@@ -1,9 +1,12 @@
 "use server";
+
 import mongoose from "mongoose";
-import Author from "@/database/author.model";
+import Author, { IAuthor } from "@/database/author.model";
 import { revalidatePath } from "next/cache";
 import dbConnect from "../mongoose";
 import { AuthorFormValues, authorSchema } from "@/validations/author";
+import action from "../handlers/action";
+import handleError from "../handlers/error";
 
 const authors = [
   {
@@ -80,30 +83,40 @@ export const getAuthorById = async (id: string) => {
   return author;
 };
 
-export async function createAuthor(data: AuthorFormValues) {
+export const createAuthor = async (
+  params: AuthorFormValues
+): Promise<ActionResponse<IAuthor>> => {
+  const validationResult = await action({
+    params,
+    schema: authorSchema,
+    authorize: true,
+  });
+  if (validationResult instanceof Error) {
+    return handleError(validationResult) as ErrorResponse;
+  }
+  const session = await mongoose.startSession();
+  session.startTransaction();
   try {
-    await dbConnect();
-
-    // Validate form data
-    const validatedData = authorSchema.parse(data);
-
-    // Create new author
-    const newAuthor = new Author(validatedData);
-
-    await newAuthor.save();
-
+    // start creating a new author
+    const [author] = await Author.create([params], { session });
+    if (!author) {
+      throw new Error("Failed to create author");
+    }
+    await session.commitTransaction();
     revalidatePath("/admin/authors");
     revalidatePath("/authors");
-
-    return { success: true, author: newAuthor };
+    return {
+      success: true,
+      data: JSON.parse(JSON.stringify(author)),
+    };
   } catch (error) {
-    console.error("Error creating author:", error);
-    if (error instanceof Error) {
-      return { success: false, error: error.message };
-    }
-    return { success: false, error: "Failed to create author" };
+    await session.abortTransaction();
+    session.endSession();
+    return handleError(error) as ErrorResponse;
+  } finally {
+    await session.endSession();
   }
-}
+};
 
 export async function updateAuthor(id: string, data: AuthorFormValues) {
   try {
