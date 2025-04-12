@@ -1,6 +1,5 @@
 import Navbar from "@/components/shared/Navbar";
 import React from "react";
-import { Toaster } from "@/components/ui/sonner";
 
 const Layout = async ({ children }: { children: React.ReactNode }) => {
   return (
@@ -12,7 +11,6 @@ const Layout = async ({ children }: { children: React.ReactNode }) => {
         </section>
       </div>
       {/* <Footer /> */}
-      <Toaster />
     </main>
   );
 };
