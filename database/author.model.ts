@@ -14,6 +14,7 @@ export interface IAuthor extends Document {
   website?: string;
   email?: string;
   genres: string[];
+  booksCount?: number;
   awards?: string[];
   featured: boolean;
   createdAt: Date;
@@ -32,6 +33,7 @@ const AuthorSchema = new Schema<IAuthor>({
   website: { type: String },
   email: { type: String },
   genres: [{ type: String }],
+  booksCount: { type: Number, default: 0 },
   awards: [{ type: String }],
   featured: { type: Boolean, default: false },
 });
