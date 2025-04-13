@@ -8,14 +8,6 @@ export const metadata: Metadata = {
   description: "Edit an author in the BookNext store",
 };
 
-// Mock admin data - in a real app, this would come from authentication
-const admin = {
-  name: "Admin User",
-  email: "admin@booknext.com",
-  role: "Administrator",
-  image: "/placeholder.svg?height=80&width=80",
-};
-
 // Common literary genres
 const genres = [
   "Fiction",
@@ -81,13 +73,8 @@ export default async function EditAuthorPage({ params }: EditAuthorPageProps) {
   const { id } = await params;
   try {
     // Fetch author for the form
-    const author = await getAuthorById(id);
-
-    // Format the author data for the form
-    const formattedAuthor = {
-      ...author,
-      _id: author.id.toString(),
-    };
+    const result = await getAuthorById(id);
+    const author = result?.data?.author;
 
     return (
       <>
@@ -99,7 +86,7 @@ export default async function EditAuthorPage({ params }: EditAuthorPageProps) {
         </div>
 
         <div className="border rounded-lg p-6">
-          <AuthorForm initialData={formattedAuthor} genres={genres} />
+          <AuthorForm initialData={author} genres={genres} />
         </div>
       </>
     );

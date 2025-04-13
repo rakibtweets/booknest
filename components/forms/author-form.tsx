@@ -23,9 +23,10 @@ import { MultiSelect } from "@/components/ui/multi-select";
 import { createAuthor, updateAuthor } from "@/lib/actions/author-actions";
 import { toast } from "sonner";
 import { AuthorFormValues, authorSchema } from "@/validations/author";
+import { IAuthor } from "@/database/author.model";
 
 interface AuthorFormProps {
-  initialData?: AuthorFormValues & { _id?: string };
+  initialData?: IAuthor;
   genres: string[];
 }
 

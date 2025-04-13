@@ -21,6 +21,8 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Badge } from "@/components/ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
+import { getAuthors } from "@/lib/actions/author-actions";
+import DeleteAuthorButton from "@/components/buttons/DeleteAuthorButton";
 
 export const metadata: Metadata = {
   title: "Manage Authors - BookNext Admin",
@@ -28,64 +30,66 @@ export const metadata: Metadata = {
 };
 
 // Mock authors data - in a real app, this would come from the database
-const authors = [
-  {
-    id: "stephen-king",
-    name: "Stephen King",
-    image: "/placeholder.svg?height=200&width=200",
-    bio: "Stephen Edwin King is an American author of horror, supernatural fiction, suspense, crime, science-fiction, and fantasy novels.",
-    booksCount: 64,
-    genres: ["Horror", "Thriller", "Science Fiction"],
-    featured: true,
-  },
-  {
-    id: "jk-rowling",
-    name: "J.K. Rowling",
-    image: "/placeholder.svg?height=200&width=200",
-    bio: "Joanne Rowling, better known by her pen name J. K. Rowling, is a British author and philanthropist.",
-    booksCount: 14,
-    genres: ["Fantasy", "Children's Fiction", "Mystery"],
-    featured: true,
-  },
-  {
-    id: "james-patterson",
-    name: "James Patterson",
-    image: "/placeholder.svg?height=200&width=200",
-    bio: "James Brendan Patterson is an American author and philanthropist. Among his works are the Alex Cross, Michael Bennett, Women's Murder Club, and Maximum Ride series.",
-    booksCount: 114,
-    genres: ["Thriller", "Mystery", "Crime Fiction"],
-    featured: true,
-  },
-  {
-    id: "colleen-hoover",
-    name: "Colleen Hoover",
-    image: "/placeholder.svg?height=200&width=200",
-    bio: "Colleen Hoover is an American author who primarily writes novels in the romance and young adult fiction genres.",
-    booksCount: 22,
-    genres: ["Romance", "Young Adult", "Contemporary"],
-    featured: true,
-  },
-  {
-    id: "haruki-murakami",
-    name: "Haruki Murakami",
-    image: "/placeholder.svg?height=200&width=200",
-    bio: "Haruki Murakami is a Japanese writer. His novels, essays, and short stories have been bestsellers in Japan and internationally.",
-    booksCount: 28,
-    genres: ["Literary Fiction", "Magical Realism", "Surrealism"],
-    featured: true,
-  },
-  {
-    id: "toni-morrison",
-    name: "Toni Morrison",
-    image: "/placeholder.svg?height=200&width=200",
-    bio: "Toni Morrison was an American novelist, essayist, book editor, and college professor. Her first novel, The Bluest Eye, was published in 1970.",
-    booksCount: 11,
-    genres: ["Literary Fiction", "Historical Fiction"],
-    featured: true,
-  },
-];
+// const authors = [
+//   {
+//     id: "stephen-king",
+//     name: "Stephen King",
+//     image: "/placeholder.svg?height=200&width=200",
+//     bio: "Stephen Edwin King is an American author of horror, supernatural fiction, suspense, crime, science-fiction, and fantasy novels.",
+//     booksCount: 64,
+//     genres: ["Horror", "Thriller", "Science Fiction"],
+//     featured: true,
+//   },
+//   {
+//     id: "jk-rowling",
+//     name: "J.K. Rowling",
+//     image: "/placeholder.svg?height=200&width=200",
+//     bio: "Joanne Rowling, better known by her pen name J. K. Rowling, is a British author and philanthropist.",
+//     booksCount: 14,
+//     genres: ["Fantasy", "Children's Fiction", "Mystery"],
+//     featured: true,
+//   },
+//   {
+//     id: "james-patterson",
+//     name: "James Patterson",
+//     image: "/placeholder.svg?height=200&width=200",
+//     bio: "James Brendan Patterson is an American author and philanthropist. Among his works are the Alex Cross, Michael Bennett, Women's Murder Club, and Maximum Ride series.",
+//     booksCount: 114,
+//     genres: ["Thriller", "Mystery", "Crime Fiction"],
+//     featured: true,
+//   },
+//   {
+//     id: "colleen-hoover",
+//     name: "Colleen Hoover",
+//     image: "/placeholder.svg?height=200&width=200",
+//     bio: "Colleen Hoover is an American author who primarily writes novels in the romance and young adult fiction genres.",
+//     booksCount: 22,
+//     genres: ["Romance", "Young Adult", "Contemporary"],
+//     featured: true,
+//   },
+//   {
+//     id: "haruki-murakami",
+//     name: "Haruki Murakami",
+//     image: "/placeholder.svg?height=200&width=200",
+//     bio: "Haruki Murakami is a Japanese writer. His novels, essays, and short stories have been bestsellers in Japan and internationally.",
+//     booksCount: 28,
+//     genres: ["Literary Fiction", "Magical Realism", "Surrealism"],
+//     featured: true,
+//   },
+//   {
+//     id: "toni-morrison",
+//     name: "Toni Morrison",
+//     image: "/placeholder.svg?height=200&width=200",
+//     bio: "Toni Morrison was an American novelist, essayist, book editor, and college professor. Her first novel, The Bluest Eye, was published in 1970.",
+//     booksCount: 11,
+//     genres: ["Literary Fiction", "Historical Fiction"],
+//     featured: true,
+//   },
+// ];
 
-export default function AdminAuthorsPage() {
+export default async function AdminAuthorsPage() {
+  const result = await getAuthors();
+  const authors = result.data?.authors || [];
   return (
     <>
       <div className="flex flex-col gap-4">
@@ -206,10 +210,7 @@ export default function AdminAuthorsPage() {
                           Edit
                         </Link>
                       </DropdownMenuItem>
-                      <DropdownMenuItem className="text-red-600">
-                        <Trash2 className="mr-2 h-4 w-4" />
-                        Delete
-                      </DropdownMenuItem>
+                      <DeleteAuthorButton authorId={author.id} />
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </TableCell>
