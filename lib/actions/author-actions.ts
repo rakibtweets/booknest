@@ -98,6 +98,7 @@ export const createAuthor = async (
   session.startTransaction();
   try {
     // start creating a new author
+    await dbConnect();
     const [author] = await Author.create([params], { session });
     if (!author) {
       throw new Error("Failed to create author");
@@ -118,42 +119,53 @@ export const createAuthor = async (
   }
 };
 
-export async function updateAuthor(id: string, data: AuthorFormValues) {
+interface UpdateAuthorParams extends AuthorFormValues {
+  _id: string;
+}
+export const updateAuthor = async (
+  params: UpdateAuthorParams
+): Promise<ActionResponse<IAuthor>> => {
+  const validationResult = await action({
+    params,
+    schema: authorSchema,
+    authorize: true,
+  });
+
+  if (validationResult instanceof Error) {
+    return handleError(validationResult) as ErrorResponse;
+  }
+
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
   try {
     await dbConnect();
+    const { _id, ...updateData } = params;
 
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      throw new Error("Invalid author ID");
+    const author = await Author.findByIdAndUpdate(_id, updateData, {
+      new: true,
+      session,
+      runValidators: true,
+    });
+
+    if (!author) {
+      throw new Error("Author not found or update failed");
     }
 
-    // Validate form data
-    const validatedData = authorSchema.parse(data);
+    await session.commitTransaction();
 
-    // Update author
-    const updatedAuthor = await Author.findByIdAndUpdate(
-      id,
-      {
-        ...validatedData,
-        updatedAt: new Date(),
-      },
-      { new: true }
-    );
-
-    if (!updatedAuthor) {
-      throw new Error("Author not found");
-    }
-
-    revalidatePath(`/admin/authors/${id}`);
-    revalidatePath(`/admin/authors`);
-    revalidatePath(`/authors/${id}`);
+    revalidatePath("/admin/authors");
     revalidatePath("/authors");
 
-    return { success: true, author: updatedAuthor };
+    return {
+      success: true,
+      data: JSON.parse(JSON.stringify(author)),
+    };
   } catch (error) {
-    console.error("Error updating author:", error);
-    if (error instanceof Error) {
-      return { success: false, error: error.message };
-    }
-    return { success: false, error: "Failed to update author" };
+    await session.abortTransaction();
+    session.endSession();
+    return handleError(error) as ErrorResponse;
+  } finally {
+    await session.endSession();
   }
-}
+};

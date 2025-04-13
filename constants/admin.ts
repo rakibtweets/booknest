@@ -1,5 +1,3 @@
-import { title } from "process";
-
 // Mock data for dashboard
 export const dashboardData = {
   stats: {
