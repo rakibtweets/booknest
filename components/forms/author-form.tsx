@@ -2,7 +2,7 @@
 
 import { useState } from "react";
 import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
+import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2, Plus, X } from "lucide-react";
 import { Button } from "@/components/ui/button";
@@ -48,10 +48,10 @@ export function AuthorForm({ initialData, genres }: AuthorFormProps) {
           image: "",
           coverImage: "",
           birthDate: "",
+          deathDate: "",
           birthPlace: "",
           website: "",
           email: "",
-          twitter: "",
           genres: [],
           awards: [],
           featured: false,
@@ -69,12 +69,15 @@ export function AuthorForm({ initialData, genres }: AuthorFormProps) {
 
       if (initialData?._id) {
         // Update existing author
-        const result = await updateAuthor(initialData._id, formData);
+        const result = await updateAuthor({
+          _id: initialData._id,
+          ...formData,
+        });
         if (result.success) {
           toast.success("The author has been updated successfully.");
           router.push("/admin/authors");
         } else {
-          toast.error(result.error || "Failed to update author");
+          toast.error(result.error?.message || "Failed to update author");
         }
       } else {
         // Create new author
@@ -130,10 +133,7 @@ export function AuthorForm({ initialData, genres }: AuthorFormProps) {
               <FormItem>
                 <FormLabel>Profile Image URL</FormLabel>
                 <FormControl>
-                  <Input
-                    placeholder="https://example.com/image.jpg"
-                    {...field}
-                  />
+                  <Input placeholder="Paste image URL here" {...field} />
                 </FormControl>
                 <FormDescription>
                   URL for the author's profile picture
@@ -150,10 +150,7 @@ export function AuthorForm({ initialData, genres }: AuthorFormProps) {
               <FormItem>
                 <FormLabel>Cover Image URL (Optional)</FormLabel>
                 <FormControl>
-                  <Input
-                    placeholder="https://example.com/cover.jpg"
-                    {...field}
-                  />
+                  <Input placeholder="Paste cover image URL here" {...field} />
                 </FormControl>
                 <FormDescription>
                   URL for the author's cover/banner image
@@ -170,8 +167,24 @@ export function AuthorForm({ initialData, genres }: AuthorFormProps) {
               <FormItem>
                 <FormLabel>Birth Date (Optional)</FormLabel>
                 <FormControl>
-                  <Input placeholder="January 1, 1970" {...field} />
+                  <Input placeholder="dd/mm/year" {...field} />
                 </FormControl>
+
+                <FormMessage />
+              </FormItem>
+            )}
+          />
+
+          <FormField
+            control={form.control}
+            name="deathDate"
+            render={({ field }) => (
+              <FormItem>
+                <FormLabel>Death Date (Optional)</FormLabel>
+                <FormControl>
+                  <Input placeholder="dd/mm/year" {...field} />
+                </FormControl>
+
                 <FormMessage />
               </FormItem>
             )}
@@ -217,23 +230,6 @@ export function AuthorForm({ initialData, genres }: AuthorFormProps) {
                 <FormControl>
                   <Input placeholder="author@example.com" {...field} />
                 </FormControl>
-                <FormMessage />
-              </FormItem>
-            )}
-          />
-
-          <FormField
-            control={form.control}
-            name="twitter"
-            render={({ field }) => (
-              <FormItem>
-                <FormLabel>Twitter Handle (Optional)</FormLabel>
-                <FormControl>
-                  <Input placeholder="@authorname" {...field} />
-                </FormControl>
-                <FormDescription>
-                  Twitter/X username with or without the @ symbol
-                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}

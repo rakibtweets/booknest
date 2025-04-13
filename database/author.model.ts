@@ -9,10 +9,10 @@ export interface IAuthor extends Document {
   image: string;
   coverImage?: string;
   birthDate?: string;
+  deathDate?: string;
   birthPlace?: string;
   website?: string;
   email?: string;
-  twitter?: string;
   genres: string[];
   awards?: string[];
   featured: boolean;
@@ -27,10 +27,10 @@ const AuthorSchema = new Schema<IAuthor>({
   image: { type: String, required: true },
   coverImage: { type: String },
   birthDate: { type: String },
+  deathDate: { type: String },
   birthPlace: { type: String },
   website: { type: String },
   email: { type: String },
-  twitter: { type: String },
   genres: [{ type: String }],
   awards: [{ type: String }],
   featured: { type: Boolean, default: false },
