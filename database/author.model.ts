@@ -3,6 +3,7 @@ import baseSchema from "./base-schema";
 import { slugify } from "@/lib/utils";
 // Author Schema
 export interface IAuthor extends Document {
+  _id: string;
   authorId: string;
   name: string;
   bio: string;
@@ -17,8 +18,8 @@ export interface IAuthor extends Document {
   booksCount?: number;
   awards?: string[];
   featured: boolean;
-  createdAt: Date;
-  updatedAt: Date;
+  createdAt?: Date;
+  updatedAt?: Date;
 }
 
 const AuthorSchema = new Schema<IAuthor>({
