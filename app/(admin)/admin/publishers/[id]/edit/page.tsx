@@ -20,13 +20,9 @@ export default async function EditPublisherPage({
   const { id } = await params;
   try {
     // Fetch publisher for the form
-    const publisher = await getPublisherById(id);
+    const result = await getPublisherById(id);
 
-    // Format the publisher data for the form
-    const formattedPublisher = {
-      ...publisher,
-      _id: publisher.id.toString(),
-    };
+    const publisher = result?.data?.publisher;
 
     return (
       <>
@@ -38,7 +34,7 @@ export default async function EditPublisherPage({
         </div>
 
         <div className="border rounded-lg p-6">
-          <PublisherForm initialData={formattedPublisher} />
+          <PublisherForm initialData={publisher} />
         </div>
       </>
     );
