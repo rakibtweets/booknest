@@ -338,7 +338,7 @@ export function PublisherForm({ initialData }: PublisherFormProps) {
           >
             Cancel
           </Button>
-          <Button type="submit" disabled={isLoading}>
+          <Button className="cursor-pointer" type="submit" disabled={isLoading}>
             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             {initialData ? "Update Publisher" : "Create Publisher"}
           </Button>

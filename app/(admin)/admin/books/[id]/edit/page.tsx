@@ -91,22 +91,12 @@ export default async function EditBookPage({ params }: EditBookPageProps) {
   const { id } = await params;
   try {
     // Fetch book, authors, and publishers for the form
-    const book = await getBookById(id);
-    const { authors } = await getAuthors(1, 8);
-    const { publishers } = await getPublishers(1, 100);
-
-    // Format the book data for the form
-    const formattedBook = {
-      ...book,
-      _id: book.id.toString(),
-      author: book.author.toString(),
-      publisher: book.publisher.toString(),
-      publishDate: book?.publishDate,
-      description: book.description || "",
-      pages: book.pages ?? 0,
-      language: book.language || "Unknown",
-      categories: book.categories || [],
-    };
+    const bookResult = await getBookById(id);
+    const book = bookResult?.data?.book;
+    const authorResult = await getAuthors();
+    const authors = authorResult?.data?.authors || [];
+    const publisherResult = await getPublishers();
+    const publishers = publisherResult?.data?.publishers || [];
 
     return (
       <>
@@ -119,7 +109,7 @@ export default async function EditBookPage({ params }: EditBookPageProps) {
 
         <div className="border rounded-lg p-6">
           <BookForm
-            initialData={formattedBook}
+            initialData={book}
             authors={authors}
             publishers={publishers}
             categories={categories}

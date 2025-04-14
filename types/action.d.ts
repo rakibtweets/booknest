@@ -16,3 +16,10 @@ export interface clerkUserUpdateParams {
 export interface DeleteUserParams {
   clerkId: string;
 }
+
+export interface IGetBooksParams {
+  page?: number;
+  limit?: number;
+  sortBy?: string;
+  order?: "asc" | "desc";
+}
