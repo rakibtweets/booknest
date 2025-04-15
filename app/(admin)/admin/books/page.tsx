@@ -169,9 +169,7 @@ export default async function AdminBooksPage() {
                         <DropdownMenuLabel>Actions</DropdownMenuLabel>
                         <DropdownMenuSeparator />
                         <DropdownMenuItem asChild>
-                          <Link href={`/admin/books/${book._id}`}>
-                            View Details
-                          </Link>
+                          <Link href={`/books/${book._id}`}>View Details</Link>
                         </DropdownMenuItem>
                         <DropdownMenuItem asChild>
                           <Link href={`/admin/books/${book._id}/edit`}>

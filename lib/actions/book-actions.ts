@@ -1,17 +1,14 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-
 import mongoose from "mongoose";
 import dbConnect from "../mongoose";
 import Book, { IBook } from "@/database/book.model";
 import { BookFormValues, bookSchema } from "@/validations/book";
-import { books } from "@/constants/admin";
 import action from "../handlers/action";
 import handleError from "../handlers/error";
 import { IGetBooksParams } from "@/types/action";
-
-// create a function getBooks as syntax like create book with pagination and sorting
+import Author from "@/database/author.model";
 
 export const getBooks = async ({
   page = 1,
@@ -27,6 +24,7 @@ export const getBooks = async ({
     prevPage: number | null;
   }>
 > => {
+  await dbConnect();
   const skip = (page - 1) * limit;
   const sort: { [key: string]: 1 | -1 } = {
     [sortBy]: order === "asc" ? 1 : -1,
@@ -34,22 +32,23 @@ export const getBooks = async ({
   const totalBooks = await Book.countDocuments();
   const totalPages = Math.ceil(totalBooks / limit);
   const books = await Book.find()
-    .sort(sort)
-    .skip(skip)
-    .limit(limit)
     .populate([
       {
         path: "author",
         select: "name",
+        model: Author,
       },
-    ]);
+    ])
+    .sort(sort)
+    .skip(skip)
+    .limit(limit);
   const nextPage = page < totalPages ? page + 1 : null;
   const prevPage = page > 1 ? page - 1 : null;
   return {
     success: true,
     data: {
       books: JSON.parse(JSON.stringify(books)),
-      totalPages: Math.ceil(totalBooks / limit),
+      totalPages: totalPages,
       currentPage: page,
       nextPage,
       prevPage,
