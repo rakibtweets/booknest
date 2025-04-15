@@ -13,8 +13,12 @@ export interface IBook extends Document {
   language: string;
   stock: number;
   featured: boolean;
+  rating?: number;
+  reviewCount?: number;
+  inStock?: boolean;
   author: mongoose.Types.ObjectId;
   publisher: mongoose.Types.ObjectId;
+  reviews: mongoose.Types.ObjectId[];
   categories: string[];
   createdAt: Date;
   updatedAt: Date;
@@ -30,7 +34,11 @@ const BookSchema = new Schema<IBook>({
   pages: { type: Number, required: true },
   language: { type: String, required: true },
   stock: { type: Number, required: true, default: 0 },
+  inStock: { type: Boolean, default: false },
+  reviewCount: { type: Number, default: 0 },
+  rating: { type: Number, default: 0 },
   featured: { type: Boolean, default: false },
+  reviews: [{ type: Schema.Types.ObjectId, ref: "Review" }],
   author: { type: Schema.Types.ObjectId, ref: "Author", required: true },
   publisher: { type: Schema.Types.ObjectId, ref: "Publisher", required: true },
   categories: [{ type: String }],

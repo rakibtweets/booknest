@@ -9,6 +9,7 @@ import action from "../handlers/action";
 import handleError from "../handlers/error";
 import { IGetBooksParams } from "@/types/action";
 import Author from "@/database/author.model";
+import Publisher from "@/database/publisher.model";
 
 export const getBooks = async ({
   page = 1,
@@ -61,7 +62,18 @@ export const getBookById = async (
 ): Promise<ActionResponse<{ book: IBook }>> => {
   try {
     await dbConnect();
-    const book = await Book.findById(id);
+    const book = await Book.findById(id).populate([
+      {
+        path: "author",
+        select: "name bio",
+        model: Author,
+      },
+      {
+        path: "publisher",
+        select: "name",
+        model: Publisher,
+      },
+    ]);
     if (!book) {
       throw new Error("Book not found");
     }

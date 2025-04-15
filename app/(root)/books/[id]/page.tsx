@@ -8,31 +8,37 @@ import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AddToCartButton from "@/components/buttons/AddToCartButton";
 import BookReviews from "@/components/sections/BookReviews";
+import { getBookById } from "@/lib/actions/book-actions";
 
-const books = [
-  {
-    id: "1",
-    title: "The Midnight Library",
-    author: "Matt Haig",
-    price: 16.99,
-    coverImage: "https://placehold.co/600x400?text=Books",
-    description:
-      "Between life and death there is a library, and within that library, the shelves go on forever. Every book provides a chance to try another life you could have lived. To see how things would be if you had made other choices... Would you have done anything different, if you had the chance to undo your regrets?",
-    isbn: "978-0525559474",
-    publisher: "Viking",
-    publishDate: "September 29, 2020",
-    pages: 304,
-    language: "English",
-    categories: ["Fiction", "Fantasy", "Contemporary"],
-    rating: 4.2,
-    reviewCount: 127,
-    inStock: true,
-  },
-];
+// const books = [
+//   {
+//     id: "1",
+//     title: "The Midnight Library",
+//     author: "Matt Haig",
+//     price: 16.99,
+//     coverImage: "https://placehold.co/600x400?text=Books",
+//     description:
+//       "Between life and death there is a library, and within that library, the shelves go on forever. Every book provides a chance to try another life you could have lived. To see how things would be if you had made other choices... Would you have done anything different, if you had the chance to undo your regrets?",
+//     isbn: "978-0525559474",
+//     publisher: "Viking",
+//     publishDate: "September 29, 2020",
+//     pages: 304,
+//     language: "English",
+//     categories: ["Fiction", "Fantasy", "Contemporary"],
+//     rating: 4.2,
+//     reviewCount: 127,
+//     inStock: true,
+//   },
+// ];
 
-export default async function BookPage({ params }: { params: { id: string } }) {
+export default async function BookDetailsPage({
+  params,
+}: {
+  params: { id: string };
+}) {
   const { id } = await params;
-  const book = books.find((book) => book.id === id);
+  const bookResult = await getBookById(id);
+  const book = bookResult.data?.book || null;
 
   if (!book) {
     notFound();
@@ -64,7 +70,13 @@ export default async function BookPage({ params }: { params: { id: string } }) {
 
         <div className="flex flex-col">
           <h1 className="text-3xl font-bold">{book.title}</h1>
-          <p className="text-lg text-muted-foreground mb-2">by {book.author}</p>
+          <p className="text-lg text-muted-foreground mb-2">
+            by{" "}
+            {
+              //@ts-ignore
+              book.author.name
+            }
+          </p>
 
           <div className="flex items-center mb-4">
             <div className="flex">
@@ -72,7 +84,7 @@ export default async function BookPage({ params }: { params: { id: string } }) {
                 <Star
                   key={i}
                   className={`h-5 w-5 ${
-                    i < Math.floor(book.rating)
+                    i < Math.floor(book?.rating || 0)
                       ? "text-yellow-400 fill-yellow-400"
                       : "text-gray-300 fill-gray-300"
                   }`}
@@ -80,7 +92,7 @@ export default async function BookPage({ params }: { params: { id: string } }) {
               ))}
             </div>
             <span className="ml-2 text-sm text-muted-foreground">
-              {book.rating.toFixed(1)} ({book.reviewCount} reviews)
+              {(book.rating ?? 0).toFixed(1)} ({book.reviewCount} reviews)
             </span>
           </div>
 
@@ -120,7 +132,12 @@ export default async function BookPage({ params }: { params: { id: string } }) {
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Publisher</p>
-              <p className="text-sm">{book.publisher}</p>
+              <p className="text-sm">
+                {
+                  //@ts-ignore
+                  book.publisher.name
+                }
+              </p>
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Publication Date</p>
@@ -149,22 +166,7 @@ export default async function BookPage({ params }: { params: { id: string } }) {
           <TabsTrigger value="reviews">Reviews</TabsTrigger>
         </TabsList>
         <TabsContent value="description" className="py-4">
-          <p>{book.description}</p>
-          <p className="mt-4">
-            A dazzling novel about all the choices that go into a life well
-            lived, from the internationally bestselling author of Reasons to
-            Stay Alive and How To Stop Time.
-          </p>
-          <p className="mt-4">
-            Somewhere out beyond the edge of the universe there is a library
-            that contains an infinite number of books, each one the story of
-            another reality. One tells the story of your life as it is, along
-            with another book for the other life you could have lived if you had
-            made a different choice at any point in your life. While we all
-            wonder how our lives might have been, what if you had the chance to
-            go to the library and see for yourself? Would any of these other
-            lives truly be better?
-          </p>
+          <p className="mt-4">{book.description}</p>
         </TabsContent>
         <TabsContent value="details" className="py-4">
           <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
@@ -176,7 +178,10 @@ export default async function BookPage({ params }: { params: { id: string } }) {
                 </li>
                 <li>
                   <span className="font-medium">Publisher:</span>{" "}
-                  {book.publisher}
+                  {
+                    //@ts-ignore
+                    book.publisher.name
+                  }
                 </li>
                 <li>
                   <span className="font-medium">Publication Date:</span>{" "}
@@ -188,28 +193,21 @@ export default async function BookPage({ params }: { params: { id: string } }) {
                 <li>
                   <span className="font-medium">Language:</span> {book.language}
                 </li>
-                <li>
-                  <span className="font-medium">Dimensions:</span> 5.5 x 0.8 x
-                  8.2 inches
-                </li>
-                <li>
-                  <span className="font-medium">Weight:</span> 10.4 ounces
-                </li>
               </ul>
             </div>
             <div>
               <h3 className="font-semibold mb-2">About the Author</h3>
               <p>
-                Matt Haig is the author of the internationally bestselling
-                memoir Reasons to Stay Alive, along with five novels, including
-                How To Stop Time, and several award-winning children's books.
-                His work has been translated into more than thirty languages.
+                {
+                  //@ts-ignore
+                  book.author?.bio
+                }
               </p>
             </div>
           </div>
         </TabsContent>
         <TabsContent value="reviews" className="py-4">
-          <BookReviews bookId={book.id} />
+          <BookReviews bookId={book._id as string} />
         </TabsContent>
       </Tabs>
     </div>
