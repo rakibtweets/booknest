@@ -7,9 +7,10 @@ import Book, { IBook } from "@/database/book.model";
 import { BookFormValues, bookSchema } from "@/validations/book";
 import action from "../handlers/action";
 import handleError from "../handlers/error";
-import { IGetBooksParams } from "@/types/action";
+import { IGetBooksByAuthorIdParams, IGetBooksParams } from "@/types/action";
 import Author from "@/database/author.model";
 import Publisher from "@/database/publisher.model";
+import { ActionResponse, ErrorResponse } from "@/types/global";
 
 export const getBooks = async ({
   page = 1,
@@ -86,6 +87,54 @@ export const getBookById = async (
   }
 };
 
+//get Books by authorId
+export const getBooksByAuthorId = async ({
+  authorId,
+  page = 1,
+  limit = 4,
+  sortBy = "createdAt",
+  order = "desc",
+}: IGetBooksByAuthorIdParams): Promise<
+  ActionResponse<{
+    books: IBook[];
+    totalPages: number;
+    currentPage: number;
+    nextPage: number | null;
+    prevPage: number | null;
+  }>
+> => {
+  await dbConnect();
+  const skip = (page - 1) * limit;
+  const sort: { [key: string]: 1 | -1 } = {
+    [sortBy]: order === "asc" ? 1 : -1,
+  };
+  const totalBooks = await Book.countDocuments({ author: authorId });
+  const totalPages = Math.ceil(totalBooks / limit);
+  const books = await Book.find({ author: authorId })
+    .populate([
+      {
+        path: "author",
+        select: "name",
+        model: Author,
+      },
+    ])
+    .sort(sort)
+    .skip(skip)
+    .limit(limit);
+  const nextPage = page < totalPages ? page + 1 : null;
+  const prevPage = page > 1 ? page - 1 : null;
+  return {
+    success: true,
+    data: {
+      books: JSON.parse(JSON.stringify(books)),
+      totalPages: totalPages,
+      currentPage: page,
+      nextPage,
+      prevPage,
+    },
+  };
+};
+
 export const createBook = async (
   params: BookFormValues
 ): Promise<ActionResponse<IBook>> => {
@@ -106,6 +155,9 @@ export const createBook = async (
     if (!book) {
       throw new Error("Failed to create book");
     }
+
+    // update author model in books property
+
     await session.commitTransaction();
     revalidatePath("/admin/authors");
     revalidatePath("/authors");

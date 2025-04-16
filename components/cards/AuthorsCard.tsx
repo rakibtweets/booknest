@@ -2,10 +2,10 @@ import Link from "next/link";
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 interface Author {
-  id: number;
+  id: string;
   name: string;
   image: string;
-  booksCount: number;
+  booksCount?: number;
 }
 
 export const AuthorsCard = ({ id, name, image, booksCount }: Author) => {

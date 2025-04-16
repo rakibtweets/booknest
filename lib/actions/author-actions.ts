@@ -7,6 +7,8 @@ import dbConnect from "../mongoose";
 import { AuthorFormValues, authorSchema } from "@/validations/author";
 import action from "../handlers/action";
 import handleError from "../handlers/error";
+import Book, { IBook } from "@/database/book.model";
+import { ActionResponse, ErrorResponse } from "@/types/global";
 
 // const authors = [
 //   {
@@ -92,9 +94,13 @@ export const getAuthorById = async (
     if (!author) {
       throw new Error("Author not found");
     }
+
+    console.log("author", author);
     return {
       success: true,
-      data: { author: JSON.parse(JSON.stringify(author)) },
+      data: {
+        author: JSON.parse(JSON.stringify(author)),
+      },
     };
   } catch (error) {
     return handleError(error) as ErrorResponse;

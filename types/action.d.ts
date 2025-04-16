@@ -23,3 +23,10 @@ export interface IGetBooksParams {
   sortBy?: string;
   order?: "asc" | "desc";
 }
+export interface IGetBooksByAuthorIdParams {
+  authorId: string;
+  page?: number;
+  limit?: number;
+  sortBy?: string;
+  order?: "asc" | "desc";
+}
