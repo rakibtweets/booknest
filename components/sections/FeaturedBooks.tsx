@@ -52,11 +52,8 @@ export default async function FeaturedBooks() {
     <section className="py-8">
       <div className="flex items-center justify-between mb-4">
         <h2 className="text-2xl font-bold tracking-tight">Featured Books</h2>
-        <Link
-          href="/books/featured"
-          className="flex items-center text-sm text-primary"
-        >
-          View all featured
+        <Link href="/books" className="flex items-center text-sm text-primary">
+          View all books
           <ChevronRight className="ml-1 h-4 w-4" />
         </Link>
       </div>
