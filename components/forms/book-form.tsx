@@ -37,11 +37,14 @@ import { MultiSelect } from "@/components/ui/multi-select";
 import { createBook, updateBook } from "@/lib/actions/book-actions";
 import { BookFormValues, bookSchema } from "@/validations/book";
 import { toast } from "sonner";
+import { IAuthor } from "@/database/author.model";
+import { IPublisher } from "@/database/publisher.model";
+import { IBook } from "@/database/book.model";
 
 interface BookFormProps {
-  initialData?: BookFormValues & { _id?: string };
-  authors: { id: string; name: string }[];
-  publishers: { id: string; name: string }[];
+  initialData?: IBook;
+  authors?: IAuthor[];
+  publishers?: IPublisher[];
   categories: string[];
 }
 
@@ -78,12 +81,12 @@ export function BookForm({
     try {
       if (initialData?._id) {
         // Update existing book
-        const result = await updateBook(initialData._id, data);
+        const result = await updateBook({ _id: initialData._id, ...data });
         if (result.success) {
           toast.success("Book updated");
           router.push("/admin/books");
         } else {
-          toast.error(result.error || "Failed to update book");
+          toast.error(result.error?.message || "Failed to update book");
         }
       } else {
         // Create new book
@@ -92,7 +95,7 @@ export function BookForm({
           toast.success("Book created");
           router.push("/admin/books");
         } else {
-          toast.error(result.error || "Failed to create book");
+          toast.error(result.error?.message || "Failed to create book");
         }
       }
     } catch (error) {
@@ -146,7 +149,7 @@ export function BookForm({
                 <FormLabel>Author</FormLabel>
                 <Select
                   onValueChange={field.onChange}
-                  defaultValue={field.value}
+                  defaultValue={field.value?.toString()}
                 >
                   <FormControl>
                     <SelectTrigger>
@@ -154,8 +157,8 @@ export function BookForm({
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {authors.map((author) => (
-                      <SelectItem key={author.id} value={author.id}>
+                    {authors?.map((author) => (
+                      <SelectItem key={author._id} value={author._id}>
                         {author.name}
                       </SelectItem>
                     ))}
@@ -174,7 +177,7 @@ export function BookForm({
                 <FormLabel>Publisher</FormLabel>
                 <Select
                   onValueChange={field.onChange}
-                  defaultValue={field.value}
+                  defaultValue={field.value?.toString()}
                 >
                   <FormControl>
                     <SelectTrigger>
@@ -182,8 +185,11 @@ export function BookForm({
                     </SelectTrigger>
                   </FormControl>
                   <SelectContent>
-                    {publishers.map((publisher) => (
-                      <SelectItem key={publisher.id} value={publisher.id}>
+                    {publishers?.map((publisher) => (
+                      <SelectItem
+                        key={publisher?._id as string}
+                        value={publisher?._id as string}
+                      >
                         {publisher.name}
                       </SelectItem>
                     ))}
@@ -418,7 +424,7 @@ export function BookForm({
           >
             Cancel
           </Button>
-          <Button type="submit" disabled={isLoading}>
+          <Button className="cursor-pointer" type="submit" disabled={isLoading}>
             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             {initialData ? "Update Book" : "Create Book"}
           </Button>

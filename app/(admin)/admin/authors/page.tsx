@@ -202,15 +202,17 @@ export default async function AdminAuthorsPage() {
                       <DropdownMenuLabel>Actions</DropdownMenuLabel>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem asChild>
-                        <Link href={`/authors/${author.id}`}>View Profile</Link>
+                        <Link href={`/authors/${author._id}`}>
+                          View Profile
+                        </Link>
                       </DropdownMenuItem>
                       <DropdownMenuItem asChild>
-                        <Link href={`/admin/authors/${author.id}/edit`}>
+                        <Link href={`/admin/authors/${author._id}/edit`}>
                           <Edit className="mr-2 h-4 w-4" />
                           Edit
                         </Link>
                       </DropdownMenuItem>
-                      <DeleteAuthorButton authorId={author.id} />
+                      <DeleteAuthorButton authorId={author._id} />
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </TableCell>

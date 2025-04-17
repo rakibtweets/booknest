@@ -26,14 +26,15 @@ import {
   updatePublisher,
 } from "@/lib/actions/publisher-actions";
 import { toast } from "sonner";
+import { IPublisher } from "@/database/publisher.model";
 
 interface PublisherFormProps {
-  initialData?: PublisherFormValues & { _id?: string };
+  initialData?: IPublisher;
 }
 
 export function PublisherForm({ initialData }: PublisherFormProps) {
   const router = useRouter();
-  const [isLoading, setIsLoading] = useState(false);
+  const [isLoading, setIsLoading] = useState<boolean>(false);
   const [imprints, setImprints] = useState<string[]>(
     initialData?.imprints || []
   );
@@ -72,12 +73,15 @@ export function PublisherForm({ initialData }: PublisherFormProps) {
 
       if (initialData?._id) {
         // Update existing publisher
-        const result = await updatePublisher(initialData._id, formData);
+        const result = await updatePublisher({
+          _id: initialData._id,
+          ...formData,
+        });
         if (result.success) {
           toast.success("The publisher has been updated successfully.");
           router.push("/admin/publishers");
         } else {
-          toast.error(result.error || "Failed to update publisher");
+          toast.error(result.error?.message || "Failed to update publisher");
         }
       } else {
         // Create new publisher
@@ -86,7 +90,7 @@ export function PublisherForm({ initialData }: PublisherFormProps) {
           toast.success("The publisher has been created successfully.");
           router.push("/admin/publishers");
         } else {
-          toast.error(result.error || "Failed to create publisher");
+          toast.error(result.error?.message || "Failed to create publisher");
         }
       }
     } catch (error) {
@@ -133,10 +137,7 @@ export function PublisherForm({ initialData }: PublisherFormProps) {
               <FormItem>
                 <FormLabel>Logo URL</FormLabel>
                 <FormControl>
-                  <Input
-                    placeholder="https://example.com/logo.png"
-                    {...field}
-                  />
+                  <Input placeholder="paste logo url here" {...field} />
                 </FormControl>
                 <FormDescription>URL for the publisher's logo</FormDescription>
                 <FormMessage />
@@ -153,7 +154,7 @@ export function PublisherForm({ initialData }: PublisherFormProps) {
                 <FormControl>
                   <Input
                     type="number"
-                    placeholder="1970"
+                    placeholder="Enter founded year"
                     {...field}
                     onChange={(e) =>
                       field.onChange(Number.parseInt(e.target.value))
@@ -337,7 +338,7 @@ export function PublisherForm({ initialData }: PublisherFormProps) {
           >
             Cancel
           </Button>
-          <Button type="submit" disabled={isLoading}>
+          <Button className="cursor-pointer" type="submit" disabled={isLoading}>
             {isLoading && <Loader2 className="mr-2 h-4 w-4 animate-spin" />}
             {initialData ? "Update Publisher" : "Create Publisher"}
           </Button>

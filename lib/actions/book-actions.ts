@@ -1,167 +1,321 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-
-import mongoose from "mongoose";
+import mongoose, { FilterQuery } from "mongoose";
 import dbConnect from "../mongoose";
+import Book, { IBook } from "@/database/book.model";
+import { BookFormValues, bookSchema } from "@/validations/book";
+import action from "../handlers/action";
+import handleError from "../handlers/error";
+import {
+  GetFeatureBooksParams,
+  IGetBooksByAuthorIdParams,
+  IGetBooksParams,
+} from "@/types/action";
 import Author from "@/database/author.model";
 import Publisher from "@/database/publisher.model";
-import Book from "@/database/book.model";
-import { BookFormValues, bookSchema } from "@/validations/book";
-import { books } from "@/constants/admin";
+import { ActionResponse, ErrorResponse } from "@/types/global";
 
-export const getBooks = async (page: number, limit: number) => {
-  const start = (page - 1) * limit;
-  const end = start + limit;
-  const total = books.length;
+export const getBooks = async (
+  params: IGetBooksParams
+): Promise<
+  ActionResponse<{
+    books: IBook[];
+    totalPages: number;
+    currentPage: number;
+    nextPage: number | null;
+    prevPage: number | null;
+  }>
+> => {
+  await dbConnect();
+  const { page = 1, pageSize = 10, query, filter } = params;
+  const skip = (Number(page) - 1) * pageSize;
+  const limit = pageSize;
+
+  const totalBooks = await Book.countDocuments();
+  const totalPages = Math.ceil(totalBooks / limit);
+  let sortCriteria = {};
+  const filterQuery: FilterQuery<IBook> = {};
+
+  // Search
+  if (query) {
+    filterQuery.$or = [
+      { title: { $regex: query, $options: "i" } },
+      { categories: { $regex: query, $options: "i" } },
+    ];
+  }
+
+  // Filters
+  switch (filter) {
+    case "name":
+      sortCriteria = { title: -1 };
+      break;
+    case "alphabetical(a-z)":
+      sortCriteria = { title: 1 };
+      break;
+    case "authorsCount":
+      sortCriteria = { author: 1 };
+      break;
+    case "lowtohigh":
+      sortCriteria = { price: 1 };
+      break;
+    case "hightolow":
+      sortCriteria = { price: -1 };
+      break;
+    default:
+      sortCriteria = { createdAt: -1 };
+      break;
+  }
+  const books = await Book.find(filterQuery)
+    .populate([
+      {
+        path: "author",
+        select: "name",
+        model: Author,
+      },
+    ])
+    .sort(sortCriteria)
+    .skip(skip)
+    .limit(limit);
+  const nextPage = page < totalPages ? page + 1 : null;
+  const prevPage = page > 1 ? page - 1 : null;
 
   return {
-    books: books.slice(start, end),
-    total,
+    success: true,
+    data: {
+      books: JSON.parse(JSON.stringify(books)),
+      totalPages: totalPages,
+      currentPage: page,
+      nextPage,
+      prevPage,
+    },
   };
 };
 
-export const getBookById = async (id: string) => {
-  const book = books.find((book: any) => book.id === id);
-  if (!book) {
-    throw new Error("Author not found");
+export const getBookById = async (
+  id: string
+): Promise<ActionResponse<{ book: IBook }>> => {
+  try {
+    await dbConnect();
+    const book = await Book.findById(id).populate([
+      {
+        path: "author",
+        select: "name bio",
+        model: Author,
+      },
+      {
+        path: "publisher",
+        select: "name",
+        model: Publisher,
+      },
+    ]);
+    if (!book) {
+      throw new Error("Book not found");
+    }
+    return {
+      success: true,
+      data: { book: JSON.parse(JSON.stringify(book)) },
+    };
+  } catch (error) {
+    return handleError(error) as ErrorResponse;
   }
-  return book;
 };
 
-export async function createBook(data: BookFormValues) {
+//get Books by authorId
+export const getBooksByAuthorId = async ({
+  authorId,
+  page = 1,
+  limit = 4,
+  sortBy = "createdAt",
+  order = "desc",
+}: IGetBooksByAuthorIdParams): Promise<
+  ActionResponse<{
+    books: IBook[];
+    totalPages: number;
+    currentPage: number;
+    nextPage: number | null;
+    prevPage: number | null;
+  }>
+> => {
+  await dbConnect();
+  const skip = (page - 1) * limit;
+  const sort: { [key: string]: 1 | -1 } = {
+    [sortBy]: order === "asc" ? 1 : -1,
+  };
+  const totalBooks = await Book.countDocuments({ author: authorId });
+  const totalPages = Math.ceil(totalBooks / limit);
+  const books = await Book.find({ author: authorId })
+    .populate([
+      {
+        path: "author",
+        select: "name",
+        model: Author,
+      },
+    ])
+    .sort(sort)
+    .skip(skip)
+    .limit(limit);
+  const nextPage = page < totalPages ? page + 1 : null;
+  const prevPage = page > 1 ? page - 1 : null;
+  return {
+    success: true,
+    data: {
+      books: JSON.parse(JSON.stringify(books)),
+      totalPages: totalPages,
+      currentPage: page,
+      nextPage,
+      prevPage,
+    },
+  };
+};
+
+export const createBook = async (
+  params: BookFormValues
+): Promise<ActionResponse<IBook>> => {
+  const validationResult = await action({
+    params,
+    schema: bookSchema,
+    authorize: true,
+  });
+  if (validationResult instanceof Error) {
+    return handleError(validationResult) as ErrorResponse;
+  }
+  const session = await mongoose.startSession();
+  session.startTransaction();
+  try {
+    // start creating a new Book
+    await dbConnect();
+    const [book] = await Book.create([params], { session });
+    if (!book) {
+      throw new Error("Failed to create book");
+    }
+
+    // update author model in books property
+
+    await session.commitTransaction();
+    revalidatePath("/admin/authors");
+    revalidatePath("/authors");
+    return {
+      success: true,
+      data: JSON.parse(JSON.stringify(book)),
+    };
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    return handleError(error) as ErrorResponse;
+  } finally {
+    await session.endSession();
+  }
+};
+
+export const updateBook = async (
+  params: Partial<IBook>
+): Promise<ActionResponse<{ book: IBook }>> => {
+  const validationResult = await action({
+    params,
+    schema: bookSchema,
+    authorize: true,
+  });
+
+  if (validationResult instanceof Error) {
+    return handleError(validationResult) as ErrorResponse;
+  }
+
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
   try {
     await dbConnect();
+    const { _id, ...updateData } = params;
 
-    // Validate form data
-    const validatedData = bookSchema.parse(data);
-
-    // Check if author exists
-    const author = await Author.findById(validatedData.author);
-    if (!author) {
-      throw new Error("Author not found");
-    }
-
-    // Check if publisher exists
-    const publisher = await Publisher.findById(validatedData.publisher);
-    if (!publisher) {
-      throw new Error("Publisher not found");
-    }
-
-    // Create new book
-    const newBook = new Book({
-      ...validatedData,
-      publishDate: new Date(validatedData.publishDate),
+    const book = await Book.findByIdAndUpdate(_id, updateData, {
+      new: true,
+      session,
+      runValidators: true,
     });
 
-    await newBook.save();
+    if (!book) {
+      throw new Error("Book not found or update failed");
+    }
+
+    await session.commitTransaction();
 
     revalidatePath("/admin/books");
     revalidatePath("/books");
 
-    return { success: true, book: newBook };
+    return {
+      success: true,
+      data: { book: JSON.parse(JSON.stringify(book)) },
+    };
   } catch (error) {
-    console.error("Error creating book:", error);
-    if (error instanceof Error) {
-      return { success: false, error: error.message };
-    }
-    return { success: false, error: "Failed to create book" };
+    await session.abortTransaction();
+    session.endSession();
+    return handleError(error) as ErrorResponse;
+  } finally {
+    await session.endSession();
   }
-}
+};
 
-export async function updateBook(id: string, data: BookFormValues) {
+export const deleteBook = async (
+  id: string
+): Promise<ActionResponse<{ book: IBook }>> => {
+  const validationResult = await action({
+    params: { id },
+    authorize: true,
+  });
+
+  if (validationResult instanceof Error) {
+    return handleError(validationResult) as ErrorResponse;
+  }
+
+  const session = await mongoose.startSession();
+  session.startTransaction();
+
   try {
     await dbConnect();
-
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      throw new Error("Invalid book ID");
+    const book = await Book.findByIdAndDelete(id, { session });
+    if (!book) {
+      throw new Error("Book not found or deletion failed");
     }
-
-    // Validate form data
-    const validatedData = bookSchema.parse(data);
-
-    // Check if author exists
-    const author = await Author.findById(validatedData.author);
-    if (!author) {
-      throw new Error("Author not found");
-    }
-
-    // Check if publisher exists
-    const publisher = await Publisher.findById(validatedData.publisher);
-    if (!publisher) {
-      throw new Error("Publisher not found");
-    }
-
-    // Update book
-    const updatedBook = await Book.findByIdAndUpdate(
-      id,
-      {
-        ...validatedData,
-        publishDate: new Date(validatedData.publishDate),
-        updatedAt: new Date(),
-      },
-      { new: true }
-    );
-
-    if (!updatedBook) {
-      throw new Error("Book not found");
-    }
-
-    revalidatePath(`/admin/books/${id}`);
-    revalidatePath(`/admin/books`);
-    revalidatePath(`/books/${id}`);
-    revalidatePath("/books");
-
-    return { success: true, book: updatedBook };
-  } catch (error) {
-    console.error("Error updating book:", error);
-    if (error instanceof Error) {
-      return { success: false, error: error.message };
-    }
-    return { success: false, error: "Failed to update book" };
-  }
-}
-
-export async function deleteBook(id: string) {
-  try {
-    await dbConnect();
-
-    if (!mongoose.Types.ObjectId.isValid(id)) {
-      throw new Error("Invalid book ID");
-    }
-
-    const deletedBook = await Book.findByIdAndDelete(id);
-
-    if (!deletedBook) {
-      throw new Error("Book not found");
-    }
-
+    await session.commitTransaction();
     revalidatePath("/admin/books");
     revalidatePath("/books");
-
-    return { success: true };
+    return {
+      success: true,
+      data: { book: JSON.parse(JSON.stringify(book)) },
+    };
   } catch (error) {
-    console.error("Error deleting book:", error);
-    if (error instanceof Error) {
-      return { success: false, error: error.message };
-    }
-    return { success: false, error: "Failed to delete book" };
+    await session.abortTransaction();
+    session.endSession();
+    return handleError(error) as ErrorResponse;
+  } finally {
+    await session.endSession();
   }
-}
+};
 
-export async function getFeaturedBooks(limit = 4) {
+export async function getFeaturedBooks(params: GetFeatureBooksParams): Promise<
+  ActionResponse<{
+    books: IBook[];
+  }>
+> {
   try {
     await dbConnect();
+    const { limit = 4 } = params;
 
     const books = await Book.find({ featured: true })
-      .populate("author")
+      .populate("author", "name")
       .sort({ createdAt: -1 })
       .limit(limit);
 
-    return books;
+    return {
+      success: true,
+      data: {
+        books: JSON.parse(JSON.stringify(books)),
+      },
+    };
   } catch (error) {
     console.error("Error fetching featured books:", error);
-    throw new Error("Failed to fetch featured books");
+    throw handleError(error) as ErrorResponse;
   }
 }
 

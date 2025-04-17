@@ -228,7 +228,7 @@ export const createPublisher = async (
   }
 };
 
-export const updatePublilsher = async (
+export const updatePublisher = async (
   params: Partial<IPublisher>
 ): Promise<ActionResponse<{ publisher: IPublisher }>> => {
   const validationResult = await action({

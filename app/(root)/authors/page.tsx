@@ -3,16 +3,17 @@ import { Metadata } from "next";
 import LocalSearchBar from "@/components/shared/LocalSearchBar";
 import Filter from "@/components/shared/Filter";
 import { authorFilters } from "@/constants";
-import Link from "next/link";
-import { AuthorsCard } from "@/components/cards/AuthorsCard";
 import Authors from "@/components/sections/Authors";
+import { getAuthors } from "@/lib/actions/author-actions";
 
 export const metadata: Metadata = {
   title: "Authors",
   description: "Authors page",
 };
 
-const Page = () => {
+const Page = async () => {
+  const authorsResult = await getAuthors();
+  const authors = authorsResult?.data?.authors || [];
   return (
     <>
       {/* Title */}
@@ -37,7 +38,7 @@ const Page = () => {
       {/* Authors */}
       <div className="grid mt-9 grid-cols-2 sm:grid-cols-3 md:grid-cols-6 gap-4">
         <Suspense fallback={<div>Loading...</div>}>
-          <Authors />
+          <Authors authors={authors} />
         </Suspense>
       </div>
     </>

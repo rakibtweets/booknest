@@ -80,8 +80,10 @@ const categories = [
 
 export default async function AddBookPage() {
   // Fetch authors and publishers for the form
-  const { authors } = await getAuthors(1, 8);
-  const { publishers } = await getPublishers(1, 8);
+  const result = await getAuthors();
+  const authors = result.data?.authors;
+  const response = await getPublishers();
+  const publishers = response.data?.publishers;
 
   return (
     <>

@@ -21,6 +21,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+import { getPublishers } from "@/lib/actions/publisher-actions";
+import DeletePublisherButton from "@/components/buttons/DeletePublisherButton";
 
 export const metadata: Metadata = {
   title: "Manage Publishers - BookNext Admin",
@@ -28,76 +30,78 @@ export const metadata: Metadata = {
 };
 
 // Mock publishers data - in a real app, this would come from the database
-const publishers = [
-  {
-    id: "penguin-random-house",
-    name: "Penguin Random House",
-    logo: "https://placehold.co/120x80",
-    description:
-      "Penguin Random House is the international home to nearly 250 editorially and creatively independent publishing imprints.",
-    founded: 2013,
-    headquarters: "New York, NY",
-    booksCount: 1245,
-    featured: true,
-  },
-  {
-    id: "hachette-book-group",
-    name: "Hachette Book Group",
-    logo: "https://placehold.co/120x80",
-    description:
-      "Hachette Book Group (HBG) is a leading U.S. trade publisher and a division of the third largest trade and educational book publisher in the world.",
-    founded: 2006,
-    headquarters: "New York, NY",
-    booksCount: 876,
-    featured: true,
-  },
-  {
-    id: "harper-collins",
-    name: "HarperCollins",
-    logo: "https://placehold.co/120x80",
-    description:
-      "HarperCollins Publishers is the second-largest consumer book publisher in the world.",
-    founded: 1817,
-    headquarters: "New York, NY",
-    booksCount: 943,
-    featured: true,
-  },
-  {
-    id: "simon-schuster",
-    name: "Simon & Schuster",
-    logo: "https://placehold.co/120x80",
-    description:
-      "Simon & Schuster is a global leader in general interest publishing.",
-    founded: 1924,
-    headquarters: "New York, NY",
-    booksCount: 754,
-    featured: false,
-  },
-  {
-    id: "macmillan-publishers",
-    name: "Macmillan Publishers",
-    logo: "https://placehold.co/120x80",
-    description:
-      "Macmillan Publishers is a global trade book publishing company with prominent imprints around the world.",
-    founded: 1843,
-    headquarters: "New York, NY",
-    booksCount: 632,
-    featured: false,
-  },
-  {
-    id: "scholastic",
-    name: "Scholastic",
-    logo: "https://placehold.co/100x120",
-    description:
-      "Scholastic is the world's largest publisher and distributor of children's books.",
-    founded: 1920,
-    headquarters: "New York, NY",
-    booksCount: 521,
-    featured: true,
-  },
-];
+// const publishers = [
+//   {
+//     id: "penguin-random-house",
+//     name: "Penguin Random House",
+//     logo: "https://placehold.co/120x80",
+//     description:
+//       "Penguin Random House is the international home to nearly 250 editorially and creatively independent publishing imprints.",
+//     founded: 2013,
+//     headquarters: "New York, NY",
+//     booksCount: 1245,
+//     featured: true,
+//   },
+//   {
+//     id: "hachette-book-group",
+//     name: "Hachette Book Group",
+//     logo: "https://placehold.co/120x80",
+//     description:
+//       "Hachette Book Group (HBG) is a leading U.S. trade publisher and a division of the third largest trade and educational book publisher in the world.",
+//     founded: 2006,
+//     headquarters: "New York, NY",
+//     booksCount: 876,
+//     featured: true,
+//   },
+//   {
+//     id: "harper-collins",
+//     name: "HarperCollins",
+//     logo: "https://placehold.co/120x80",
+//     description:
+//       "HarperCollins Publishers is the second-largest consumer book publisher in the world.",
+//     founded: 1817,
+//     headquarters: "New York, NY",
+//     booksCount: 943,
+//     featured: true,
+//   },
+//   {
+//     id: "simon-schuster",
+//     name: "Simon & Schuster",
+//     logo: "https://placehold.co/120x80",
+//     description:
+//       "Simon & Schuster is a global leader in general interest publishing.",
+//     founded: 1924,
+//     headquarters: "New York, NY",
+//     booksCount: 754,
+//     featured: false,
+//   },
+//   {
+//     id: "macmillan-publishers",
+//     name: "Macmillan Publishers",
+//     logo: "https://placehold.co/120x80",
+//     description:
+//       "Macmillan Publishers is a global trade book publishing company with prominent imprints around the world.",
+//     founded: 1843,
+//     headquarters: "New York, NY",
+//     booksCount: 632,
+//     featured: false,
+//   },
+//   {
+//     id: "scholastic",
+//     name: "Scholastic",
+//     logo: "https://placehold.co/100x120",
+//     description:
+//       "Scholastic is the world's largest publisher and distributor of children's books.",
+//     founded: 1920,
+//     headquarters: "New York, NY",
+//     booksCount: 521,
+//     featured: true,
+//   },
+// ];
 
-export default function AdminPublishersPage() {
+export default async function AdminPublishersPage() {
+  const result = await getPublishers();
+  const publishers = result.data?.publishers;
   return (
     <>
       <div className="flex flex-col gap-4">
@@ -150,13 +154,13 @@ export default function AdminPublishersPage() {
               <TableHead>Publisher</TableHead>
               <TableHead>Founded</TableHead>
               <TableHead>Headquarters</TableHead>
-              <TableHead>Books</TableHead>
+              {/* <TableHead>Books</TableHead> */}
               <TableHead>Featured</TableHead>
               <TableHead className="text-right">Actions</TableHead>
             </TableRow>
           </TableHeader>
           <TableBody>
-            {publishers.map((publisher) => (
+            {publishers?.map((publisher) => (
               <TableRow key={publisher.id}>
                 <TableCell>
                   <div className="flex items-center gap-3">
@@ -179,7 +183,7 @@ export default function AdminPublishersPage() {
                 </TableCell>
                 <TableCell>{publisher.founded}</TableCell>
                 <TableCell>{publisher.headquarters}</TableCell>
-                <TableCell>{publisher.booksCount}</TableCell>
+                {/* <TableCell>{publisher?.booksCount || 0}</TableCell> */}
                 <TableCell>
                   {publisher.featured ? (
                     <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
@@ -202,21 +206,20 @@ export default function AdminPublishersPage() {
                       <DropdownMenuLabel>Actions</DropdownMenuLabel>
                       <DropdownMenuSeparator />
                       <DropdownMenuItem asChild>
-                        <Link href={`/publishers/${publisher.id}`}>
+                        <Link href={`/publishers/${publisher._id}`}>
                           <ExternalLink className="mr-2 h-4 w-4" />
                           View Profile
                         </Link>
                       </DropdownMenuItem>
                       <DropdownMenuItem asChild>
-                        <Link href={`/admin/publishers/${publisher.id}/edit`}>
+                        <Link href={`/admin/publishers/${publisher._id}/edit`}>
                           <Edit className="mr-2 h-4 w-4" />
                           Edit
                         </Link>
                       </DropdownMenuItem>
-                      <DropdownMenuItem className="text-red-600">
-                        <Trash2 className="mr-2 h-4 w-4" />
-                        Delete
-                      </DropdownMenuItem>
+                      <DeletePublisherButton
+                        publisherId={publisher._id as string}
+                      />
                     </DropdownMenuContent>
                   </DropdownMenu>
                 </TableCell>

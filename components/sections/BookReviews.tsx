@@ -60,7 +60,7 @@ const mockReviews = [
 ];
 
 interface BookReviewsProps {
-  bookId: string;
+  bookId: string | undefined;
 }
 
 export default function BookReviews({ bookId }: BookReviewsProps) {

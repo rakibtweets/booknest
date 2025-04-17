@@ -182,7 +182,7 @@ export default function PublishersPage() {
           route="/publishers"
           iconPosition="left"
           placeholder="Search for publishers..."
-          otherClasses="flex-1"
+          otherClasses="flex-1 "
         />
 
         <Filter

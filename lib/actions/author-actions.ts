@@ -7,6 +7,11 @@ import dbConnect from "../mongoose";
 import { AuthorFormValues, authorSchema } from "@/validations/author";
 import action from "../handlers/action";
 import handleError from "../handlers/error";
+import {
+  ActionResponse,
+  ErrorResponse,
+  PaginatedSearchParams,
+} from "@/types/global";
 
 // const authors = [
 //   {
@@ -92,9 +97,12 @@ export const getAuthorById = async (
     if (!author) {
       throw new Error("Author not found");
     }
+
     return {
       success: true,
-      data: { author: JSON.parse(JSON.stringify(author)) },
+      data: {
+        author: JSON.parse(JSON.stringify(author)),
+      },
     };
   } catch (error) {
     return handleError(error) as ErrorResponse;
@@ -219,5 +227,21 @@ export const deleteAuthor = async (
     return handleError(error) as ErrorResponse;
   } finally {
     await session.endSession();
+  }
+};
+
+export const getFeaturedAuthors = async (
+  params: PaginatedSearchParams
+): Promise<ActionResponse<{ authors: IAuthor[] }>> => {
+  try {
+    await dbConnect();
+    const { limit = 4 } = params;
+    const authors = await Author.find({ featured: true }).limit(limit);
+    return {
+      success: true,
+      data: { authors: JSON.parse(JSON.stringify(authors)) },
+    };
+  } catch (error) {
+    return handleError(error) as ErrorResponse;
   }
 };

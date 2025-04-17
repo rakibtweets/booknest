@@ -8,8 +8,8 @@ export const authorFilters = [
 export const bookFilters = [
   { name: "Alphabetical", value: "alphabetical(a-z)" },
   { name: "Number of Authors", value: "authorsCount" },
-  { name: "Ascending Order", value: "ascending" },
-  { name: "Descending Order", value: "descending" },
+  { name: "Price Low to High", value: "lowtohigh" },
+  { name: "Price Hight to Low", value: "hightolow" },
 ];
 
 export const publishersFilters = [

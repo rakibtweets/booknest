@@ -1,4 +1,10 @@
-import { Schema, type Document, model, models, Model } from "mongoose";
+import mongoose, {
+  Schema,
+  type Document,
+  model,
+  models,
+  Model,
+} from "mongoose";
 import baseSchema from "./base-schema";
 import { slugify } from "@/lib/utils";
 // Author Schema
@@ -12,12 +18,13 @@ export interface IAuthor extends Document {
   birthDate?: string;
   deathDate?: string;
   birthPlace?: string;
+  booksCount?: number;
   website?: string;
   email?: string;
   genres: string[];
-  booksCount?: number;
   awards?: string[];
   featured: boolean;
+  books: mongoose.Types.ObjectId[];
   createdAt?: Date;
   updatedAt?: Date;
 }
@@ -27,6 +34,7 @@ const AuthorSchema = new Schema<IAuthor>({
   name: { type: String, required: true },
   bio: { type: String, required: true },
   image: { type: String, required: true },
+  booksCount: { type: Number, default: 0 },
   coverImage: { type: String },
   birthDate: { type: String },
   deathDate: { type: String },
@@ -34,9 +42,9 @@ const AuthorSchema = new Schema<IAuthor>({
   website: { type: String },
   email: { type: String },
   genres: [{ type: String }],
-  booksCount: { type: Number, default: 0 },
   awards: [{ type: String }],
   featured: { type: Boolean, default: false },
+  books: [{ type: Schema.Types.ObjectId, ref: "Book" }],
 });
 
 AuthorSchema.add(baseSchema);

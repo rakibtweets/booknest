@@ -9,40 +9,38 @@ export function cn(...inputs: ClassValue[]) {
 interface UrlQueryParams {
   params: string;
   key: string;
-  value: string | null;
+  value: string;
 }
 
 export const formUrlQuery = ({ params, key, value }: UrlQueryParams) => {
-  const currentUrl = qs.parse(params);
-  currentUrl[key] = value;
+  const queryString = qs.parse(params);
 
-  return qs.stringifyUrl(
-    {
-      url: window.location.pathname,
-      query: currentUrl,
-    },
-    { skipNull: true }
-  );
+  queryString[key] = value;
+
+  return qs.stringifyUrl({
+    url: window.location.pathname,
+    query: queryString,
+  });
 };
-interface removeUrlQueryParams {
+interface RemoveUrlQueryParams {
   params: string;
   keysToRemove: string[];
 }
 
-export const removeKeysFromQuery = ({
+export const removeKeysFromUrlQuery = ({
   params,
   keysToRemove,
-}: removeUrlQueryParams) => {
-  const currentUrl = qs.parse(params);
+}: RemoveUrlQueryParams) => {
+  const queryString = qs.parse(params);
 
   keysToRemove.forEach((key) => {
-    delete currentUrl[key];
+    delete queryString[key];
   });
 
   return qs.stringifyUrl(
     {
       url: window.location.pathname,
-      query: currentUrl,
+      query: queryString,
     },
     { skipNull: true }
   );
@@ -57,3 +55,11 @@ export function slugify(text: string): string {
     .replace(/[^a-z0-9]+/g, "-")
     .replace(/^-+|-+$/g, "");
 }
+
+export const getYear = (dateString: string): number => {
+  const date = new Date(dateString);
+  if (isNaN(date.getTime())) {
+    throw new Error("Invalid date format");
+  }
+  return date.getUTCFullYear();
+};

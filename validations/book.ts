@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { z } from "zod";
 
 export const bookSchema = z.object({
@@ -14,8 +15,12 @@ export const bookSchema = z.object({
     .int()
     .nonnegative("Stock must be a non-negative integer"),
   featured: z.boolean(),
-  author: z.string().min(1, "Author is required"),
-  publisher: z.string().min(1, "Publisher is required"),
+  author: z.custom<mongoose.Types.ObjectId>((value) =>
+    mongoose.Types.ObjectId.isValid(value as string)
+  ),
+  publisher: z.custom<mongoose.Types.ObjectId>((value) =>
+    mongoose.Types.ObjectId.isValid(value as string)
+  ),
   categories: z.array(z.string()).min(1, "At least one category is required"),
 });
 

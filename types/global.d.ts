@@ -1,3 +1,6 @@
+import { IAuthor } from "@/database/author.model";
+import { IBook } from "@/database/book.model";
+
 // Create a type for the roles
 type Roles = "admin" | "user";
 
@@ -25,4 +28,17 @@ type ErrorResponse = ActionResponse<undefined> & { success: false };
 interface RouteParams {
   params: Promise<Record<string, string>>;
   searchParams: Promise<Record<string, string>>;
+}
+
+interface Author extends IAuthor {
+  booksByGenre: Record<string, IBook[]>;
+}
+
+interface PaginatedSearchParams {
+  page?: number;
+  pageSize?: number;
+  limit?: number;
+  query?: string;
+  filter?: string;
+  sort?: string;
 }
