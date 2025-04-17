@@ -11,14 +11,21 @@ import { Button } from "@/components/ui/button";
 import { ShoppingCart } from "lucide-react";
 import { getBooks } from "@/lib/actions/book-actions";
 import { IBook } from "@/database/book.model";
+import { RouteParams } from "@/types/global";
 
 export const metadata: Metadata = {
   title: "Books",
   description: "Books page",
 };
 
-const Page = async () => {
-  const bookResult = await getBooks({});
+const Page = async ({ searchParams }: RouteParams) => {
+  const { page, pageSize, query, filter } = await searchParams;
+  const bookResult = await getBooks({
+    page: Number(page) || 1,
+    pageSize: Number(pageSize) || 10,
+    query,
+    filter,
+  });
   const books = bookResult.data?.books || [];
   return (
     <>
@@ -31,7 +38,7 @@ const Page = async () => {
           route="/books"
           iconPosition="left"
           placeholder="Search for Books..."
-          otherClasses="flex-1"
+          otherClasses="flex-1 "
         />
 
         <Filter

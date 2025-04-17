@@ -244,7 +244,7 @@ export async function generateMetadata({ params }: AuthorPageProps): Metadata {
   };
 }
 
-export default async function AuthorPage({ params }: AuthorPageProps) {
+export default async function AuthorDetailsPage({ params }: AuthorPageProps) {
   const { id } = await params;
   const authorResult = await getAuthorById(id);
   const author = (authorResult?.data?.author as Author) || {};

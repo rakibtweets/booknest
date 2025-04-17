@@ -1,23 +1,24 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import mongoose from "mongoose";
+import mongoose, { FilterQuery } from "mongoose";
 import dbConnect from "../mongoose";
 import Book, { IBook } from "@/database/book.model";
 import { BookFormValues, bookSchema } from "@/validations/book";
 import action from "../handlers/action";
 import handleError from "../handlers/error";
-import { IGetBooksByAuthorIdParams, IGetBooksParams } from "@/types/action";
+import {
+  GetFeatureBooksParams,
+  IGetBooksByAuthorIdParams,
+  IGetBooksParams,
+} from "@/types/action";
 import Author from "@/database/author.model";
 import Publisher from "@/database/publisher.model";
 import { ActionResponse, ErrorResponse } from "@/types/global";
 
-export const getBooks = async ({
-  page = 1,
-  limit = 10,
-  sortBy = "createdAt",
-  order = "desc",
-}: IGetBooksParams): Promise<
+export const getBooks = async (
+  params: IGetBooksParams
+): Promise<
   ActionResponse<{
     books: IBook[];
     totalPages: number;
@@ -27,13 +28,45 @@ export const getBooks = async ({
   }>
 > => {
   await dbConnect();
-  const skip = (page - 1) * limit;
-  const sort: { [key: string]: 1 | -1 } = {
-    [sortBy]: order === "asc" ? 1 : -1,
-  };
+  const { page = 1, pageSize = 10, query, filter } = params;
+  const skip = (Number(page) - 1) * pageSize;
+  const limit = pageSize;
+
   const totalBooks = await Book.countDocuments();
   const totalPages = Math.ceil(totalBooks / limit);
-  const books = await Book.find()
+  let sortCriteria = {};
+  const filterQuery: FilterQuery<IBook> = {};
+
+  // Search
+  if (query) {
+    filterQuery.$or = [
+      { title: { $regex: query, $options: "i" } },
+      { categories: { $regex: query, $options: "i" } },
+    ];
+  }
+
+  // Filters
+  switch (filter) {
+    case "name":
+      sortCriteria = { title: -1 };
+      break;
+    case "alphabetical(a-z)":
+      sortCriteria = { title: 1 };
+      break;
+    case "authorsCount":
+      sortCriteria = { author: 1 };
+      break;
+    case "lowtohigh":
+      sortCriteria = { price: 1 };
+      break;
+    case "hightolow":
+      sortCriteria = { price: -1 };
+      break;
+    default:
+      sortCriteria = { createdAt: -1 };
+      break;
+  }
+  const books = await Book.find(filterQuery)
     .populate([
       {
         path: "author",
@@ -41,11 +74,12 @@ export const getBooks = async ({
         model: Author,
       },
     ])
-    .sort(sort)
+    .sort(sortCriteria)
     .skip(skip)
     .limit(limit);
   const nextPage = page < totalPages ? page + 1 : null;
   const prevPage = page > 1 ? page - 1 : null;
+
   return {
     success: true,
     data: {
@@ -259,16 +293,26 @@ export const deleteBook = async (
   }
 };
 
-export async function getFeaturedBooks(limit = 4) {
+export async function getFeaturedBooks(params: GetFeatureBooksParams): Promise<
+  ActionResponse<{
+    books: IBook[];
+  }>
+> {
   try {
     await dbConnect();
+    const { limit = 4 } = params;
 
     const books = await Book.find({ featured: true })
-      .populate("author")
+      .populate("author", "name")
       .sort({ createdAt: -1 })
       .limit(limit);
 
-    return JSON.parse(JSON.stringify(books));
+    return {
+      success: true,
+      data: {
+        books: JSON.parse(JSON.stringify(books)),
+      },
+    };
   } catch (error) {
     console.error("Error fetching featured books:", error);
     throw handleError(error) as ErrorResponse;

@@ -1,7 +1,7 @@
 "use client";
 
 import { Input } from "@/components/ui/input";
-import { formUrlQuery, removeKeysFromQuery } from "@/lib/utils";
+import { formUrlQuery, removeKeysFromUrlQuery } from "@/lib/utils";
 import { Search } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
@@ -19,36 +19,37 @@ const LocalSearchBar = ({
   placeholder,
   otherClasses,
 }: CustomeInputProps) => {
-  const router = useRouter();
   const pathname = usePathname();
+  const router = useRouter();
   const searchParams = useSearchParams();
+  const query = searchParams.get("query") || "";
 
-  const query = searchParams.get("q");
-
-  const [search, setSearch] = useState(query || "");
+  const [searchQuery, setSearchQuery] = useState(query);
 
   useEffect(() => {
     const delayDebounceFn = setTimeout(() => {
-      if (search) {
+      if (searchQuery) {
         const newUrl = formUrlQuery({
           params: searchParams.toString(),
-          key: "q",
-          value: search,
+          key: "query",
+          value: searchQuery,
         });
+
         router.push(newUrl, { scroll: false });
       } else {
         if (pathname === route) {
-          const newUrl = removeKeysFromQuery({
+          const newUrl = removeKeysFromUrlQuery({
             params: searchParams.toString(),
-            keysToRemove: ["q"],
+            keysToRemove: ["query"],
           });
+
           router.push(newUrl, { scroll: false });
         }
       }
     }, 300);
 
     return () => clearTimeout(delayDebounceFn);
-  }, [query, search, route, router, pathname, searchParams]);
+  }, [searchQuery, router, route, searchParams, pathname]);
   return (
     <div
       className={`flex min-h-[56px] grow justify-center items-center gap-4 rounded-[10px] px-0 ${otherClasses}`}
@@ -64,8 +65,8 @@ const LocalSearchBar = ({
         <Input
           type="text"
           placeholder={placeholder}
-          value={search}
-          onChange={(e) => setSearch(e.target.value)}
+          value={searchQuery}
+          onChange={(e) => setSearchQuery(e.target.value)}
           className={`font-normal min-h-[56px] no-focus placeholder  shadow-none outline-none w-full ${
             iconPosition === "left"
               ? "pl-10"

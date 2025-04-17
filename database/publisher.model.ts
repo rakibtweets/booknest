@@ -30,8 +30,6 @@ const PublisherSchema = new Schema<IPublisher>({
   phone: { type: String },
   imprints: [{ type: String }],
   featured: { type: Boolean, default: false },
-  createdAt: { type: Date, default: Date.now },
-  updatedAt: { type: Date, default: Date.now },
 });
 PublisherSchema.add(baseSchema);
 

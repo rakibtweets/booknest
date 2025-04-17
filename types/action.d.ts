@@ -1,4 +1,5 @@
 import { IUser } from "@/database/user.model";
+import { PaginatedSearchParams } from "@/types/global";
 
 export interface CreateUserParams {
   clerkId: string;
@@ -17,8 +18,7 @@ export interface DeleteUserParams {
   clerkId: string;
 }
 
-export interface IGetBooksParams {
-  page?: number;
+export interface IGetBooksParams extends PaginatedSearchParams {
   limit?: number;
   sortBy?: string;
   order?: "asc" | "desc";
@@ -29,4 +29,7 @@ export interface IGetBooksByAuthorIdParams {
   limit?: number;
   sortBy?: string;
   order?: "asc" | "desc";
+}
+export interface GetFeatureBooksParams {
+  limit: number;
 }

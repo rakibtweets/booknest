@@ -25,14 +25,24 @@ import DeleteBookButton from "@/components/buttons/DeleteBookButton";
 import { getBooks } from "@/lib/actions/book-actions";
 import { Badge } from "@/components/ui/badge";
 import { IBook } from "@/database/book.model";
+import LocalSearchBar from "@/components/shared/LocalSearchBar";
+import Filter from "@/components/shared/Filter";
+import { bookFilters } from "@/constants";
+import { RouteParams } from "@/types/global";
 
 export const metadata: Metadata = {
   title: "Manage Books - BookNext Admin",
   description: "Manage books in the BookNext store",
 };
 
-export default async function AdminBooksPage() {
-  const result = await getBooks({});
+export default async function AdminBooksPage({ searchParams }: RouteParams) {
+  const { page, pageSize, query, filter } = await searchParams;
+  const result = await getBooks({
+    page: Number(page) || 1,
+    pageSize: Number(pageSize) || 10,
+    query,
+    filter,
+  });
   const books = result?.data?.books || [];
 
   return (
@@ -53,31 +63,19 @@ export default async function AdminBooksPage() {
           </Button>
         </div>
 
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mt-2">
-          <div className="relative w-full sm:w-64">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder="Search books..."
-              className="pl-8"
-            />
-          </div>
-          <div className="flex items-center gap-2 w-full sm:w-auto">
-            <select className="text-sm border rounded-md px-2 py-1 w-full sm:w-auto">
-              <option>All Categories</option>
-              <option>Fiction</option>
-              <option>Science Fiction</option>
-              <option>Fantasy</option>
-              <option>Historical Fiction</option>
-            </select>
-            <select className="text-sm border rounded-md px-2 py-1 w-full sm:w-auto">
-              <option>All Publishers</option>
-              <option>Penguin Random House</option>
-              <option>Knopf</option>
-              <option>Tor Books</option>
-              <option>Ballantine Books</option>
-            </select>
-          </div>
+        {/* Search options */}
+        <div className="mt-11 flex justify-between gap-5 max-sm:flex-col sm:items-center">
+          <LocalSearchBar
+            route="/admin/books"
+            iconPosition="left"
+            placeholder="Search for Books..."
+            otherClasses="flex-1"
+          />
+
+          <Filter
+            filters={bookFilters}
+            otherClasses="min-h-[56px] sm:min-w-[170px]"
+          />
         </div>
       </div>
 
@@ -95,7 +93,7 @@ export default async function AdminBooksPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {result.success ? (
+            {books.length > 0 ? (
               books?.map((book: IBook) => (
                 <TableRow key={book._id as string}>
                   <TableCell>
