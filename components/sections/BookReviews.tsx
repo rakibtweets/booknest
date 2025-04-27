@@ -80,10 +80,16 @@ export default async function BookReviews({ bookId }: BookReviewsProps) {
           <div key={review.id} className="mb-6">
             <div className="flex items-start gap-4">
               <Avatar>
-                {/* <AvatarImage
-                  src={review.user.picure as string}
-                  alt={review.user?.name as string}
-                /> */}
+                <AvatarImage
+                  src={
+                    // @ts-ignore
+                    review.user.picture as string
+                  }
+                  alt={
+                    //@ts-ignore
+                    review.user?.name as string
+                  }
+                />
                 <AvatarFallback>
                   {//@ts-ignore
                   review?.user?.name.charAt(0)}
