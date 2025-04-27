@@ -7,7 +7,7 @@ export interface IUser extends Document {
   name: string;
   email: string;
   roles: string[];
-  image: string;
+  picture: string;
   orders?: mongoose.Types.ObjectId[]; // Reference to orders
   wishlist?: mongoose.Types.ObjectId[]; // Reference to books in wishlist
   cart?: {
@@ -25,6 +25,7 @@ const UserSchema = new Schema<IUser>({
   clerkId: { type: String, required: true, unique: true },
   name: { type: String, required: true },
   email: { type: String, required: true, unique: true },
+  picture: { type: String },
   roles: { type: [String], default: ["user"] },
   orders: [{ type: Schema.Types.ObjectId, ref: "Order" }],
   wishlist: [{ type: Schema.Types.ObjectId, ref: "Book" }],
@@ -41,7 +42,6 @@ const UserSchema = new Schema<IUser>({
     enum: ["active", "inactive", "suspended"],
     default: "active",
   },
-  image: { type: String },
 });
 UserSchema.add(baseSchema);
 
