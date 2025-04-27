@@ -33,3 +33,15 @@ export interface IGetBooksByAuthorIdParams {
 export interface GetFeatureBooksParams {
   limit: number;
 }
+
+export interface createBookReviewParams {
+  bookId: string | undefined;
+  userId: string;
+  rating: number;
+  content: string;
+  path: string;
+}
+
+export interface IGetBookReviewParams extends PaginatedSearchParams {
+  bookId: string | undefined;
+}
