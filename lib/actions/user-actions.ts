@@ -36,6 +36,7 @@ export const updateUser = async (params: clerkUserUpdateParams) => {
     await dbConnect();
 
     const { clerkId, updateData } = params;
+    console.log("updateData", updateData);
 
     const udpatedUser = await User.findOneAndUpdate({ clerkId }, updateData, {
       new: true,
