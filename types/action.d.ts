@@ -45,3 +45,11 @@ export interface createBookReviewParams {
 export interface IGetBookReviewParams extends PaginatedSearchParams {
   bookId: string | undefined;
 }
+
+export interface ReviewVoteParams {
+  reviewId: string;
+  userId: string;
+  hasupVoted: boolean;
+  hasdownVoted: boolean;
+  path: string;
+}

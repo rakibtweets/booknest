@@ -2,7 +2,11 @@
 
 import { ActionResponse, ErrorResponse } from "@/types/global";
 import handleError from "../handlers/error";
-import { createBookReviewParams, IGetBookReviewParams } from "@/types/action";
+import {
+  createBookReviewParams,
+  IGetBookReviewParams,
+  ReviewVoteParams,
+} from "@/types/action";
 import dbConnect from "../mongoose";
 import { bookReviewSchema } from "@/validations/review";
 import Review, { IBookReview } from "@/database/review.model";
@@ -121,6 +125,118 @@ export const createBookReview = async (
     return {
       success: true,
       data: JSON.parse(JSON.stringify(book)),
+    };
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    return handleError(error) as ErrorResponse;
+  } finally {
+    await session.endSession();
+  }
+};
+
+export const upvoteReview = async (
+  params: ReviewVoteParams
+): Promise<ActionResponse<IBookReview>> => {
+  const validationResult = await action({
+    params,
+    authorize: true,
+  });
+  if (validationResult instanceof Error) {
+    return handleError(validationResult) as ErrorResponse;
+  }
+  const session = await mongoose.startSession();
+  session.startTransaction();
+  try {
+    await dbConnect();
+
+    const { reviewId, userId, hasupVoted, path, hasdownVoted } = params;
+
+    // find user by userId
+    const user = await User.findOne({ clerkId: userId });
+
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    let updateQuery = {};
+    if (hasupVoted) {
+      updateQuery = { $pull: { upvotes: user._id } };
+    } else if (hasdownVoted) {
+      updateQuery = {
+        $pull: { downvotes: user._id },
+        $push: { upvotes: user._id },
+      };
+    } else {
+      updateQuery = { $addToSet: { upvotes: user._id } };
+    }
+
+    const review = await Review.findByIdAndUpdate(reviewId, updateQuery, {
+      new: true,
+    });
+    if (!review) {
+      throw new Error("No Review found");
+    }
+    await session.commitTransaction();
+    revalidatePath(path);
+    return {
+      success: true,
+      data: JSON.parse(JSON.stringify(review)),
+    };
+  } catch (error) {
+    await session.abortTransaction();
+    session.endSession();
+    return handleError(error) as ErrorResponse;
+  } finally {
+    await session.endSession();
+  }
+};
+export const downvoteReview = async (
+  params: ReviewVoteParams
+): Promise<ActionResponse<IBookReview>> => {
+  const validationResult = await action({
+    params,
+    authorize: true,
+  });
+  if (validationResult instanceof Error) {
+    return handleError(validationResult) as ErrorResponse;
+  }
+  const session = await mongoose.startSession();
+  session.startTransaction();
+  try {
+    await dbConnect();
+
+    const { reviewId, userId, hasupVoted, path, hasdownVoted } = params;
+
+    // find user by userId
+    const user = await User.findOne({ clerkId: userId });
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    let updateQuery = {};
+    if (hasdownVoted) {
+      updateQuery = { $pull: { downvotes: user._id } };
+    } else if (hasupVoted) {
+      updateQuery = {
+        $pull: { upvotes: user._id },
+        $push: { downvotes: user._id },
+      };
+    } else {
+      updateQuery = { $addToSet: { downvotes: user._id } };
+    }
+
+    const review = await Review.findByIdAndUpdate(reviewId, updateQuery, {
+      new: true,
+    });
+    if (!review) {
+      throw new Error("No Review found");
+    }
+    await session.commitTransaction();
+    revalidatePath(path);
+    return {
+      success: true,
+      data: JSON.parse(JSON.stringify(review)),
     };
   } catch (error) {
     await session.abortTransaction();
