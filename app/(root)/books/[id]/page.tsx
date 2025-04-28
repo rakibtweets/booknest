@@ -1,7 +1,7 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Star, Truck, ShieldCheck, ArrowLeft } from "lucide-react";
+import { Star, Truck, ShieldCheck, ArrowLeft, Heart } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
@@ -107,8 +107,12 @@ export default async function BookDetailsPage({
           </div>
 
           <div className="flex flex-col gap-4 sm:flex-row mb-6">
-            <AddToCartButton bookId={book.id} />
-            <Button variant="outline">Add to Wishlist</Button>
+            <AddToCartButton bookId={book._id as string} />
+            <Button className="cursor-pointer" variant="outline">
+              <>
+                <Heart className="mr-2 h-4 w-4" /> Add to Wishlist
+              </>
+            </Button>
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">
@@ -160,9 +164,15 @@ export default async function BookDetailsPage({
 
       <Tabs defaultValue="description" className="mb-12">
         <TabsList>
-          <TabsTrigger value="description">Description</TabsTrigger>
-          <TabsTrigger value="details">Details</TabsTrigger>
-          <TabsTrigger value="reviews">Reviews</TabsTrigger>
+          <TabsTrigger className="cursor-pointer" value="description">
+            Description
+          </TabsTrigger>
+          <TabsTrigger className="cursor-pointer" value="details">
+            Details
+          </TabsTrigger>
+          <TabsTrigger className="cursor-pointer" value="reviews">
+            Reviews
+          </TabsTrigger>
         </TabsList>
         <TabsContent value="description" className="py-4">
           <p className="mt-4">{book.description}</p>

@@ -72,7 +72,7 @@ const Votes = ({
           onClick={() => handleVote("upvote")}
         >
           <ThumbsUp
-            className={`h-3 w-3 ${hasupVoted ? "bg-green-5000" : ""}`}
+            className={`h-3 w-3 ${hasupVoted ? "text-green-500" : ""}`}
           />
           {upvotes}
         </Button>
@@ -85,7 +85,7 @@ const Votes = ({
           onClick={() => handleVote("downvote")}
         >
           <ThumbsDown
-            className={`h-3 w-3 ${hasdownVoted ? "bg-green-5000" : ""}`}
+            className={`h-3 w-3 ${hasdownVoted ? "text-red-500" : ""}`}
           />
           {downvotes}
         </Button>
