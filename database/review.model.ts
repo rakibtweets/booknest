@@ -8,7 +8,8 @@ export interface IBookReview extends Document {
   clerkId: string;
   rating: number;
   content: string;
-  helpful: number;
+  upvotes: mongoose.Types.ObjectId[];
+  downvotes: mongoose.Types.ObjectId[];
   verified: boolean;
   createdAt: Date;
   updatedAt: Date;
@@ -20,7 +21,18 @@ const ReviewSchema = new Schema<IBookReview>({
   clerkId: { type: String, required: true },
   rating: { type: Number, required: true, min: 1, max: 5 },
   content: { type: String, required: true },
-  helpful: { type: Number, default: 0 },
+  upvotes: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    },
+  ],
+  downvotes: [
+    {
+      type: Schema.Types.ObjectId,
+      ref: "User",
+    },
+  ],
   verified: { type: Boolean, default: false },
 });
 

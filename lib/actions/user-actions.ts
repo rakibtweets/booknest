@@ -1,12 +1,14 @@
 "use server";
 
-import User from "@/database/user.model";
+import User, { IUser } from "@/database/user.model";
 import dbConnect from "../mongoose";
 import {
   clerkUserUpdateParams,
   CreateUserParams,
   DeleteUserParams,
 } from "@/types/action";
+import { ActionResponse, ErrorResponse } from "@/types/global";
+import handleError from "../handlers/error";
 
 export const getUsers = async () => {
   try {
@@ -16,6 +18,29 @@ export const getUsers = async () => {
     return { success: true, data: JSON.parse(JSON.stringify(users)) };
   } catch (error) {
     console.log(error);
+  }
+};
+
+// get User by clerkId
+
+export const getUserByClerkId = async (
+  clerkId: string
+): Promise<ActionResponse<{ user: IUser }>> => {
+  try {
+    await dbConnect();
+    const user = await User.findOne({ clerkId });
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    return {
+      success: true,
+      data: {
+        user: JSON.parse(JSON.stringify(user)),
+      },
+    };
+  } catch (error) {
+    return handleError(error) as ErrorResponse;
   }
 };
 
