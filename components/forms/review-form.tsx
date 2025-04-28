@@ -116,7 +116,11 @@ const ReviewForm = ({ bookId }: BookReviewsFormProps) => {
             </FormItem>
           )}
         />
-        <Button type="submit" disabled={isSubmitting}>
+        <Button
+          className="cursor-pointer"
+          type="submit"
+          disabled={isSubmitting}
+        >
           {isSubmitting ? "Submitting..." : "Submit Review"}
         </Button>
       </form>

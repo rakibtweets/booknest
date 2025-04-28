@@ -23,7 +23,11 @@ export default function AddToCartButton({ bookId }: AddToCartButtonProps) {
   };
 
   return (
-    <Button onClick={handleAddToCart} disabled={isLoading}>
+    <Button
+      className="cursor-pointer"
+      onClick={handleAddToCart}
+      disabled={isLoading}
+    >
       {isLoading ? (
         "Adding..."
       ) : (
