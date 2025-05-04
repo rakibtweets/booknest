@@ -1,13 +1,16 @@
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Star, Truck, ShieldCheck, ArrowLeft, Heart } from "lucide-react";
-import { Button } from "@/components/ui/button";
+import { Star, Truck, ShieldCheck, ArrowLeft } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import AddToCartButton from "@/components/buttons/AddToCartButton";
 import BookReviews from "@/components/sections/BookReviews";
 import { getBookById } from "@/lib/actions/book-actions";
+import AddToWishlist from "@/components/buttons/AddToWishlist";
+import { auth } from "@clerk/nextjs/server";
+import { getUserByClerkId } from "@/lib/actions/user-actions";
+import { isBookInWishlist } from "@/lib/actions/wishlist-actions";
 
 // const books = [
 //   {
@@ -35,9 +38,14 @@ export default async function BookDetailsPage({
 }: {
   params: { id: string };
 }) {
+  const { userId } = await auth();
   const { id } = await params;
   const bookResult = await getBookById(id);
   const book = bookResult.data?.book || null;
+  const userData = await getUserByClerkId(userId as string);
+  const user = userData.data?.user || null;
+  const wishlistData = await isBookInWishlist(user?._id as string, id);
+  const isInWishlist = wishlistData.data?.isInWishlist;
 
   if (!book) {
     notFound();
@@ -108,11 +116,11 @@ export default async function BookDetailsPage({
 
           <div className="flex flex-col gap-4 sm:flex-row mb-6">
             <AddToCartButton bookId={book._id as string} />
-            <Button className="cursor-pointer" variant="outline">
-              <>
-                <Heart className="mr-2 h-4 w-4" /> Add to Wishlist
-              </>
-            </Button>
+            <AddToWishlist
+              bookId={book._id as string}
+              userId={user?._id as string}
+              isInWishlist={isInWishlist}
+            />
           </div>
 
           <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-6">

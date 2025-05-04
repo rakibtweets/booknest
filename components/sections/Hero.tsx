@@ -4,9 +4,9 @@ import { Button } from "@/components/ui/button";
 export default function Hero() {
   return (
     <div className="relative py-12 md:py-16 bg-muted rounded-lg overflow-hidden mb-12">
-      <div className="">
+      <div className="container px-4 md:px-6">
         <div className="grid gap-6 lg:grid-cols-2 lg:gap-12 items-center">
-          <div className="space-y-4">
+          <div className="space-y-4 ">
             <div className="space-y-2">
               <h1 className="text-3xl font-bold tracking-tighter sm:text-4xl md:text-5xl">
                 Discover Your Next Favorite Book
