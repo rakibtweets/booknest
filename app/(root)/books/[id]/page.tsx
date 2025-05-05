@@ -4,13 +4,13 @@ import { notFound } from "next/navigation";
 import { Star, Truck, ShieldCheck, ArrowLeft } from "lucide-react";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import AddToCartButton from "@/components/buttons/AddToCartButton";
 import BookReviews from "@/components/sections/BookReviews";
 import { getBookById } from "@/lib/actions/book-actions";
 import AddToWishlist from "@/components/buttons/AddToWishlist";
 import { auth } from "@clerk/nextjs/server";
 import { getUserByClerkId } from "@/lib/actions/user-actions";
 import { isBookInWishlist } from "@/lib/actions/wishlist-actions";
+import AddToCartButton from "@/components/buttons/AddToCartButton";
 
 // const books = [
 //   {
@@ -115,7 +115,13 @@ export default async function BookDetailsPage({
           </div>
 
           <div className="flex flex-col gap-4 sm:flex-row mb-6">
-            <AddToCartButton bookId={book._id as string} />
+            <AddToCartButton
+              userId={user?._id as string}
+              bookId={book._id as string}
+              quantity={1}
+              className="cursor-pointer"
+              title="Add to Cart"
+            />
             <AddToWishlist
               bookId={book._id as string}
               userId={user?._id as string}
