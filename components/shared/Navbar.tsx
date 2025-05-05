@@ -1,5 +1,10 @@
 "use client";
-import { BookOpenText, Search, WavesIcon as Wave } from "lucide-react";
+import {
+  BookOpenText,
+  Search,
+  ShoppingCart,
+  WavesIcon as Wave,
+} from "lucide-react";
 import Link from "next/link";
 import ProfileAvatar from "./ProfileAvatar";
 import MobileNav from "./MobileNav";
@@ -56,7 +61,11 @@ const Navbar = () => {
               placeholder="Search Books, Authors..."
             />
           </div>
-
+          <div>
+            <Link href={"/cart"}>
+              <ShoppingCart className="h-6 w-6 text-gray-500" />
+            </Link>
+          </div>
           <div className="flex  rounded-full  cursor-pointer">
             <ProfileAvatar />
           </div>

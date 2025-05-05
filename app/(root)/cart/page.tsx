@@ -8,39 +8,28 @@ import { Separator } from "@/components/ui/separator";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
+import { auth } from "@clerk/nextjs/server";
+import { getUserByClerkId } from "@/lib/actions/user-actions";
+import { getUserCart } from "@/lib/actions/cart-actions";
+import { IBook } from "@/database/book.model";
+import RemoveFromCartButton from "@/components/buttons/RemoveFromCartButton";
+import QuantityButton from "@/components/buttons/QuantityButton";
 
 export const metadata: Metadata = {
   title: "Shopping Cart - BookNext",
   description: "View and manage your shopping cart",
 };
 
-// Mock cart data
-const cartItems = [
-  {
-    id: "1",
-    title: "The Midnight Library",
-    author: "Matt Haig",
-    price: 16.99,
-    quantity: 1,
-    coverImage: "https://placehold.co/120x80",
-  },
-  {
-    id: "3",
-    title: "Project Hail Mary",
-    author: "Andy Weir",
-    price: 15.99,
-    quantity: 2,
-    coverImage: "https://placehold.co/120x80",
-  },
-];
-
-export default function CartPage() {
-  const subtotal = cartItems.reduce(
-    (sum, item) => sum + item.price * item.quantity,
-    0
-  );
-  const shipping = 4.99;
-  const total = subtotal + shipping;
+export default async function CartPage() {
+  const { userId } = await auth();
+  const userData = await getUserByClerkId(userId as string);
+  const user = userData.data?.user || null;
+  const catResult = await getUserCart(user?._id as string);
+  const cartItems = catResult.data?.cart || [];
+  const subtotal = catResult.data?.subtotal || 0;
+  const shipping = catResult.data?.shipping || 0;
+  const tax = catResult.data?.tax || 0;
+  const total = catResult.data?.total || 0;
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -54,61 +43,61 @@ export default function CartPage() {
 
       <div className="grid md:grid-cols-3 gap-8">
         <div className="md:col-span-2">
-          {cartItems.length > 0 ? (
+          {cartItems?.length > 0 ? (
             <div className="space-y-4">
-              {cartItems.map((item) => (
-                <div key={item.id} className="flex gap-4 py-4">
-                  <div className="relative aspect-[2/3] h-[120px]">
-                    <Image
-                      src={item.coverImage || "/placeholder.svg"}
-                      alt={item.title}
-                      fill
-                      className="object-cover rounded"
-                      sizes="120px"
-                    />
-                  </div>
-                  <div className="flex flex-1 flex-col">
-                    <div className="flex justify-between">
-                      <div>
-                        <h3 className="font-medium">{item.title}</h3>
-                        <p className="text-sm text-muted-foreground">
-                          {item.author}
-                        </p>
+              {cartItems?.map(
+                (
+                  {
+                    book,
+                    quantity,
+                  }: {
+                    book: IBook;
+                    quantity: number;
+                  },
+                  index
+                ) => {
+                  return (
+                    <div key={index} className="flex gap-4 py-4">
+                      <div className="relative aspect-[2/3] h-[120px]">
+                        <Image
+                          src={book?.coverImage || "/placeholder.svg"}
+                          alt={book?.title}
+                          fill
+                          className="object-cover rounded"
+                          sizes="120px"
+                        />
                       </div>
-                      <p className="font-medium">
-                        ${(item.price * item.quantity).toFixed(2)}
-                      </p>
-                    </div>
-                    <div className="mt-auto flex items-center justify-between">
-                      <div className="flex items-center">
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          className="h-8 w-8 rounded-r-none"
-                        >
-                          <Minus className="h-3 w-3" />
-                          <span className="sr-only">Decrease quantity</span>
-                        </Button>
-                        <div className="flex h-8 w-8 items-center justify-center border-y">
-                          {item.quantity}
+                      <div className="flex flex-1 flex-col">
+                        <div className="flex justify-between">
+                          <div>
+                            <h3 className="font-medium">{book?.title}</h3>
+                            <p className="text-sm text-muted-foreground">
+                              {
+                                //@ts-ignore
+                                book.author.name
+                              }
+                            </p>
+                          </div>
+                          <p className="font-medium">
+                            ${(book?.price * quantity).toFixed(2)}
+                          </p>
                         </div>
-                        <Button
-                          variant="outline"
-                          size="icon"
-                          className="h-8 w-8 rounded-l-none"
-                        >
-                          <Plus className="h-3 w-3" />
-                          <span className="sr-only">Increase quantity</span>
-                        </Button>
+                        <div className="mt-auto flex items-center justify-between">
+                          <QuantityButton
+                            quantity={quantity}
+                            userId={user?._id as string}
+                            bookId={book?._id as string}
+                          />
+                          <RemoveFromCartButton
+                            userId={user?._id as string}
+                            bookId={book?._id as string}
+                          />
+                        </div>
                       </div>
-                      <Button variant="ghost" size="sm" className="h-8 px-2">
-                        <Trash2 className="h-4 w-4 text-muted-foreground" />
-                        <span className="sr-only">Remove item</span>
-                      </Button>
                     </div>
-                  </div>
-                </div>
-              ))}
+                  );
+                }
+              )}
             </div>
           ) : (
             <div className="flex flex-col items-center justify-center py-12">
@@ -127,21 +116,25 @@ export default function CartPage() {
               <div className="space-y-2">
                 <div className="flex justify-between">
                   <span>Subtotal</span>
-                  <span>${subtotal.toFixed(2)}</span>
+                  <span>${subtotal as number}</span>
                 </div>
                 <div className="flex justify-between">
                   <span>Shipping</span>
-                  <span>${shipping.toFixed(2)}</span>
+                  <span>${shipping as number}</span>
+                </div>
+                <div className="flex justify-between">
+                  <span>Tax</span>
+                  <span>${tax as number}</span>
                 </div>
                 <Separator className="my-2" />
                 <div className="flex justify-between font-semibold">
                   <span>Total</span>
-                  <span>${total.toFixed(2)}</span>
+                  <span>${total as number}</span>
                 </div>
               </div>
             </CardContent>
             <CardFooter className="flex flex-col gap-4 p-6 pt-0">
-              <Button className="w-full" asChild>
+              <Button className="w-full cursor-pointer" asChild>
                 <Link href="/checkout">Proceed to Checkout</Link>
               </Button>
               <div className="space-y-2">
