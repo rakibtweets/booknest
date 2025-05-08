@@ -134,7 +134,7 @@ export async function createOrder(userId: string, data: OrderFormValues) {
     // Create initial timeline entry
     const timeline = [
       {
-        status: "Order Placed",
+        status: "Payment Confirmed",
         date: new Date(),
         description: "Your order has been received and is being processed.",
       },
