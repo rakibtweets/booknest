@@ -176,9 +176,6 @@ export default function CheckoutPage() {
     return true;
   };
 
-  // console.log("secret", clientSecret);
-  // console.log("stripePromise", stripePromise);
-
   // Render checkout steps
   const renderStep = () => {
     switch (currentStep) {
@@ -212,6 +209,7 @@ export default function CheckoutPage() {
                   <PaymentForm
                     clientSecret={clientSecret}
                     onSuccess={handlePaymentSuccess}
+                    setPaymentCompleted={setPaymentCompleted}
                     total={total}
                   />
                 </Elements>

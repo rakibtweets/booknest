@@ -177,7 +177,6 @@ export async function PUT(req: Request) {
       automatic_payment_methods: {
         enabled: true,
       },
-      return_url: `${process.env.NEXT_PUBLIC_APP_URL}/checkout?step=confirm`,
       metadata: {
         subtotal: subtotalCents.toString(),
         shipping: shippingCents.toString(),
@@ -195,7 +194,7 @@ export async function PUT(req: Request) {
         userId: user, // Replace with actual user ID from your auth system
       },
     });
-    console.log("stripe", paymentIntent);
+    // console.log("stripe", paymentIntent);
 
     // Return the client secret to the client
     return NextResponse.json({

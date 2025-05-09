@@ -3,9 +3,12 @@
 import { revalidatePath } from "next/cache";
 import mongoose from "mongoose";
 import dbConnect from "../mongoose";
-import Order from "@/database/order.model";
+import Order, { IOrder } from "@/database/order.model";
 import { OrderFormValues, orderSchema } from "@/validations/order";
 import Book from "@/database/book.model";
+import { ActionResponse, ErrorResponse } from "@/types/global";
+import handleError from "../handlers/error";
+import User from "@/database/user.model";
 
 export async function getOrders(page = 1, limit = 10, query = {}) {
   try {
@@ -91,83 +94,60 @@ export async function getUserOrders(userId: string, page = 1, limit = 10) {
   }
 }
 
-export async function createOrder(userId: string, data: OrderFormValues) {
+export async function createOrder(
+  data: IOrder
+): Promise<ActionResponse<IOrder>> {
   try {
     await dbConnect();
 
-    if (!mongoose.Types.ObjectId.isValid(userId)) {
-      throw new Error("Invalid user ID");
-    }
-
-    // Validate form data
-    const validatedData = orderSchema.parse(data);
-
-    // Calculate totals
-    let subtotal = 0;
-
-    // Verify books and update stock
-    for (const item of validatedData.items) {
-      const book = await Book.findById(item.book);
-
-      if (!book) {
-        throw new Error(`Book with ID ${item.book} not found`);
-      }
-
-      if (book.stock < item.quantity) {
-        throw new Error(`Not enough stock for ${book.title}`);
-      }
-
-      // Update book stock
-      book.stock -= item.quantity;
-      await book.save();
-
-      // Calculate item total
-      subtotal += item.price * item.quantity;
-    }
-
-    // Calculate tax and total
-    const shipping =
-      validatedData.shippingAddress.country === "United States" ? 4.99 : 14.99;
-    const tax = subtotal * 0.08; // 8% tax
-    const total = subtotal + shipping + tax;
-
-    // Create initial timeline entry
-    const timeline = [
-      {
-        status: "Payment Confirmed",
-        date: new Date(),
-        description: "Your order has been received and is being processed.",
-      },
-    ];
+    const {
+      user,
+      subtotal,
+      tax,
+      shipping,
+      billingAddress,
+      shippingAddress,
+      timeline,
+      total,
+      orderId,
+      items,
+      status,
+      paymentMethod,
+      paymentStatus,
+    } = data;
 
     // Create new order
     const newOrder = new Order({
-      user: userId,
-      items: validatedData.items,
-      status: validatedData.status,
+      user: user,
+      items: items,
+      status: status,
       subtotal,
       shipping,
       tax,
       total,
-      paymentStatus: validatedData.paymentStatus,
-      paymentMethod: validatedData.paymentMethod,
-      shippingAddress: validatedData.shippingAddress,
-      billingAddress: validatedData.billingAddress,
+      orderId,
+      paymentStatus: paymentStatus,
+      paymentMethod: paymentMethod,
+      shippingAddress: shippingAddress,
+      billingAddress: billingAddress,
       timeline,
     });
 
     await newOrder.save();
 
+    if (!newOrder) {
+      throw new Error("Failed to create order");
+    }
+    await User.findByIdAndUpdate(user, { $set: { cart: [] } }, { new: true });
+
     revalidatePath("/orders");
+    revalidatePath("/cart");
     revalidatePath("/admin/orders");
 
-    return { success: true, order: newOrder };
+    return { success: true, data: JSON.parse(JSON.stringify(newOrder)) };
   } catch (error) {
     console.error("Error creating order:", error);
-    if (error instanceof Error) {
-      return { success: false, error: error.message };
-    }
-    return { success: false, error: "Failed to create order" };
+    return handleError(error) as ErrorResponse;
   }
 }
 

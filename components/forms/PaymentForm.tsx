@@ -14,12 +14,14 @@ import { toast } from "sonner";
 interface PaymentFormProps {
   clientSecret: string;
   onSuccess: (paymentIntent: any) => void;
+  setPaymentCompleted: (completed: boolean) => void;
   total: number;
 }
 
 export default function PaymentForm({
   clientSecret,
   onSuccess,
+  setPaymentCompleted,
   total,
 }: PaymentFormProps) {
   const stripe = useStripe();
@@ -53,6 +55,7 @@ export default function PaymentForm({
         );
       } else if (paymentIntent && paymentIntent.status === "succeeded") {
         toast.success("Payment successful. Thank you for your purchase!");
+        setPaymentCompleted(true);
         onSuccess(paymentIntent);
       }
     } catch (err: any) {

@@ -75,7 +75,7 @@ export default function CartSummary({
               <p className="mt-1 text-sm text-muted-foreground line-clamp-1">
                 {
                   //@ts-ignore
-                  item.book?.author?.name
+                  item?.book?.author?.name
                 }
               </p>
 
@@ -91,7 +91,7 @@ export default function CartSummary({
                       //     onUpdateQuantity(item.book._id, item.quantity - 1);
                       //   }
                       // }}
-                      disabled={item.quantity <= 1}
+                      disabled={item?.quantity <= 1}
                     >
                       <Minus className="h-3 w-3" />
                     </Button>
@@ -122,7 +122,7 @@ export default function CartSummary({
                 </div>
               ) : (
                 <div className="mt-1 text-sm text-muted-foreground">
-                  Qty: {item.quantity}
+                  Qty: {item?.quantity}
                 </div>
               )}
             </div>

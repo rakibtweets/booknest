@@ -5,7 +5,6 @@ import Link from "next/link";
 import { CheckCircle, ShoppingBag, FileText } from "lucide-react";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { StripeFormatCurrency } from "@/lib/stripe";
 import { Order } from "@/types/stripe";
 
 interface OrderConfirmationProps {

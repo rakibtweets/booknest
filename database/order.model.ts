@@ -1,6 +1,5 @@
 import mongoose, { Schema, type Document, model, models } from "mongoose";
 import baseSchema from "./base-schema";
-import { type } from "os";
 
 // Order Schema
 export interface IOrderItem {
@@ -11,6 +10,7 @@ export interface IOrderItem {
 
 export interface IOrder extends Document {
   user: mongoose.Types.ObjectId;
+  orderId: string;
   items: IOrderItem[];
   status: "Processing" | "Shipped" | "Delivered" | "Cancelled";
   total: number;
@@ -38,7 +38,7 @@ export interface IOrder extends Document {
   timeline: {
     status: "Order Placed" | "Payment Confirmed" | "Shipped" | "Delivered";
     date: Date;
-    description: string;
+    description?: string;
   }[];
   createdAt: Date;
   updatedAt: Date;
@@ -46,6 +46,7 @@ export interface IOrder extends Document {
 
 const OrderSchema = new Schema<IOrder>({
   user: { type: Schema.Types.ObjectId, ref: "User", required: true },
+  orderId: { type: String, required: true },
   items: [
     {
       book: { type: Schema.Types.ObjectId, ref: "Book", required: true },
@@ -92,7 +93,7 @@ const OrderSchema = new Schema<IOrder>({
         required: true,
       },
       date: { type: Date, default: Date.now },
-      description: { type: String, required: true },
+      description: { type: String },
     },
   ],
 });

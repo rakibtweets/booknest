@@ -1,6 +1,8 @@
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
 import { headers } from "next/headers";
+import { IOrder } from "@/database/order.model";
+import { createOrder } from "@/lib/actions/order-actions";
 
 // Initialize Stripe
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
@@ -82,15 +84,13 @@ export async function POST(req: Request) {
 }
 
 async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
-  console.log("Checkout completed:", session);
-
+  // console.log("Checkout completed:", session);
   // Here you would typically:
   // 1. Get customer information from session.customer
   // 2. Get order details from session.metadata
   // 3. Create an order in your database
   // 4. Clear the user's cart
   // 5. Send order confirmation email
-
   // Example (pseudo-code):
   /*
   const userId = session.metadata?.userId;
@@ -106,6 +106,7 @@ async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
     paymentId: session.payment_intent,
   });
   
+  
   await db.users.updateCart(userId, []);
   await sendOrderConfirmationEmail(userId, session.id);
   */
@@ -116,19 +117,66 @@ async function handlePaymentIntentSucceeded(
 ) {
   console.log("Payment succeeded:", paymentIntent);
 
-  // Here you would typically:
-  // 1. Get order details from paymentIntent.metadata
-  // 2. Update the order status in your database
-  // 3. Trigger any necessary post-payment workflows
+  const subtotal = Number(paymentIntent.metadata?.subtotal) / 100;
+  const shipping = Number(paymentIntent.metadata?.shipping) / 100;
+  const tax = Number(paymentIntent.metadata?.tax) / 100;
+  const total = Number(paymentIntent.amount) / 100;
 
-  // Example (pseudo-code):
-  /*
+  const parsedIems = JSON.parse(paymentIntent.metadata?.items || "[]");
+  const items = parsedIems.map((item: any) => ({
+    book: item.id,
+    quantity: item.quantity,
+    price: item.price,
+  }));
+  const shippingAddress = JSON.parse(
+    paymentIntent.metadata?.shippingAddress || "{}"
+  );
+  const billingAddress = JSON.parse(
+    paymentIntent.metadata?.billingAddress || "{}"
+  );
   const userId = paymentIntent.metadata?.userId;
-  const items = JSON.parse(paymentIntent.metadata?.items || '[]');
-  
-  await db.orders.updateStatus(paymentIntent.id, 'Paid');
-  await triggerOrderFulfillment(paymentIntent.id);
-  */
+  const orderId = paymentIntent.id;
+  const paymentStatus =
+    paymentIntent.status === "succeeded" ? "Paid" : "Pending";
+
+  const paymentMethod = paymentIntent.payment_method_types[0]
+    ? "Credit Card"
+    : "Unknown";
+
+  const timeline = [
+    {
+      status: "Payment Confirmed",
+      date: new Date(),
+      description: `Payment of ${total} received.`,
+    },
+  ];
+
+  const newOrder = {
+    orderId: orderId,
+    user: userId,
+    items,
+    total,
+    subtotal,
+    shipping,
+    tax,
+    paymentStatus,
+    paymentMethod,
+    shippingAddress,
+    billingAddress,
+    timeline,
+  } as unknown as IOrder;
+
+  console.log("New order data:", newOrder);
+
+  const { data, error } = await createOrder(newOrder);
+  if (error) {
+    console.error("Error creating order:", error);
+    return NextResponse.json(
+      { error: "Error creating order" },
+      { status: 500 }
+    );
+  }
+  return NextResponse.json({ success: true, order: data }, { status: 200 });
 }
 
 async function handlePaymentIntentFailed(paymentIntent: Stripe.PaymentIntent) {
