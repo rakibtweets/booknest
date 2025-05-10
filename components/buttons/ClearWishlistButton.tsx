@@ -1,6 +1,9 @@
 "use client";
 
+import { Trash2 } from "lucide-react";
 import { useState } from "react";
+import { toast } from "sonner";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -13,8 +16,7 @@ import {
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
 import { clearWishlist } from "@/lib/actions/wishlist-actions";
-import { toast } from "sonner";
-import { Trash2 } from "lucide-react";
+
 import { Button } from "../ui/button";
 
 interface ClearWishButtonProps {
@@ -36,6 +38,7 @@ const ClearWishlistButton = ({ userId }: ClearWishButtonProps) => {
         toast.error(result.error?.message || "Failed to delete author.");
         setIsLoading(false);
       }
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       setIsLoading(false);
       toast.error("Failed to delete author. Please try again.");

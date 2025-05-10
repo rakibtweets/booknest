@@ -1,12 +1,15 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { useForm, useFieldArray } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2, Plus, Trash } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { useForm, useFieldArray } from "react-hook-form";
+import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Form,
   FormControl,
@@ -23,14 +26,11 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { Checkbox } from "@/components/ui/checkbox";
-import { orderSchema, type OrderFormValues } from "@/validations/order";
 import {
-  createOrder,
   updateOrderStatus,
   updatePaymentStatus,
 } from "@/lib/actions/order-actions";
-import { toast } from "sonner";
+import { orderSchema, type OrderFormValues } from "@/validations/order";
 
 interface OrderFormProps {
   userId: string;
@@ -106,14 +106,13 @@ export function OrderForm({ userId, books, initialData }: OrderFormProps) {
           toast.error(result.error || "Failed to update order");
         }
       } else {
-        // Create new order
-        const result = await createOrder(userId, data);
-        if (result.success) {
-          toast.success("The order has been created successfully.");
-          router.push("/orders");
-        } else {
-          toast.error(result.error || "Failed to create order");
-        }
+        // const result = await createOrder({ user: userId as string, ...data });
+        // if (result.success) {
+        //   toast.success("The order has been created successfully.");
+        //   router.push("/orders");
+        // } else {
+        //   toast.error(result.error?.message || "Failed to create order");
+        // }
       }
     } catch (error) {
       console.error("Error submitting form:", error);

@@ -1,6 +1,8 @@
 "use client";
-import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { Trash2 } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -12,8 +14,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { useState } from "react";
-import { toast } from "sonner";
+import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { deletePublisher } from "@/lib/actions/publisher-actions";
 
 interface DeleteAuthorButtonProps {
@@ -35,6 +36,7 @@ const DeletePublisherButton = ({ publisherId }: DeleteAuthorButtonProps) => {
         toast.error(result.error?.message || "Failed to delete publihser.");
         setIsLoading(false);
       }
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       setIsLoading(false);
       toast.error("Failed to delete publihser. Please try again.");

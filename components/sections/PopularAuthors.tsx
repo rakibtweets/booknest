@@ -1,5 +1,6 @@
-import Link from "next/link";
 import { ChevronRight } from "lucide-react";
+import Link from "next/link";
+
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { getFeaturedAuthors } from "@/lib/actions/author-actions";
 

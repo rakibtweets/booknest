@@ -1,12 +1,12 @@
 "use client";
-import Link from "next/link";
-import Image from "next/image";
-import { notFound } from "next/navigation";
 import { ArrowLeft, BookOpen } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+import { notFound } from "next/navigation";
 
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { Badge } from "@/components/ui/badge";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 // This would typically come from a database or API

@@ -1,8 +1,9 @@
-import Link from "next/link";
-import Image from "next/image";
 import { ChevronRight } from "lucide-react";
-import { Card } from "@/components/ui/card";
+import Image from "next/image";
+import Link from "next/link";
+
 import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { Card } from "@/components/ui/card";
 import { getFeaturedBooks } from "@/lib/actions/book-actions";
 
 // const featuredBooks = [
@@ -85,6 +86,7 @@ export default async function FeaturedBooks() {
                 </h3>
                 <p className="text-sm text-muted-foreground">
                   {
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                     //@ts-ignore
                     book.author?.name
                   }

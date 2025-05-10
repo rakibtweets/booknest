@@ -1,7 +1,8 @@
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import React from "react";
+
 import { AdminDashboardSidebar } from "@/components/admin/admin-sidebar";
 import ProfileAvatar from "@/components/shared/ProfileAvatar";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 
 const AdminDashboardLayout = ({ children }: { children: React.ReactNode }) => {
   return (

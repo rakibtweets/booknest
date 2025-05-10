@@ -1,10 +1,11 @@
+import { ClerkProvider } from "@clerk/nextjs";
+import type { Metadata } from "next";
 import { Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
-import type { Metadata } from "next";
 import NextTopLoader from "nextjs-toploader";
 import { Suspense } from "react";
+
 import { BreakPointIndicator } from "@/components/shared/BreakPointIndicator";
-import { ClerkProvider } from "@clerk/nextjs";
 import { Toaster } from "@/components/ui/sonner";
 
 const inter = Inter({

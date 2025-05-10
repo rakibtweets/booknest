@@ -1,5 +1,6 @@
-import { AuthorForm } from "@/components/forms/author-form";
 import type { Metadata } from "next";
+
+import { AuthorForm } from "@/components/forms/author-form";
 
 export const metadata: Metadata = {
   title: "Add New Author - BookNext Admin",

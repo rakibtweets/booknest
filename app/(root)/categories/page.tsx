@@ -1,8 +1,5 @@
 import type { Metadata } from "next";
-import Link from "next/link";
-import Image from "next/image";
 
-import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import CategoryCard from "@/components/cards/CategoryCard";
 
 export const metadata: Metadata = {

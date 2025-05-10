@@ -1,28 +1,15 @@
-import { Metadata } from "next";
-import Link from "next/link";
-import Image from "next/image";
 import { BookOpen, DollarSign, Package, ShoppingCart } from "lucide-react";
+import { Metadata } from "next";
+import Image from "next/image";
+import Link from "next/link";
 
-import {
-  Card,
-  CardContent,
-  CardDescription,
-  CardHeader,
-  CardTitle,
-} from "@/components/ui/card";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 
 export const metadata: Metadata = {
   title: "Dashboard - BookNext",
   description: "User dashboard for BookNext",
-};
-
-// Mock user data - in a real app, this would come from authentication
-const user = {
-  name: "John Doe",
-  email: "john.doe@example.com",
-  image: "/placeholder.svg?height=80&width=80",
 };
 
 // Mock data for dashboard
@@ -94,7 +81,8 @@ export default function DashboardPage() {
       <div className="flex flex-col gap-4">
         <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
         <p className="text-muted-foreground">
-          Welcome back, {"Rakib Hasan"}! Here's an overview of your account.
+          Welcome back, {"Rakib Hasan"}! Here&apos;s an overview of your
+          account.
         </p>
       </div>
 
@@ -216,7 +204,7 @@ export default function DashboardPage() {
             <div className="p-4">
               <h2 className="text-xl font-semibold">Recently Viewed</h2>
               <p className="text-sm text-muted-foreground">
-                Books you've viewed recently
+                Books you&apos;ve viewed recently
               </p>
             </div>
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-4 p-4">

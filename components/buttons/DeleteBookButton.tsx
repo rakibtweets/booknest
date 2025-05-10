@@ -1,6 +1,8 @@
 "use client";
-import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { Trash2 } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
+
 import {
   AlertDialog,
   AlertDialogAction,
@@ -12,8 +14,7 @@ import {
   AlertDialogTitle,
   AlertDialogTrigger,
 } from "@/components/ui/alert-dialog";
-import { useState } from "react";
-import { toast } from "sonner";
+import { DropdownMenuItem } from "@/components/ui/dropdown-menu";
 import { deleteBook } from "@/lib/actions/book-actions";
 
 interface DeleteBookButtonProps {
@@ -35,6 +36,7 @@ const DeleteBookButton = ({ bookId }: DeleteBookButtonProps) => {
         toast.error(result.error?.message || "Failed to delete book.");
         setIsLoading(false);
       }
+      // eslint-disable-next-line @typescript-eslint/no-unused-vars
     } catch (error) {
       setIsLoading(false);
       toast.error("Failed to delete book. Please try again.");

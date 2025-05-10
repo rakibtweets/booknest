@@ -2,11 +2,12 @@ import {
   Home,
   LayoutDashboard,
   ListOrdered,
-  LogOut,
   ShoppingCart,
   UserCheck,
 } from "lucide-react";
+import Link from "next/link";
 
+import LogoutButton from "@/components/buttons/LogoutButton";
 import {
   Sidebar,
   SidebarContent,
@@ -18,8 +19,6 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import Link from "next/link";
-import LogoutButton from "@/components/buttons/LogoutButton";
 
 // Menu items.
 const items = [

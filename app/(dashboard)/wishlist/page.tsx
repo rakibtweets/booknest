@@ -1,22 +1,21 @@
+import { auth } from "@clerk/nextjs/server";
+import { ShoppingCart, AlertCircle } from "lucide-react";
+import { Heart } from "lucide-react";
 import type { Metadata } from "next";
-import Link from "next/link";
 import Image from "next/image";
+import Link from "next/link";
+
+import ClearWishlistButton from "@/components/buttons/ClearWishlistButton";
+import { WishlistButton } from "@/components/buttons/WishListButton";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent } from "@/components/ui/card";
 import { Separator } from "@/components/ui/separator";
-import { ShoppingCart, Trash2, AlertCircle } from "lucide-react";
-import { formatCurrency } from "@/lib/utils";
-// Import the Heart icon at the top of the file
-import { Heart } from "lucide-react";
-import { WishlistButton } from "@/components/buttons/WishListButton";
-import {
-  getUserWishlist,
-  isBookInWishlist,
-} from "@/lib/actions/wishlist-actions";
-import { getUserByClerkId } from "@/lib/actions/user-actions";
-import { auth } from "@clerk/nextjs/server";
 import { IBook } from "@/database/book.model";
-import ClearWishlistButton from "@/components/buttons/ClearWishlistButton";
+import { getUserByClerkId } from "@/lib/actions/user-actions";
+import { getUserWishlist } from "@/lib/actions/wishlist-actions";
+import { formatCurrency } from "@/lib/utils";
+
+// Import the Heart icon at the top of the file
 
 export const metadata: Metadata = {
   title: "My Wishlist - BookNext",
@@ -57,7 +56,8 @@ export default async function WishlistPage() {
           <Heart className="h-12 w-12 text-muted-foreground mb-4" />
           <h2 className="text-xl font-semibold mb-2">Your wishlist is empty</h2>
           <p className="text-muted-foreground mb-6">
-            Browse our collection and add books you'd like to purchase later.
+            Browse our collection and add books you&apos;d like to purchase
+            later.
           </p>
           <Button asChild>
             <Link href="/books">Browse Books</Link>
@@ -105,6 +105,7 @@ export default async function WishlistPage() {
                                 className="hover:underline"
                               >
                                 {
+                                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                                   //@ts-ignore
                                   book.author?.name
                                 }

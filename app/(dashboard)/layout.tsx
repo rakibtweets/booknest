@@ -1,7 +1,8 @@
-import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 import React from "react";
+
 import { DashboardSidebar } from "@/components/dashboard/sidebar/app-sidebar";
 import ProfileAvatar from "@/components/shared/ProfileAvatar";
+import { SidebarProvider, SidebarTrigger } from "@/components/ui/sidebar";
 
 const DashboardLayout = ({ children }: { children: React.ReactNode }) => {
   return (

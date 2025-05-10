@@ -1,4 +1,10 @@
 "use client";
+import { SignedIn, SignedOut, useUser, SignOutButton } from "@clerk/nextjs";
+import { LayoutDashboardIcon, LogOutIcon, UserCheck } from "lucide-react";
+import Link from "next/link";
+
+import UserAuthMenu from "@/components/buttons/UserAuthMenu";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
@@ -7,15 +13,9 @@ import {
   DropdownMenuItem,
   DropdownMenuLabel,
   DropdownMenuSeparator,
-  DropdownMenuShortcut,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import Link from "next/link";
-import { LayoutDashboardIcon, LogOutIcon, UserCheck } from "lucide-react";
 import { Skeleton } from "@/components/ui/skeleton";
-import { SignedIn, SignedOut, useUser, SignOutButton } from "@clerk/nextjs";
-import UserAuthMenu from "@/components/buttons/UserAuthMenu";
 
 const ProfileAvatar = () => {
   const { user, isLoaded } = useUser();

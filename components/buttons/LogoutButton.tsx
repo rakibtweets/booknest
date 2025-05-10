@@ -1,8 +1,9 @@
 "use client";
 import { SignOutButton } from "@clerk/nextjs";
 import { LogOut } from "lucide-react";
-import { Button } from "../ui/button";
 import { useState } from "react";
+
+import { Button } from "../ui/button";
 
 const LogoutButton = () => {
   const [isLoading, setIsLoading] = useState(false);

@@ -1,10 +1,11 @@
 "use client";
 
-import { useState } from "react";
 import { LoaderCircle, ShoppingCart } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
+
 import { Button } from "@/components/ui/button";
 import { addToCart } from "@/lib/actions/cart-actions";
-import { toast } from "sonner";
 
 interface AddToCartButtonProps {
   bookId: string;
@@ -42,7 +43,11 @@ export default function AddToCartButton({
         toast.error(result.error?.message || "Failed to add book to cart.");
       }
     } catch (error) {
-      toast.error("An unexpected error occurred.");
+      if (error instanceof Error) {
+        toast.error(error.message || "An unexpected error occurred.");
+      } else {
+        toast.error("An unexpected error occurred.");
+      }
     } finally {
       setIsLoading(false);
     }

@@ -1,15 +1,17 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+/* eslint-disable @typescript-eslint/no-unused-vars */
 "use client";
 
-import React, { useState } from "react";
 import {
   useElements,
   useStripe,
   PaymentElement,
-  AddressElement,
 } from "@stripe/react-stripe-js";
-import { Button } from "@/components/ui/button";
 import { Loader2 } from "lucide-react";
+import React, { useState } from "react";
 import { toast } from "sonner";
+
+import { Button } from "@/components/ui/button";
 
 interface PaymentFormProps {
   clientSecret: string;
@@ -58,11 +60,11 @@ export default function PaymentForm({
         setPaymentCompleted(true);
         onSuccess(paymentIntent);
       }
-    } catch (err: any) {
-      setError(err.message || "An unknown error occurred");
-      toast.error(
-        `Payment failed, ${err.message || "An unknown error occurred"}`
-      );
+    } catch (err) {
+      const errorMessage =
+        err instanceof Error ? err.message : "An unknown error occurred";
+      setError(errorMessage);
+      toast.error(`Payment failed, ${errorMessage}`);
     } finally {
       setIsLoading(false);
     }

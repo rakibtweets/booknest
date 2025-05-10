@@ -1,10 +1,11 @@
 "use client";
 
 import { LoaderCircle, Minus, Plus } from "lucide-react";
-import { Button } from "@/components/ui/button";
 import { useState } from "react";
-import { updateCartItemQuantity } from "@/lib/actions/cart-actions";
 import { toast } from "sonner";
+
+import { Button } from "@/components/ui/button";
+import { updateCartItemQuantity } from "@/lib/actions/cart-actions";
 
 interface QuantityButtonProps {
   quantity: number;

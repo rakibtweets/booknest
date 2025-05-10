@@ -1,13 +1,13 @@
 "use client";
 
-import React from "react";
-import Image from "next/image";
 import { Trash2, Plus, Minus } from "lucide-react";
+import Image from "next/image";
+import React from "react";
+
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
-import { CartItem } from "@/types/stripe";
-import { formatCurrency } from "@/lib/utils";
 import { IBook } from "@/database/book.model";
+import { formatCurrency } from "@/lib/utils";
 
 interface CartSummaryProps {
   items: {
@@ -25,8 +25,7 @@ interface CartSummaryProps {
 
 export default function CartSummary({
   items,
-  onUpdateQuantity,
-  onRemoveItem,
+
   subtotal,
   shipping,
   tax,
@@ -74,6 +73,7 @@ export default function CartSummary({
               </div>
               <p className="mt-1 text-sm text-muted-foreground line-clamp-1">
                 {
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                   //@ts-ignore
                   item?.book?.author?.name
                 }

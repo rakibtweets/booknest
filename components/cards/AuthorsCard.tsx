@@ -1,4 +1,5 @@
 import Link from "next/link";
+
 import { Avatar, AvatarFallback, AvatarImage } from "../ui/avatar";
 
 interface Author {
@@ -21,7 +22,7 @@ export const AuthorsCard = ({ id, name, image, booksCount }: Author) => {
           <AvatarFallback>
             {name
               .split(" ")
-              .map((n: any) => n[0])
+              .map((n) => n[0])
               .join("")}
           </AvatarFallback>
         </Avatar>

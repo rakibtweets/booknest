@@ -1,18 +1,13 @@
+import { PlusCircle, Edit, AlertTriangle } from "lucide-react";
 import type { Metadata } from "next";
-import Link from "next/link";
 import Image from "next/image";
-import { PlusCircle, Search, Edit, AlertTriangle } from "lucide-react";
+import Link from "next/link";
 
+import DeleteBookButton from "@/components/buttons/DeleteBookButton";
+import Filter from "@/components/shared/Filter";
+import LocalSearchBar from "@/components/shared/LocalSearchBar";
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -21,13 +16,17 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
-import DeleteBookButton from "@/components/buttons/DeleteBookButton";
-import { getBooks } from "@/lib/actions/book-actions";
-import { Badge } from "@/components/ui/badge";
-import { IBook } from "@/database/book.model";
-import LocalSearchBar from "@/components/shared/LocalSearchBar";
-import Filter from "@/components/shared/Filter";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { bookFilters } from "@/constants";
+import { IBook } from "@/database/book.model";
+import { getBooks } from "@/lib/actions/book-actions";
 import { RouteParams } from "@/types/global";
 
 export const metadata: Metadata = {
@@ -118,6 +117,7 @@ export default async function AdminBooksPage({ searchParams }: RouteParams) {
 
                   <TableCell>
                     {
+                      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                       //@ts-ignore
                       book.author?.name
                     }

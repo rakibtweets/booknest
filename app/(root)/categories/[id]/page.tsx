@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+
 import CategoryClientPage from "./CategoryClientPage";
 
 interface CategoryPageProps {
@@ -72,6 +73,7 @@ const categories = [
 
 export async function generateMetadata({
   params,
+  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   //@ts-ignore
 }: CategoryPageProps): Metadata {
   const { id } = await params;

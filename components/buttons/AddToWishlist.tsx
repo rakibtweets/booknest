@@ -1,9 +1,9 @@
 "use client";
-import { useState } from "react";
-import { Button } from "@/components/ui/button";
 import { Heart } from "lucide-react";
-
+import { useState } from "react";
 import { toast } from "sonner";
+
+import { Button } from "@/components/ui/button";
 import { addToWishlist } from "@/lib/actions/wishlist-actions";
 
 interface AddToWishlistProps {

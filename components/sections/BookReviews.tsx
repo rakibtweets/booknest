@@ -1,17 +1,18 @@
+/* eslint-disable @typescript-eslint/ban-ts-comment */
+import { SignedIn, SignedOut } from "@clerk/nextjs";
+import { auth } from "@clerk/nextjs/server";
+import { Star } from "lucide-react";
+import mongoose from "mongoose";
 import type React from "react";
 
-import { Star } from "lucide-react";
-
-import { Separator } from "@/components/ui/separator";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import ReviewForm from "../forms/review-form";
+import { Separator } from "@/components/ui/separator";
 import { getBookReviewsByBookId } from "@/lib/actions/review-actions";
-import { getTimeStamp } from "@/lib/utils";
-import Votes from "./Votes";
-import { auth } from "@clerk/nextjs/server";
 import { getUserByClerkId } from "@/lib/actions/user-actions";
-import mongoose from "mongoose";
-import { SignedIn, SignedOut } from "@clerk/nextjs";
+import { getTimeStamp } from "@/lib/utils";
+
+import Votes from "./Votes";
+import ReviewForm from "../forms/review-form";
 import SignInAlert from "../ui/signin-alert";
 
 interface BookReviewsProps {

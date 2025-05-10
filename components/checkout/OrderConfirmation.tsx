@@ -1,8 +1,9 @@
 "use client";
 
-import React from "react";
-import Link from "next/link";
 import { CheckCircle, ShoppingBag, FileText } from "lucide-react";
+import Link from "next/link";
+import React from "react";
+
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
 import { Order } from "@/types/stripe";

@@ -1,8 +1,6 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
-import { cookies } from "next/headers";
-import { StripeFormatCurrency } from "@/lib/stripe";
-import { metadata } from "@/app/layout";
 
 // Initialize Stripe
 const stripe = new Stripe(process.env.STRIPE_SECRET_KEY!, {
@@ -159,16 +157,6 @@ export async function PUT(req: Request) {
     const shippingCents = Math.round(shipping * 100); // Convert to cents
     const taxCents = Math.round(tax * 100); // Convert to cents
     const totalCents = Math.round(total * 100); // Convert to cents
-
-    const TAX_RATE = 0.08; // 8% tax
-    const SHIPPING_RATE = 599; // $5.99 shipping
-    const FREE_SHIPPING_THRESHOLD = 5000; // Free shipping for orders over $50
-
-    // const shipping = subtotal > FREE_SHIPPING_THRESHOLD ? 0 : SHIPPING_RATE;
-    // const tax = Math.round(subtotal * TAX_RATE);
-    // const total = subtotal + shipping + tax;
-
-    // console.log("stripe put", stripe);
 
     // Create a PaymentIntent with the order amount and currency
     const paymentIntent = await stripe.paymentIntents.create({

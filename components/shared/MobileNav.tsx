@@ -1,4 +1,8 @@
 "use client";
+import { AlignJustifyIcon } from "lucide-react";
+import Link from "next/link";
+import { usePathname } from "next/navigation";
+
 import { Button } from "@/components/ui/button";
 import {
   Sheet,
@@ -7,9 +11,6 @@ import {
   SheetTrigger,
 } from "@/components/ui/sheet";
 import { navLinks } from "@/constants";
-import { AlignJustifyIcon } from "lucide-react";
-import Link from "next/link";
-import { usePathname } from "next/navigation";
 
 const NavContent = () => {
   const pathname = usePathname();

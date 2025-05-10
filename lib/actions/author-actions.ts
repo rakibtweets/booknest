@@ -1,17 +1,19 @@
 "use server";
 
 import mongoose from "mongoose";
-import Author, { IAuthor } from "@/database/author.model";
 import { revalidatePath } from "next/cache";
-import dbConnect from "../mongoose";
-import { AuthorFormValues, authorSchema } from "@/validations/author";
-import action from "../handlers/action";
-import handleError from "../handlers/error";
+
+import Author, { IAuthor } from "@/database/author.model";
 import {
   ActionResponse,
   ErrorResponse,
   PaginatedSearchParams,
 } from "@/types/global";
+import { AuthorFormValues, authorSchema } from "@/validations/author";
+
+import action from "../handlers/action";
+import handleError from "../handlers/error";
+import dbConnect from "../mongoose";
 
 // const authors = [
 //   {

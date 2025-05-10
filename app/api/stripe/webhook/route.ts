@@ -1,6 +1,8 @@
+/* eslint-disable @typescript-eslint/no-explicit-any */
+import { headers } from "next/headers";
 import { NextResponse } from "next/server";
 import Stripe from "stripe";
-import { headers } from "next/headers";
+
 import { IOrder } from "@/database/order.model";
 import { createOrder } from "@/lib/actions/order-actions";
 
@@ -84,7 +86,7 @@ export async function POST(req: Request) {
 }
 
 async function handleCheckoutCompleted(session: Stripe.Checkout.Session) {
-  // console.log("Checkout completed:", session);
+  console.log("Checkout completed:", session);
   // Here you would typically:
   // 1. Get customer information from session.customer
   // 2. Get order details from session.metadata

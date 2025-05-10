@@ -24,6 +24,7 @@ export interface StripeLineItem {
 }
 
 // Calculate order summary
+// eslint-disable-next-line @typescript-eslint/no-explicit-any
 export const calculateOrderSummary = (items: any[]) => {
   const subtotal = items.reduce(
     (acc, item) => acc + (item.price || item.book.price) * item.quantity,

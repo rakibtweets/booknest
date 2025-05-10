@@ -1,19 +1,18 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
-import { useRouter } from "next/navigation";
 import { Elements } from "@stripe/react-stripe-js";
 import { loadStripe } from "@stripe/stripe-js";
-import { calculateOrderSummary, StripeFormatCurrency } from "@/lib/stripe";
 import { Loader2 } from "lucide-react";
-import { CartItem, Order, Address } from "@/types/stripe";
+import { useState, useEffect } from "react";
+import { toast } from "sonner";
+
 import CartSummary from "@/components/checkout/CartSummary";
 import CheckoutLayout from "@/components/checkout/CheckoutLayout";
-import AddressForm, { AddressFormValues } from "@/components/forms/AddressForm";
 import OrderConfirmation from "@/components/checkout/OrderConfirmation";
+import AddressForm, { AddressFormValues } from "@/components/forms/AddressForm";
 import PaymentForm from "@/components/forms/PaymentForm";
-import { toast } from "sonner";
 import { useUser } from "@/hooks/use-user";
+import { Order, Address } from "@/types/stripe";
 
 // Mock data - replace with actual data fetching in a real application
 // const mockCartItems: CartItem[] = [
@@ -60,7 +59,6 @@ export default function CheckoutPage() {
   const [paymentCompleted, setPaymentCompleted] = useState(false);
   const [order, setOrder] = useState<Order | null>(null);
   const [loading, setLoading] = useState(false);
-  const router = useRouter();
 
   // Calculate order summary
   // const { subtotal, shipping, tax, total } = calculateOrderSummary(cartItems);
@@ -109,11 +107,11 @@ export default function CheckoutPage() {
             throw new Error(data.error);
           }
 
-          console.log("Payment intent created:", data.clientSecret);
-
+          console.log(paymentCompleted, loading);
           setClientSecret(data.clientSecret);
+          // eslint-disable-next-line @typescript-eslint/no-explicit-any
         } catch (error: any) {
-          toast.error(error.message || "Failed to initialize payment");
+          toast.error(error?.message || "Failed to initialize payment");
           // Go back to address step
           setCurrentStep(1);
         } finally {
@@ -123,9 +121,22 @@ export default function CheckoutPage() {
 
       createPaymentIntent();
     }
-  }, [currentStep, addressData, clientSecret, cartItems, toast]);
+  }, [
+    currentStep,
+    addressData,
+    clientSecret,
+    cartItems,
+    user,
+    total,
+    shipping,
+    tax,
+    subtotal,
+    paymentCompleted,
+    loading,
+  ]);
 
   // Handle payment success
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handlePaymentSuccess = (paymentIntent: any) => {
     // Create an order object
     const newOrder: Order = {
