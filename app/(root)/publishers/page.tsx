@@ -1,9 +1,9 @@
 import type { Metadata } from "next";
 
-import Filter from "@/components/shared/Filter";
-import { publishersFilters } from "@/constants";
 import PublisherCard from "@/components/cards/PublisherCard";
+import Filter from "@/components/shared/Filter";
 import LocalSearchBar from "@/components/shared/LocalSearchBar";
+import { publishersFilters } from "@/constants";
 
 export const metadata: Metadata = {
   title: "Publishers - BookNext",

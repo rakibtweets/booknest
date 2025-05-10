@@ -1,14 +1,15 @@
 "use server";
 
 import User, { IUser } from "@/database/user.model";
-import dbConnect from "../mongoose";
 import {
   clerkUserUpdateParams,
   CreateUserParams,
   DeleteUserParams,
 } from "@/types/action";
 import { ActionResponse, ErrorResponse } from "@/types/global";
+
 import handleError from "../handlers/error";
+import dbConnect from "../mongoose";
 
 export const getUsers = async () => {
   try {

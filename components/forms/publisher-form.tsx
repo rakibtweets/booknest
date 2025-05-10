@@ -1,12 +1,15 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2, Plus, X } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
 
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Form,
   FormControl,
@@ -18,15 +21,12 @@ import {
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
 import { Textarea } from "@/components/ui/textarea";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Badge } from "@/components/ui/badge";
-import { publisherSchema, PublisherFormValues } from "@/validations/publisher";
+import { IPublisher } from "@/database/publisher.model";
 import {
   createPublisher,
   updatePublisher,
 } from "@/lib/actions/publisher-actions";
-import { toast } from "sonner";
-import { IPublisher } from "@/database/publisher.model";
+import { publisherSchema, PublisherFormValues } from "@/validations/publisher";
 
 interface PublisherFormProps {
   initialData?: IPublisher;
@@ -139,7 +139,9 @@ export function PublisherForm({ initialData }: PublisherFormProps) {
                 <FormControl>
                   <Input placeholder="paste logo url here" {...field} />
                 </FormControl>
-                <FormDescription>URL for the publisher's logo</FormDescription>
+                <FormDescription>
+                  URL for the publisher&apos;s logo
+                </FormDescription>
                 <FormMessage />
               </FormItem>
             )}
@@ -258,7 +260,8 @@ export function PublisherForm({ initialData }: PublisherFormProps) {
                 />
               </FormControl>
               <FormDescription>
-                A more detailed description (displayed on the publisher's page)
+                A more detailed description (displayed on the publisher&apos;s
+                page)
               </FormDescription>
               <FormMessage />
             </FormItem>

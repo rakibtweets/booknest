@@ -1,10 +1,11 @@
 "use client";
 
-import { Input } from "@/components/ui/input";
-import { formUrlQuery, removeKeysFromUrlQuery } from "@/lib/utils";
 import { Search } from "lucide-react";
 import { usePathname, useRouter, useSearchParams } from "next/navigation";
 import { useEffect, useState } from "react";
+
+import { Input } from "@/components/ui/input";
+import { formUrlQuery, removeKeysFromUrlQuery } from "@/lib/utils";
 
 interface CustomeInputProps {
   route?: string;

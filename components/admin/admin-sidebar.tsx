@@ -3,11 +3,11 @@ import {
   Home,
   LayoutDashboard,
   Layers,
-  Settings,
   ListOrdered,
   UserRoundPen,
   Warehouse,
 } from "lucide-react";
+import Link from "next/link";
 
 import {
   Sidebar,
@@ -20,7 +20,7 @@ import {
   SidebarMenuButton,
   SidebarMenuItem,
 } from "@/components/ui/sidebar";
-import Link from "next/link";
+
 import LogoutButton from "../buttons/LogoutButton";
 
 // Menu items.

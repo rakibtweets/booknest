@@ -1,16 +1,17 @@
+import { auth } from "@clerk/nextjs/server";
+import { Star, Truck, ShieldCheck, ArrowLeft } from "lucide-react";
 import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { Star, Truck, ShieldCheck, ArrowLeft } from "lucide-react";
+
+import AddToCartButton from "@/components/buttons/AddToCartButton";
+import AddToWishlist from "@/components/buttons/AddToWishlist";
+import BookReviews from "@/components/sections/BookReviews";
 import { Separator } from "@/components/ui/separator";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import BookReviews from "@/components/sections/BookReviews";
 import { getBookById } from "@/lib/actions/book-actions";
-import AddToWishlist from "@/components/buttons/AddToWishlist";
-import { auth } from "@clerk/nextjs/server";
 import { getUserByClerkId } from "@/lib/actions/user-actions";
 import { isBookInWishlist } from "@/lib/actions/wishlist-actions";
-import AddToCartButton from "@/components/buttons/AddToCartButton";
 
 // const books = [
 //   {
@@ -80,6 +81,7 @@ export default async function BookDetailsPage({
           <p className="text-lg text-muted-foreground mb-2">
             by{" "}
             {
+              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
               //@ts-ignore
               book.author.name
             }
@@ -151,6 +153,7 @@ export default async function BookDetailsPage({
               <p className="text-sm text-muted-foreground">Publisher</p>
               <p className="text-sm">
                 {
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                   //@ts-ignore
                   book.publisher.name
                 }
@@ -202,6 +205,7 @@ export default async function BookDetailsPage({
                 <li>
                   <span className="font-medium">Publisher:</span>{" "}
                   {
+                    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                     //@ts-ignore
                     book.publisher.name
                   }
@@ -222,6 +226,7 @@ export default async function BookDetailsPage({
               <h3 className="font-semibold mb-2">About the Author</h3>
               <p>
                 {
+                  // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                   //@ts-ignore
                   book.author?.bio
                 }

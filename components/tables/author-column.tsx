@@ -1,8 +1,10 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { Button } from "@/components/ui/button";
 import { ArrowUpDown, Edit, Link } from "lucide-react";
+
+import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -11,9 +13,8 @@ import {
   DropdownMenuSeparator,
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
+
 import DeleteAuthorButton from "../buttons/DeleteAuthorButton";
-import { Badge } from "@/components/ui/badge";
-import { IAuthor } from "@/database/author.model";
 
 interface IAuthorTable {
   _id: string;

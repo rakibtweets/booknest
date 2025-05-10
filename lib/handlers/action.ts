@@ -1,7 +1,7 @@
 "use server";
 
-import { ZodError, type ZodSchema } from "zod";
 import { auth } from "@clerk/nextjs/server";
+import { ZodError, type ZodSchema } from "zod";
 
 import { UnauthorizedError, ValidationError } from "../http-errors";
 import dbConnect from "../mongoose";
@@ -40,6 +40,7 @@ async function action<T>({
 
   if (authorize) {
     // Get the Clerk auth session
+    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
     //@ts-ignore
     const { userId } = await auth();
 

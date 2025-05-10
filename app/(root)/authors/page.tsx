@@ -1,9 +1,10 @@
-import React, { Suspense } from "react";
 import { Metadata } from "next";
-import LocalSearchBar from "@/components/shared/LocalSearchBar";
-import Filter from "@/components/shared/Filter";
-import { authorFilters } from "@/constants";
+import React, { Suspense } from "react";
+
 import Authors from "@/components/sections/Authors";
+import Filter from "@/components/shared/Filter";
+import LocalSearchBar from "@/components/shared/LocalSearchBar";
+import { authorFilters } from "@/constants";
 import { getAuthors } from "@/lib/actions/author-actions";
 
 export const metadata: Metadata = {

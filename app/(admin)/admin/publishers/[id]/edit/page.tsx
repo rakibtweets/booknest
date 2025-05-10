@@ -1,7 +1,8 @@
 import type { Metadata } from "next";
 import { notFound } from "next/navigation";
-import { getPublisherById } from "@/lib/actions/publisher-actions";
+
 import { PublisherForm } from "@/components/forms/publisher-form";
+import { getPublisherById } from "@/lib/actions/publisher-actions";
 
 export const metadata: Metadata = {
   title: "Edit Publisher - BookNext Admin",

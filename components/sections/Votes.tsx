@@ -1,10 +1,11 @@
 "use client";
 
 import { ThumbsUp, ThumbsDown } from "lucide-react";
-import { Button } from "@/components/ui/button";
-import { toast } from "sonner";
-import { downvoteReview, upvoteReview } from "@/lib/actions/review-actions";
 import { usePathname } from "next/navigation";
+import { toast } from "sonner";
+
+import { Button } from "@/components/ui/button";
+import { downvoteReview, upvoteReview } from "@/lib/actions/review-actions";
 
 interface IVotesParams {
   reviewId: string | undefined;

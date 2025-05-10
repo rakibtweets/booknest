@@ -1,7 +1,7 @@
-import type { Metadata } from "next";
-import Link from "next/link";
-import Image from "next/image";
 import { Package, Search, TruckIcon } from "lucide-react";
+import type { Metadata } from "next";
+import Image from "next/image";
+import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
@@ -259,8 +259,8 @@ export default function OrdersPage() {
                       <>
                         <Package className="h-4 w-4 text-orange-500" />
                         <span className="text-sm">
-                          Your order is being processed. We'll notify you when
-                          it ships.
+                          Your order is being processed. We&apos;ll notify you
+                          when it ships.
                         </span>
                       </>
                     )}
@@ -341,8 +341,8 @@ export default function OrdersPage() {
                   <div className="flex items-center gap-2">
                     <Package className="h-4 w-4 text-orange-500" />
                     <span className="text-sm">
-                      Your order is being processed. We'll notify you when it
-                      ships.
+                      Your order is being processed. We&apos;ll notify you when
+                      it ships.
                     </span>
                   </div>
                 </div>
@@ -355,7 +355,7 @@ export default function OrdersPage() {
               <Package className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
               <h3 className="text-lg font-medium">No processing orders</h3>
               <p className="text-muted-foreground">
-                You don't have any orders being processed at the moment.
+                You don&apos;t have any orders being processed at the moment.
               </p>
             </div>
           )}
@@ -445,7 +445,7 @@ export default function OrdersPage() {
               <TruckIcon className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
               <h3 className="text-lg font-medium">No shipped orders</h3>
               <p className="text-muted-foreground">
-                You don't have any orders being shipped at the moment.
+                You don&apos;t have any orders being shipped at the moment.
               </p>
             </div>
           )}
@@ -524,7 +524,7 @@ export default function OrdersPage() {
               <Package className="h-12 w-12 text-muted-foreground mx-auto mb-4" />
               <h3 className="text-lg font-medium">No delivered orders</h3>
               <p className="text-muted-foreground">
-                You don't have any delivered orders yet.
+                You don&apos;t have any delivered orders yet.
               </p>
             </div>
           )}

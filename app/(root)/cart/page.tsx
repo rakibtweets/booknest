@@ -1,19 +1,19 @@
-import Link from "next/link";
-import Image from "next/image";
+import { auth } from "@clerk/nextjs/server";
+import { ArrowLeft } from "lucide-react";
 import type { Metadata } from "next";
-import { ArrowLeft, Minus, Plus, Trash2 } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
 
+import QuantityButton from "@/components/buttons/QuantityButton";
+import RemoveFromCartButton from "@/components/buttons/RemoveFromCartButton";
 import { Button } from "@/components/ui/button";
-import { Separator } from "@/components/ui/separator";
+import { Card, CardContent, CardFooter } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
 import { Label } from "@/components/ui/label";
-import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { auth } from "@clerk/nextjs/server";
-import { getUserByClerkId } from "@/lib/actions/user-actions";
-import { getUserCart } from "@/lib/actions/cart-actions";
+import { Separator } from "@/components/ui/separator";
 import { IBook } from "@/database/book.model";
-import RemoveFromCartButton from "@/components/buttons/RemoveFromCartButton";
-import QuantityButton from "@/components/buttons/QuantityButton";
+import { getUserCart } from "@/lib/actions/cart-actions";
+import { getUserByClerkId } from "@/lib/actions/user-actions";
 
 export const metadata: Metadata = {
   title: "Shopping Cart - BookNext",
@@ -25,6 +25,7 @@ export default async function CartPage() {
   const userData = await getUserByClerkId(userId as string);
   const user = userData.data?.user || null;
   const catResult = await getUserCart(user?._id as string);
+  console.log(" CartPage catResult:", catResult);
   const cartItems = catResult.data?.cart || [];
   const subtotal = catResult.data?.subtotal || 0;
   const shipping = catResult.data?.shipping || 0;
@@ -73,6 +74,7 @@ export default async function CartPage() {
                             <h3 className="font-medium">{book?.title}</h3>
                             <p className="text-sm text-muted-foreground">
                               {
+                                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                                 //@ts-ignore
                                 book.author.name
                               }

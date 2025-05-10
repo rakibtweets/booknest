@@ -1,25 +1,18 @@
+import { ArrowLeft, Calendar, Globe, Mail, MapPin } from "lucide-react";
 import type { Metadata } from "next";
-import Link from "next/link";
 import Image from "next/image";
+import Link from "next/link";
 import { notFound } from "next/navigation";
-import {
-  ArrowLeft,
-  Calendar,
-  Globe,
-  Mail,
-  MapPin,
-  Twitter,
-} from "lucide-react";
 
-import { Button } from "@/components/ui/button";
-import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
-import { getAuthorById } from "@/lib/actions/author-actions";
-import { Author } from "@/types/global";
+import { Button } from "@/components/ui/button";
+import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { IBook } from "@/database/book.model";
+import { getAuthorById } from "@/lib/actions/author-actions";
 import { getBooksByAuthorId } from "@/lib/actions/book-actions";
 import { getYear } from "@/lib/utils";
+import { Author } from "@/types/global";
 
 // This would typically come from a database or API
 // const authors = [
@@ -225,6 +218,7 @@ interface AuthorPageProps {
   };
 }
 
+// eslint-disable-next-line @typescript-eslint/ban-ts-comment
 //@ts-ignore
 export async function generateMetadata({ params }: AuthorPageProps): Metadata {
   const { id } = await params;
@@ -496,7 +490,7 @@ export default async function AuthorDetailsPage({ params }: AuthorPageProps) {
 
             <TabsContent value="genres" className="py-4">
               <h2 className="text-2xl font-bold mb-6">
-                {author.name}'s Genres
+                {author.name}&apos;s Genres
               </h2>
 
               {/* {Object.entries(booksByGenre)?.map(([genre, books]) => (

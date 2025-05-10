@@ -1,11 +1,15 @@
 "use client";
 
-import { useState } from "react";
-import { useRouter } from "next/navigation";
-import { Controller, useForm } from "react-hook-form";
 import { zodResolver } from "@hookform/resolvers/zod";
 import { Loader2, Plus, X } from "lucide-react";
+import { useRouter } from "next/navigation";
+import { useState } from "react";
+import { useForm } from "react-hook-form";
+import { toast } from "sonner";
+
+import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
+import { Checkbox } from "@/components/ui/checkbox";
 import {
   Form,
   FormControl,
@@ -16,14 +20,11 @@ import {
   FormMessage,
 } from "@/components/ui/form";
 import { Input } from "@/components/ui/input";
-import { Textarea } from "@/components/ui/textarea";
-import { Checkbox } from "@/components/ui/checkbox";
-import { Badge } from "@/components/ui/badge";
 import { MultiSelect } from "@/components/ui/multi-select";
-import { createAuthor, updateAuthor } from "@/lib/actions/author-actions";
-import { toast } from "sonner";
-import { AuthorFormValues, authorSchema } from "@/validations/author";
+import { Textarea } from "@/components/ui/textarea";
 import { IAuthor } from "@/database/author.model";
+import { createAuthor, updateAuthor } from "@/lib/actions/author-actions";
+import { AuthorFormValues, authorSchema } from "@/validations/author";
 
 interface AuthorFormProps {
   initialData?: IAuthor;
@@ -137,7 +138,7 @@ export function AuthorForm({ initialData, genres }: AuthorFormProps) {
                   <Input placeholder="Paste image URL here" {...field} />
                 </FormControl>
                 <FormDescription>
-                  URL for the author's profile picture
+                  URL for the author&apos;s profile picture
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -154,7 +155,7 @@ export function AuthorForm({ initialData, genres }: AuthorFormProps) {
                   <Input placeholder="Paste cover image URL here" {...field} />
                 </FormControl>
                 <FormDescription>
-                  URL for the author's cover/banner image
+                  URL for the author&apos;s cover/banner image
                 </FormDescription>
                 <FormMessage />
               </FormItem>
@@ -215,7 +216,7 @@ export function AuthorForm({ initialData, genres }: AuthorFormProps) {
                   <Input placeholder="https://example.com" {...field} />
                 </FormControl>
                 <FormDescription>
-                  Author's personal or official website
+                  Author&apos;s personal or official website
                 </FormDescription>
                 <FormMessage />
               </FormItem>

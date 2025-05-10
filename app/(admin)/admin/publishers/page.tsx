@@ -1,9 +1,18 @@
+import { PlusCircle, Search, Edit, ExternalLink } from "lucide-react";
 import type { Metadata } from "next";
-import Link from "next/link";
 import Image from "next/image";
-import { PlusCircle, Search, Edit, Trash2, ExternalLink } from "lucide-react";
+import Link from "next/link";
 
+import DeletePublisherButton from "@/components/buttons/DeletePublisherButton";
 import { Button } from "@/components/ui/button";
+import {
+  DropdownMenu,
+  DropdownMenuContent,
+  DropdownMenuItem,
+  DropdownMenuLabel,
+  DropdownMenuSeparator,
+  DropdownMenuTrigger,
+} from "@/components/ui/dropdown-menu";
 import { Input } from "@/components/ui/input";
 import {
   Table,
@@ -13,16 +22,8 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
+import { IPublisher } from "@/database/publisher.model";
 import { getPublishers } from "@/lib/actions/publisher-actions";
-import DeletePublisherButton from "@/components/buttons/DeletePublisherButton";
 
 export const metadata: Metadata = {
   title: "Manage Publishers - BookNext Admin",
@@ -160,8 +161,8 @@ export default async function AdminPublishersPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {publishers?.map((publisher) => (
-              <TableRow key={publisher.id}>
+            {publishers?.map((publisher: IPublisher) => (
+              <TableRow key={publisher._id as string}>
                 <TableCell>
                   <div className="flex items-center gap-3">
                     <div className="relative h-10 w-20">

@@ -1,6 +1,3 @@
-import type { Metadata } from "next";
-import Link from "next/link";
-import Image from "next/image";
 import {
   BookOpen,
   DollarSign,
@@ -9,10 +6,13 @@ import {
   TrendingUp,
   AlertTriangle,
 } from "lucide-react";
+import type { Metadata } from "next";
+import Image from "next/image";
+import Link from "next/link";
 
+import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { Button } from "@/components/ui/button";
 import { dashboardData } from "@/constants/admin";
 
 export const metadata: Metadata = {
@@ -26,7 +26,7 @@ export default function AdminDashboardPage() {
       <div className="flex flex-col gap-4">
         <h1 className="text-3xl font-bold tracking-tight">Admin Dashboard</h1>
         <p className="text-muted-foreground">
-          Welcome back, {"Rakib Hasan"}! Here's an overview of your store.
+          Welcome back, {"Rakib Hasan"}! Here&apos;s an overview of your store.
         </p>
       </div>
 

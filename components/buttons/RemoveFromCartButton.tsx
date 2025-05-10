@@ -1,11 +1,11 @@
 "use client";
 
 import { LoaderCircle, Trash2 } from "lucide-react";
+import { useState } from "react";
+import { toast } from "sonner";
+
 import { Button } from "@/components/ui/button";
 import { removeFromCart } from "@/lib/actions/cart-actions";
-import { toast } from "sonner";
-import { useState } from "react";
-import { trackFallbackParamAccessed } from "next/dist/server/app-render/dynamic-rendering";
 
 interface RemoveFromCartButtonProps {
   userId: string | undefined;
@@ -35,7 +35,7 @@ const RemoveFromCartButton = ({
         );
         setIsLoading(false);
       }
-    } catch (error) {
+    } catch {
       setIsLoading(false);
       toast.error("Failed to remove item. Please try again.");
     } finally {

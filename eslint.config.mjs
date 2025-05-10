@@ -19,7 +19,7 @@ const eslintConfig = [
   ...compat.extends(
     "next/core-web-vitals",
     "next/typescript",
-    "standard",
+
     // "plugin:tailwindcss/recommended",
     "prettier"
   ),
@@ -56,6 +56,7 @@ const eslintConfig = [
         },
       ],
       "comma-dangle": "off",
+      "typescript-eslint/ban-ts-comment": "off",
     },
   },
   {
@@ -63,6 +64,7 @@ const eslintConfig = [
 
     rules: {
       "no-undef": "off",
+      "typescript-eslint/no-undef": "off",
     },
   },
 ];

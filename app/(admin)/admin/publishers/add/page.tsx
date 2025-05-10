@@ -1,4 +1,5 @@
 import type { Metadata } from "next";
+
 import { PublisherForm } from "@/components/forms/publisher-form";
 
 export const metadata: Metadata = {

@@ -1,7 +1,3 @@
-import type { Metadata } from "next";
-import Link from "next/link";
-import Image from "next/image";
-import { notFound } from "next/navigation";
 import {
   ArrowLeft,
   CreditCard,
@@ -10,6 +6,10 @@ import {
   Truck,
   User,
 } from "lucide-react";
+import type { Metadata } from "next";
+import Image from "next/image";
+import Link from "next/link";
+import { notFound } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";

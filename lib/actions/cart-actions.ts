@@ -1,12 +1,14 @@
 "use server";
 
-import Book, { IBook } from "@/database/book.model";
-import User from "@/database/user.model";
 import type mongoose from "mongoose";
 import { revalidatePath } from "next/cache";
-import dbConnect from "../mongoose";
+
+import Book, { IBook } from "@/database/book.model";
+import User from "@/database/user.model";
 import { ActionResponse, ErrorResponse } from "@/types/global";
+
 import handleError from "../handlers/error";
+import dbConnect from "../mongoose";
 
 // Get user's cart with populated book details
 export async function getUserCart(userId: string): Promise<
@@ -34,8 +36,24 @@ export async function getUserCart(userId: string): Promise<
       throw new Error("User not found");
     }
 
+    const cart = JSON.parse(JSON.stringify(user.cart)) || [];
+
+    // ✅ If cart is empty, return 0 totals
+    if (cart.length === 0) {
+      return {
+        success: true,
+        data: {
+          cart: [],
+          subtotal: 0,
+          shipping: 0,
+          tax: 0,
+          total: 0,
+        },
+      };
+    }
+
     // Calculate cart totals
-    const subtotal = user.cart.reduce(
+    const subtotal = cart.reduce(
       (sum: number, item: { book: { price: number }; quantity: number }) => {
         return sum + (item.book?.price || 0) * item.quantity;
       },

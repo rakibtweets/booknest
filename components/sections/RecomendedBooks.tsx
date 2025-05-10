@@ -1,9 +1,10 @@
-import Link from "next/link";
-import Image from "next/image";
 import { ChevronRight, ShoppingCart } from "lucide-react";
+import Image from "next/image";
+import Link from "next/link";
+
+import { AspectRatio } from "@/components/ui/aspect-ratio";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { AspectRatio } from "@/components/ui/aspect-ratio";
 
 const recommendedBooks = [
   {

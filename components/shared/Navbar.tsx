@@ -1,16 +1,13 @@
 "use client";
-import {
-  BookOpenText,
-  Search,
-  ShoppingCart,
-  WavesIcon as Wave,
-} from "lucide-react";
+import { BookOpenText, Search, ShoppingCart } from "lucide-react";
 import Link from "next/link";
-import ProfileAvatar from "./ProfileAvatar";
-import MobileNav from "./MobileNav";
-import { Input } from "../ui/input";
 import { usePathname } from "next/navigation";
+
 import { navLinks } from "@/constants";
+
+import MobileNav from "./MobileNav";
+import ProfileAvatar from "./ProfileAvatar";
+import { Input } from "../ui/input";
 
 const Navbar = () => {
   const pathname = usePathname();

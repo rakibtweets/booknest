@@ -1,20 +1,19 @@
-import React from "react";
-import { Metadata } from "next";
-import LocalSearchBar from "@/components/shared/LocalSearchBar";
-import { bookFilters, recommendedBooks } from "@/constants";
-import Filter from "@/components/shared/Filter";
-import Link from "next/link";
-import { Card } from "@/components/ui/card";
-import Image from "next/image";
-import { AspectRatio } from "@/components/ui/aspect-ratio";
-import { Button } from "@/components/ui/button";
-import { ShoppingCart } from "lucide-react";
-import { getBooks } from "@/lib/actions/book-actions";
-import { IBook } from "@/database/book.model";
-import { RouteParams } from "@/types/global";
 import { auth } from "@clerk/nextjs/server";
-import { getUserByClerkId } from "@/lib/actions/user-actions";
+import { Metadata } from "next";
+import Image from "next/image";
+import Link from "next/link";
+import React from "react";
+
 import AddToCartButton from "@/components/buttons/AddToCartButton";
+import Filter from "@/components/shared/Filter";
+import LocalSearchBar from "@/components/shared/LocalSearchBar";
+import { AspectRatio } from "@/components/ui/aspect-ratio";
+import { Card } from "@/components/ui/card";
+import { bookFilters } from "@/constants";
+import { IBook } from "@/database/book.model";
+import { getBooks } from "@/lib/actions/book-actions";
+import { getUserByClerkId } from "@/lib/actions/user-actions";
+import { RouteParams } from "@/types/global";
 
 export const metadata: Metadata = {
   title: "Books",
@@ -87,6 +86,7 @@ const Page = async ({ searchParams }: RouteParams) => {
                 >
                   <p className="text-sm text-muted-foreground">
                     {
+                      // eslint-disable-next-line @typescript-eslint/ban-ts-comment
                       //@ts-ignore
                       book.author?.name
                     }
