@@ -1,4 +1,5 @@
 import { Schema, type Document, model, models } from "mongoose";
+
 import baseSchema from "./base-schema";
 
 // Publisher Schema

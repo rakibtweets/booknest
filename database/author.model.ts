@@ -5,8 +5,10 @@ import mongoose, {
   models,
   Model,
 } from "mongoose";
-import baseSchema from "./base-schema";
+
 import { slugify } from "@/lib/utils";
+
+import baseSchema from "./base-schema";
 // Author Schema
 export interface IAuthor extends Document {
   _id: string;

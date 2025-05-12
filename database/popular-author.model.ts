@@ -1,4 +1,5 @@
 import mongoose, { Schema, type Document, model, models } from "mongoose";
+
 import baseSchema from "./base-schema";
 
 // Popular Authors Schema
@@ -18,3 +19,5 @@ PopularAuthorSchema.add(baseSchema);
 const PopularAuthor =
   models?.PopularAuthor ||
   model<IPopularAuthor>("PopularAuthor", PopularAuthorSchema);
+
+export default PopularAuthor;

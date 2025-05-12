@@ -1,4 +1,5 @@
 import mongoose, { Schema, type Document, model, models } from "mongoose";
+
 import baseSchema from "./base-schema";
 // Recommended Books Schema
 export interface IRecommendedBook extends Document {
