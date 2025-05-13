@@ -1,5 +1,6 @@
 "use server";
 
+import Book from "@/database/book.model";
 import Order from "@/database/order.model";
 import User, { IUser } from "@/database/user.model";
 import {
@@ -143,6 +144,112 @@ export const getUserStateData = async (
     };
   } catch (error) {
     console.error("Error in getUserStateData:", error);
+    return handleError(error) as ErrorResponse;
+  }
+};
+
+// create a function for admin dashboard stats
+export const getAdminDashboardStats = async (): Promise<
+  ActionResponse<{
+    stats: {
+      totalSales: number;
+      totalOrders: number;
+      totalUsers: number;
+      totalBooks: number;
+      lowStock: number;
+      pendingOrders: number;
+    };
+    recentOrders: {
+      _id: string;
+      orderId: string;
+      customer: string;
+      date: string;
+      status: string;
+      total: number;
+      items: number;
+    }[];
+    recentUsers: {
+      _id: string;
+      name: string;
+      email: string;
+      joinDate: string;
+      orders: number;
+    }[];
+  }>
+> => {
+  try {
+    await dbConnect();
+
+    // Fetch total users
+    const totalUsers = await User.countDocuments();
+
+    // Fetch total orders
+    const totalOrders = await Order.countDocuments();
+
+    // Fetch total sales
+    const totalSales = await Order.aggregate([
+      { $match: { paymentStatus: "Paid" } },
+      { $group: { _id: null, total: { $sum: "$total" } } },
+    ]);
+    const totalSalesValue = totalSales.length > 0 ? totalSales[0].total : 0;
+
+    // Fetch pending orders
+    const pendingOrders = await Order.countDocuments({ status: "Processing" });
+
+    // Fetch low stock books
+    const lowStock = await Book.countDocuments({ stock: { $lt: 10 } });
+
+    // Fetch total books
+    const totalBooks = await Book.countDocuments();
+    const recentOrders = await Order.find({})
+      .sort({ createdAt: -1 })
+      .limit(6)
+      .select("orderId user createdAt status total items")
+      .populate("user", "name")
+      .lean();
+
+    const formattedRecentOrders = recentOrders.map((order) => ({
+      _id: order._id,
+      orderId: order.orderId,
+      customer: order.user.name,
+      date: order.createdAt.toISOString(),
+      status: order.status,
+      total: order.total,
+      items: order.items.length,
+    }));
+
+    // Fetch recent new users
+    const recentUsers = await User.find({})
+      .sort({ createdAt: -1 })
+      .limit(6)
+      .select("name email createdAt orders")
+      .lean();
+
+    const formattedRecentUsers = recentUsers?.map((user) => ({
+      _id: user._id as string,
+      name: user.name,
+      email: user.email,
+      joinDate: user.createdAt.toISOString(),
+      orders: user.orders.length,
+    }));
+
+    return {
+      success: true,
+      data: {
+        stats: {
+          totalSales: parseFloat(totalSalesValue.toFixed(2)),
+          totalOrders,
+          totalUsers,
+          totalBooks,
+          lowStock,
+          pendingOrders,
+        },
+        recentOrders: JSON.parse(JSON.stringify(formattedRecentOrders)),
+        recentUsers: JSON.parse(JSON.stringify(formattedRecentUsers)),
+      },
+    };
+  } catch (error) {
+    console.error("Error in getAdminDashboardStats:", error);
     return handleError(error) as ErrorResponse;
   }
 };
