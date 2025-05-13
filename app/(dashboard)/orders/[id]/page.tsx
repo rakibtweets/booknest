@@ -13,6 +13,8 @@ import { notFound } from "next/navigation";
 
 import { Button } from "@/components/ui/button";
 import { Separator } from "@/components/ui/separator";
+import { IBook } from "@/database/book.model";
+import { getOrderById } from "@/lib/actions/order-actions";
 
 export const metadata: Metadata = {
   title: "Order Details - BookNext",
@@ -20,67 +22,67 @@ export const metadata: Metadata = {
 };
 
 // Mock orders data
-const orders = [
-  {
-    id: "ORD-12345",
-    date: "2023-04-15",
-    status: "Delivered",
-    total: 48.97,
-    subtotal: 35.98,
-    shipping: 4.99,
-    tax: 8.0,
-    paymentMethod: "Credit Card (ending in 4242)",
-    shippingAddress: {
-      name: "John Doe",
-      street: "123 Book Street",
-      city: "Bookville",
-      state: "CA",
-      zip: "90210",
-      country: "United States",
-    },
-    timeline: [
-      {
-        status: "Order Placed",
-        date: "2023-04-15",
-        description: "Your order has been received and is being processed.",
-      },
-      {
-        status: "Payment Confirmed",
-        date: "2023-04-15",
-        description: "Payment has been successfully processed.",
-      },
-      {
-        status: "Shipped",
-        date: "2023-04-17",
-        description: "Your order has been shipped via USPS.",
-      },
-      {
-        status: "Delivered",
-        date: "2023-04-20",
-        description: "Your order has been delivered.",
-      },
-    ],
-    items: [
-      {
-        id: "1",
-        title: "The Midnight Library",
-        author: "Matt Haig",
-        coverImage: "https://placehold.co/120x80",
-        price: 16.99,
-        quantity: 1,
-      },
-      {
-        id: "2",
-        title: "Klara and the Sun",
-        author: "Kazuo Ishiguro",
-        coverImage: "https://placehold.co/120x80",
-        price: 18.99,
-        quantity: 1,
-      },
-    ],
-  },
-  // Other orders would be defined here
-];
+// const orders = [
+//   {
+//     id: "ORD-12345",
+//     date: "2023-04-15",
+//     status: "Delivered",
+//     total: 48.97,
+//     subtotal: 35.98,
+//     shipping: 4.99,
+//     tax: 8.0,
+//     paymentMethod: "Credit Card (ending in 4242)",
+//     shippingAddress: {
+//       name: "John Doe",
+//       street: "123 Book Street",
+//       city: "Bookville",
+//       state: "CA",
+//       zip: "90210",
+//       country: "United States",
+//     },
+//     timeline: [
+//       {
+//         status: "Order Placed",
+//         date: "2023-04-15",
+//         description: "Your order has been received and is being processed.",
+//       },
+//       {
+//         status: "Payment Confirmed",
+//         date: "2023-04-15",
+//         description: "Payment has been successfully processed.",
+//       },
+//       {
+//         status: "Shipped",
+//         date: "2023-04-17",
+//         description: "Your order has been shipped via USPS.",
+//       },
+//       {
+//         status: "Delivered",
+//         date: "2023-04-20",
+//         description: "Your order has been delivered.",
+//       },
+//     ],
+//     items: [
+//       {
+//         id: "1",
+//         title: "The Midnight Library",
+//         author: "Matt Haig",
+//         coverImage: "https://placehold.co/120x80",
+//         price: 16.99,
+//         quantity: 1,
+//       },
+//       {
+//         id: "2",
+//         title: "Klara and the Sun",
+//         author: "Kazuo Ishiguro",
+//         coverImage: "https://placehold.co/120x80",
+//         price: 18.99,
+//         quantity: 1,
+//       },
+//     ],
+//   },
+//   // Other orders would be defined here
+// ];
 
 interface OrderDetailsPageProps {
   params: {
@@ -92,7 +94,8 @@ export default async function OrderDetailsPage({
   params,
 }: OrderDetailsPageProps) {
   const { id } = await params;
-  const order = orders.find((o) => o.id === id);
+  const response = await getOrderById(id);
+  const order = response.data?.order;
 
   if (!order) {
     notFound();
@@ -112,10 +115,10 @@ export default async function OrderDetailsPage({
         <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4">
           <div>
             <h1 className="text-3xl font-bold tracking-tight">
-              Order #{order.id}
+              Order #{order?.orderId?.substring(0, 8).toUpperCase()}
             </h1>
             <p className="text-muted-foreground">
-              Placed on {new Date(order.date).toLocaleDateString()}
+              Placed on {new Date(order.createdAt).toLocaleDateString()}
             </p>
           </div>
           <div className="flex items-center gap-2">
@@ -146,30 +149,32 @@ export default async function OrderDetailsPage({
             </div>
             <div className="p-4">
               <ol className="relative border-l border-muted-foreground/20">
-                {order.timeline.map((event, index) => (
-                  <li key={index} className="mb-6 ml-6 last:mb-0">
-                    <span
-                      className={`absolute flex items-center justify-center w-6 h-6 rounded-full -left-3 ${
-                        index === order.timeline.length - 1
-                          ? "bg-green-100 text-green-800"
-                          : "bg-muted"
-                      }`}
-                    >
-                      {index === 0 ? (
-                        <Package className="w-3 h-3" />
-                      ) : index === order.timeline.length - 1 ? (
-                        <Package className="w-3 h-3" />
-                      ) : (
-                        <Truck className="w-3 h-3" />
-                      )}
-                    </span>
-                    <h3 className="font-medium">{event.status}</h3>
-                    <time className="block text-xs text-muted-foreground mb-1">
-                      {new Date(event.date).toLocaleDateString()}
-                    </time>
-                    <p className="text-sm">{event.description}</p>
-                  </li>
-                ))}
+                {order?.timeline?.map((event, index) => {
+                  return (
+                    <li key={index} className="mb-6 ml-6 last:mb-0">
+                      <span
+                        className={`absolute flex items-center justify-center w-6 h-6 rounded-full -left-3 ${
+                          index === order.timeline.length - 1
+                            ? "bg-green-100 text-green-800"
+                            : "bg-muted"
+                        }`}
+                      >
+                        {index === 0 ? (
+                          <Package className="w-3 h-3" />
+                        ) : index === order.timeline.length - 1 ? (
+                          <Package className="w-3 h-3" />
+                        ) : (
+                          <Truck className="w-3 h-3" />
+                        )}
+                      </span>
+                      <h3 className="font-medium">{event.status}</h3>
+                      <time className="block text-xs text-muted-foreground mb-1">
+                        {new Date(event.date).toLocaleDateString()}
+                      </time>
+                      <p className="text-sm">{event.description}</p>
+                    </li>
+                  );
+                })}
               </ol>
             </div>
           </div>
@@ -181,36 +186,47 @@ export default async function OrderDetailsPage({
             </div>
             <div className="p-4">
               <div className="space-y-4">
-                {order.items.map((item) => (
-                  <div key={item.id} className="flex gap-4">
-                    <div className="relative aspect-[2/3] h-[120px]">
-                      <Image
-                        src={item.coverImage || "/placeholder.svg"}
-                        alt={item.title}
-                        fill
-                        className="object-cover rounded"
-                        sizes="120px"
-                      />
-                    </div>
-                    <div className="flex flex-1 flex-col">
-                      <h4 className="font-medium">{item.title}</h4>
-                      <p className="text-sm text-muted-foreground">
-                        {item.author}
-                      </p>
-                      <div className="mt-auto flex justify-between items-end">
-                        <div>
-                          <p className="text-sm">Qty: {item.quantity}</p>
-                          <p className="text-sm">
-                            Price: ${item.price.toFixed(2)}
+                {order?.items?.map((item) => {
+                  const { book, price, quantity } = item as {
+                    book: IBook;
+                    price: number;
+                    quantity: number;
+                  };
+                  return (
+                    <div key={item.book._id as string} className="flex gap-4">
+                      <div className="relative aspect-[2/3] h-[120px]">
+                        <Image
+                          src={book?.coverImage || "/placeholder.svg"}
+                          alt={book?.title}
+                          fill
+                          className="object-cover rounded"
+                          sizes="120px"
+                        />
+                      </div>
+                      <div className="flex flex-1 flex-col">
+                        <h4 className="font-medium">{book?.title}</h4>
+                        <p className="text-sm text-muted-foreground">
+                          {
+                            // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                            //@ts-ignore
+                            book?.author?.name
+                          }
+                        </p>
+                        <div className="mt-auto flex justify-between items-end">
+                          <div>
+                            <p className="text-sm">Qty: {quantity}</p>
+                            <p className="text-sm">
+                              Price: ${price.toFixed(2)}
+                            </p>
+                          </div>
+                          <p className="font-medium">
+                            ${(price * quantity).toFixed(2)}
                           </p>
                         </div>
-                        <p className="font-medium">
-                          ${(item.price * item.quantity).toFixed(2)}
-                        </p>
                       </div>
                     </div>
-                  </div>
-                ))}
+                  );
+                })}
               </div>
             </div>
           </div>

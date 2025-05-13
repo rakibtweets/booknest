@@ -1,3 +1,4 @@
+import { auth } from "@clerk/nextjs/server";
 import { Package, Search, TruckIcon } from "lucide-react";
 import type { Metadata } from "next";
 import Image from "next/image";
@@ -6,6 +7,9 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { IBook } from "@/database/book.model";
+import { IOrder } from "@/database/order.model";
+import { getUserOrders } from "@/lib/actions/order-actions";
 
 export const metadata: Metadata = {
   title: "Orders - BookNext",
@@ -13,130 +17,134 @@ export const metadata: Metadata = {
 };
 
 // Mock orders data
-const orders = [
-  {
-    id: "ORD-12345",
-    date: "2023-04-15",
-    status: "Delivered",
-    total: 48.97,
-    items: [
-      {
-        id: "1",
-        title: "The Midnight Library",
-        author: "Matt Haig",
-        coverImage: "https://placehold.co/120x80?text=order",
-        price: 16.99,
-        quantity: 1,
-      },
-      {
-        id: "2",
-        title: "Klara and the Sun",
-        author: "Kazuo Ishiguro",
-        coverImage: "https://placehold.co/120x80?text=order",
-        price: 18.99,
-        quantity: 1,
-      },
-    ],
-  },
-  {
-    id: "ORD-12346",
-    date: "2023-03-28",
-    status: "Shipped",
-    total: 32.99,
-    items: [
-      {
-        id: "3",
-        title: "Project Hail Mary",
-        author: "Andy Weir",
-        coverImage: "https://placehold.co/120x80?text=order",
-        price: 15.99,
-        quantity: 1,
-      },
-      {
-        id: "4",
-        title: "The Four Winds",
-        author: "Kristin Hannah",
-        coverImage: "https://placehold.co/120x80?text=order",
-        price: 14.99,
-        quantity: 1,
-      },
-    ],
-  },
-  {
-    id: "ORD-12347",
-    date: "2023-03-10",
-    status: "Processing",
-    total: 75.5,
-    items: [
-      {
-        id: "5",
-        title: "The Invisible Life of Addie LaRue",
-        author: "V.E. Schwab",
-        coverImage: "https://placehold.co/120x80?text=order",
-        price: 17.99,
-        quantity: 1,
-      },
-      {
-        id: "6",
-        title: "The Vanishing Half",
-        author: "Brit Bennett",
-        coverImage: "https://placehold.co/120x80?text=order",
-        price: 16.99,
-        quantity: 2,
-      },
-    ],
-  },
-  {
-    id: "ORD-12348",
-    date: "2023-02-22",
-    status: "Delivered",
-    total: 29.99,
-    items: [
-      {
-        id: "7",
-        title: "Hamnet",
-        author: "Maggie O'Farrell",
-        coverImage: "https://placehold.co/120x80?text=order",
-        price: 15.99,
-        quantity: 1,
-      },
-      {
-        id: "8",
-        title: "The Song of Achilles",
-        author: "Madeline Miller",
-        coverImage: "https://placehold.co/120x80?text=order",
-        price: 14.99,
-        quantity: 1,
-      },
-    ],
-  },
-  {
-    id: "ORD-12349",
-    date: "2023-01-15",
-    status: "Delivered",
-    total: 42.98,
-    items: [
-      {
-        id: "9",
-        title: "Circe",
-        author: "Madeline Miller",
-        coverImage: "https://placehold.co/120x80?text=order",
-        price: 14.99,
-        quantity: 1,
-      },
-      {
-        id: "10",
-        title: "The Silent Patient",
-        author: "Alex Michaelides",
-        coverImage: "https://placehold.co/120x80?text=order",
-        price: 13.99,
-        quantity: 2,
-      },
-    ],
-  },
-];
+// const orders = [
+//   {
+//     id: "ORD-12345",
+//     date: "2023-04-15",
+//     status: "Delivered",
+//     total: 48.97,
+//     items: [
+//       {
+//         id: "1",
+//         title: "The Midnight Library",
+//         author: "Matt Haig",
+//         coverImage: "https://placehold.co/120x80?text=order",
+//         price: 16.99,
+//         quantity: 1,
+//       },
+//       {
+//         id: "2",
+//         title: "Klara and the Sun",
+//         author: "Kazuo Ishiguro",
+//         coverImage: "https://placehold.co/120x80?text=order",
+//         price: 18.99,
+//         quantity: 1,
+//       },
+//     ],
+//   },
+//   {
+//     id: "ORD-12346",
+//     date: "2023-03-28",
+//     status: "Shipped",
+//     total: 32.99,
+//     items: [
+//       {
+//         id: "3",
+//         title: "Project Hail Mary",
+//         author: "Andy Weir",
+//         coverImage: "https://placehold.co/120x80?text=order",
+//         price: 15.99,
+//         quantity: 1,
+//       },
+//       {
+//         id: "4",
+//         title: "The Four Winds",
+//         author: "Kristin Hannah",
+//         coverImage: "https://placehold.co/120x80?text=order",
+//         price: 14.99,
+//         quantity: 1,
+//       },
+//     ],
+//   },
+//   {
+//     id: "ORD-12347",
+//     date: "2023-03-10",
+//     status: "Processing",
+//     total: 75.5,
+//     items: [
+//       {
+//         id: "5",
+//         title: "The Invisible Life of Addie LaRue",
+//         author: "V.E. Schwab",
+//         coverImage: "https://placehold.co/120x80?text=order",
+//         price: 17.99,
+//         quantity: 1,
+//       },
+//       {
+//         id: "6",
+//         title: "The Vanishing Half",
+//         author: "Brit Bennett",
+//         coverImage: "https://placehold.co/120x80?text=order",
+//         price: 16.99,
+//         quantity: 2,
+//       },
+//     ],
+//   },
+//   {
+//     id: "ORD-12348",
+//     date: "2023-02-22",
+//     status: "Delivered",
+//     total: 29.99,
+//     items: [
+//       {
+//         id: "7",
+//         title: "Hamnet",
+//         author: "Maggie O'Farrell",
+//         coverImage: "https://placehold.co/120x80?text=order",
+//         price: 15.99,
+//         quantity: 1,
+//       },
+//       {
+//         id: "8",
+//         title: "The Song of Achilles",
+//         author: "Madeline Miller",
+//         coverImage: "https://placehold.co/120x80?text=order",
+//         price: 14.99,
+//         quantity: 1,
+//       },
+//     ],
+//   },
+//   {
+//     id: "ORD-12349",
+//     date: "2023-01-15",
+//     status: "Delivered",
+//     total: 42.98,
+//     items: [
+//       {
+//         id: "9",
+//         title: "Circe",
+//         author: "Madeline Miller",
+//         coverImage: "https://placehold.co/120x80?text=order",
+//         price: 14.99,
+//         quantity: 1,
+//       },
+//       {
+//         id: "10",
+//         title: "The Silent Patient",
+//         author: "Alex Michaelides",
+//         coverImage: "https://placehold.co/120x80?text=order",
+//         price: 13.99,
+//         quantity: 2,
+//       },
+//     ],
+//   },
+// ];
 
-export default function OrdersPage() {
+export default async function OrdersPage() {
+  const { userId } = await auth();
+  const response = await getUserOrders(userId as string);
+  const orders = response.data?.orders as IOrder[];
+
   return (
     <>
       <div className="flex flex-col gap-4">
@@ -159,10 +167,10 @@ export default function OrdersPage() {
           <span className="text-sm text-muted-foreground">Filter by:</span>
           <select className="text-sm border rounded-md px-2 py-1">
             <option>All Orders</option>
-            <option>Last 30 days</option>
-            <option>Last 6 months</option>
-            <option>2023</option>
-            <option>2022</option>
+            <option>newest</option>
+            <option>oldest</option>
+            <option>{"High > Low"}</option>
+            <option>{"Low > Hight"}</option>
           </select>
         </div>
       </div>
@@ -176,12 +184,17 @@ export default function OrdersPage() {
         </TabsList>
 
         <TabsContent value="all" className="space-y-6 mt-6">
-          {orders.map((order) => (
-            <div key={order.id} className="border rounded-lg overflow-hidden">
+          {orders?.map((order: IOrder) => (
+            <div
+              key={order._id as string}
+              className="border rounded-lg overflow-hidden"
+            >
               <div className="bg-muted p-4 flex flex-col sm:flex-row justify-between gap-4">
                 <div>
                   <div className="flex items-center gap-2">
-                    <h3 className="font-semibold">Order #{order.id}</h3>
+                    <h3 className="font-semibold">
+                      Order #{order?.orderId?.substring(0, 8).toUpperCase()}
+                    </h3>
                     <span
                       className={`text-xs px-2 py-1 rounded-full ${
                         order.status === "Delivered"
@@ -195,7 +208,7 @@ export default function OrdersPage() {
                     </span>
                   </div>
                   <p className="text-sm text-muted-foreground">
-                    Placed on {new Date(order.date).toLocaleDateString()}
+                    Placed on {new Date(order.createdAt).toLocaleDateString()}
                   </p>
                 </div>
                 <div className="flex items-center gap-4">
@@ -209,38 +222,52 @@ export default function OrdersPage() {
                     </div>
                   </div>
                   <Button variant="outline" size="sm" asChild>
-                    <Link href={`/orders/${order.id}`}>View Details</Link>
+                    <Link href={`/orders/${order._id}`}>View Details</Link>
                   </Button>
                 </div>
               </div>
 
               <div className="p-4 border-t">
                 <div className="grid gap-4">
-                  {order.items.map((item) => (
-                    <div key={item.id} className="flex gap-4">
-                      <div className="relative aspect-[2/3] h-[80px]">
-                        <Image
-                          src={item.coverImage || "/placeholder.svg"}
-                          alt={item.title}
-                          fill
-                          className="object-cover rounded"
-                          sizes="80px"
-                        />
-                      </div>
-                      <div className="flex flex-1 flex-col">
-                        <h4 className="font-medium">{item.title}</h4>
-                        <p className="text-sm text-muted-foreground">
-                          {item.author}
-                        </p>
-                        <div className="mt-auto flex justify-between">
-                          <span className="text-sm">Qty: {item.quantity}</span>
-                          <span className="font-medium">
-                            ${item.price.toFixed(2)}
-                          </span>
+                  {order?.items?.map((item) => {
+                    const { book, price, quantity } = item as {
+                      book: IBook;
+                      price: number;
+                      quantity: number;
+                    };
+                    return (
+                      <div
+                        key={item?.book?._id as string}
+                        className="flex gap-4"
+                      >
+                        <div className="relative aspect-[2/3] h-[80px]">
+                          <Image
+                            src={book?.coverImage || "/placeholder.svg"}
+                            alt={book?.title}
+                            fill
+                            className="object-cover rounded"
+                            sizes="80px"
+                          />
+                        </div>
+                        <div className="flex flex-1 flex-col">
+                          <h4 className="font-medium">{book?.title}</h4>
+                          <p className="text-sm text-muted-foreground">
+                            {
+                              // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                              //@ts-ignore
+                              book?.author?.name
+                            }
+                          </p>
+                          <div className="mt-auto flex justify-between">
+                            <span className="text-sm">Qty: {quantity}</span>
+                            <span className="font-medium">
+                              ${price.toFixed(2)}
+                            </span>
+                          </div>
                         </div>
                       </div>
-                    </div>
-                  ))}
+                    );
+                  })}
                 </div>
               </div>
 
@@ -273,20 +300,25 @@ export default function OrdersPage() {
 
         <TabsContent value="processing" className="space-y-6 mt-6">
           {orders
-            .filter((order) => order.status === "Processing")
+            .filter((order) => order?.status === "Processing")
             .map((order) => (
-              <div key={order.id} className="border rounded-lg overflow-hidden">
+              <div
+                key={order?._id as string}
+                className="border rounded-lg overflow-hidden"
+              >
                 {/* Same content as above, filtered for Processing orders */}
                 <div className="bg-muted p-4 flex flex-col sm:flex-row justify-between gap-4">
                   <div>
                     <div className="flex items-center gap-2">
-                      <h3 className="font-semibold">Order #{order.id}</h3>
+                      <h3 className="font-semibold">
+                        Order #{order?.orderId?.substring(0, 8).toUpperCase()}
+                      </h3>
                       <span className="text-xs px-2 py-1 rounded-full bg-orange-100 text-orange-800">
                         {order.status}
                       </span>
                     </div>
                     <p className="text-sm text-muted-foreground">
-                      Placed on {new Date(order.date).toLocaleDateString()}
+                      Placed on {new Date(order.createdAt).toLocaleDateString()}
                     </p>
                   </div>
                   <div className="flex items-center gap-4">
@@ -300,40 +332,52 @@ export default function OrdersPage() {
                       </div>
                     </div>
                     <Button variant="outline" size="sm" asChild>
-                      <Link href={`/orders/${order.id}`}>View Details</Link>
+                      <Link href={`/orders/${order._id}`}>View Details</Link>
                     </Button>
                   </div>
                 </div>
 
                 <div className="p-4 border-t">
                   <div className="grid gap-4">
-                    {order.items.map((item) => (
-                      <div key={item.id} className="flex gap-4">
-                        <div className="relative aspect-[2/3] h-[80px]">
-                          <Image
-                            src={item.coverImage || "/placeholder.svg"}
-                            alt={item.title}
-                            fill
-                            className="object-cover rounded"
-                            sizes="80px"
-                          />
-                        </div>
-                        <div className="flex flex-1 flex-col">
-                          <h4 className="font-medium">{item.title}</h4>
-                          <p className="text-sm text-muted-foreground">
-                            {item.author}
-                          </p>
-                          <div className="mt-auto flex justify-between">
-                            <span className="text-sm">
-                              Qty: {item.quantity}
-                            </span>
-                            <span className="font-medium">
-                              ${item.price.toFixed(2)}
-                            </span>
+                    {order.items.map((item) => {
+                      const { book, price, quantity } = item as {
+                        book: IBook;
+                        price: number;
+                        quantity: number;
+                      };
+                      return (
+                        <div
+                          key={item.book?._id as string}
+                          className="flex gap-4"
+                        >
+                          <div className="relative aspect-[2/3] h-[80px]">
+                            <Image
+                              src={book?.coverImage || "/placeholder.svg"}
+                              alt={book?.title}
+                              fill
+                              className="object-cover rounded"
+                              sizes="80px"
+                            />
+                          </div>
+                          <div className="flex flex-1 flex-col">
+                            <h4 className="font-medium">{book?.title}</h4>
+                            <p className="text-sm text-muted-foreground">
+                              {
+                                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                                //@ts-ignore
+                                book?.author?.name
+                              }
+                            </p>
+                            <div className="mt-auto flex justify-between">
+                              <span className="text-sm">Qty: {quantity}</span>
+                              <span className="font-medium">
+                                ${price.toFixed(2)}
+                              </span>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
 
@@ -365,18 +409,23 @@ export default function OrdersPage() {
           {orders
             .filter((order) => order.status === "Shipped")
             .map((order) => (
-              <div key={order.id} className="border rounded-lg overflow-hidden">
+              <div
+                key={order._id as string}
+                className="border rounded-lg overflow-hidden"
+              >
                 {/* Same content as above, filtered for Shipped orders */}
                 <div className="bg-muted p-4 flex flex-col sm:flex-row justify-between gap-4">
                   <div>
                     <div className="flex items-center gap-2">
-                      <h3 className="font-semibold">Order #{order.id}</h3>
+                      <h3 className="font-semibold">
+                        Order #{order?.orderId?.substring(0, 8).toUpperCase()}
+                      </h3>
                       <span className="text-xs px-2 py-1 rounded-full bg-blue-100 text-blue-800">
                         {order.status}
                       </span>
                     </div>
                     <p className="text-sm text-muted-foreground">
-                      Placed on {new Date(order.date).toLocaleDateString()}
+                      Placed on {new Date(order.createdAt).toLocaleDateString()}
                     </p>
                   </div>
                   <div className="flex items-center gap-4">
@@ -390,40 +439,52 @@ export default function OrdersPage() {
                       </div>
                     </div>
                     <Button variant="outline" size="sm" asChild>
-                      <Link href={`/orders/${order.id}`}>View Details</Link>
+                      <Link href={`/orders/${order._id}`}>View Details</Link>
                     </Button>
                   </div>
                 </div>
 
                 <div className="p-4 border-t">
                   <div className="grid gap-4">
-                    {order.items.map((item) => (
-                      <div key={item.id} className="flex gap-4">
-                        <div className="relative aspect-[2/3] h-[80px]">
-                          <Image
-                            src={item.coverImage || "/placeholder.svg"}
-                            alt={item.title}
-                            fill
-                            className="object-cover rounded"
-                            sizes="80px"
-                          />
-                        </div>
-                        <div className="flex flex-1 flex-col">
-                          <h4 className="font-medium">{item.title}</h4>
-                          <p className="text-sm text-muted-foreground">
-                            {item.author}
-                          </p>
-                          <div className="mt-auto flex justify-between">
-                            <span className="text-sm">
-                              Qty: {item.quantity}
-                            </span>
-                            <span className="font-medium">
-                              ${item.price.toFixed(2)}
-                            </span>
+                    {order.items.map((item) => {
+                      const { book, price, quantity } = item as {
+                        book: IBook;
+                        price: number;
+                        quantity: number;
+                      };
+                      return (
+                        <div
+                          key={item.book._id as string}
+                          className="flex gap-4"
+                        >
+                          <div className="relative aspect-[2/3] h-[80px]">
+                            <Image
+                              src={book?.coverImage || "/placeholder.svg"}
+                              alt={book?.title}
+                              fill
+                              className="object-cover rounded"
+                              sizes="80px"
+                            />
+                          </div>
+                          <div className="flex flex-1 flex-col">
+                            <h4 className="font-medium">{book?.title}</h4>
+                            <p className="text-sm text-muted-foreground">
+                              {
+                                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                                //@ts-ignore
+                                book?.author?.name
+                              }
+                            </p>
+                            <div className="mt-auto flex justify-between">
+                              <span className="text-sm">Qty: {quantity}</span>
+                              <span className="font-medium">
+                                ${price.toFixed(2)}
+                              </span>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
 
@@ -455,17 +516,22 @@ export default function OrdersPage() {
           {orders
             .filter((order) => order.status === "Delivered")
             .map((order) => (
-              <div key={order.id} className="border rounded-lg overflow-hidden">
+              <div
+                key={order._id as string}
+                className="border rounded-lg overflow-hidden"
+              >
                 <div className="bg-muted p-4 flex flex-col sm:flex-row justify-between gap-4">
                   <div>
                     <div className="flex items-center gap-2">
-                      <h3 className="font-semibold">Order #{order.id}</h3>
+                      <h3 className="font-semibold">
+                        Order #{order?.orderId?.substring(0, 8).toUpperCase()}
+                      </h3>
                       <span className="text-xs px-2 py-1 rounded-full bg-green-100 text-green-800">
                         {order.status}
                       </span>
                     </div>
                     <p className="text-sm text-muted-foreground">
-                      Placed on {new Date(order.date).toLocaleDateString()}
+                      Placed on {new Date(order.createdAt).toLocaleDateString()}
                     </p>
                   </div>
                   <div className="flex items-center gap-4">
@@ -486,33 +552,45 @@ export default function OrdersPage() {
 
                 <div className="p-4 border-t">
                   <div className="grid gap-4">
-                    {order.items.map((item) => (
-                      <div key={item.id} className="flex gap-4">
-                        <div className="relative aspect-[2/3] h-[80px]">
-                          <Image
-                            src={item.coverImage || "/placeholder.svg"}
-                            alt={item.title}
-                            fill
-                            className="object-cover rounded"
-                            sizes="80px"
-                          />
-                        </div>
-                        <div className="flex flex-1 flex-col">
-                          <h4 className="font-medium">{item.title}</h4>
-                          <p className="text-sm text-muted-foreground">
-                            {item.author}
-                          </p>
-                          <div className="mt-auto flex justify-between">
-                            <span className="text-sm">
-                              Qty: {item.quantity}
-                            </span>
-                            <span className="font-medium">
-                              ${item.price.toFixed(2)}
-                            </span>
+                    {order?.items?.map((item) => {
+                      const { book, price, quantity } = item as {
+                        book: IBook;
+                        price: number;
+                        quantity: number;
+                      };
+                      return (
+                        <div
+                          key={item?.book?._id as string}
+                          className="flex gap-4"
+                        >
+                          <div className="relative aspect-[2/3] h-[80px]">
+                            <Image
+                              src={book?.coverImage || "/placeholder.svg"}
+                              alt={book?.title}
+                              fill
+                              className="object-cover rounded"
+                              sizes="80px"
+                            />
+                          </div>
+                          <div className="flex flex-1 flex-col">
+                            <h4 className="font-medium">{book?.title}</h4>
+                            <p className="text-sm text-muted-foreground">
+                              {
+                                // eslint-disable-next-line @typescript-eslint/ban-ts-comment
+                                //@ts-ignore
+                                book?.author?.name
+                              }
+                            </p>
+                            <div className="mt-auto flex justify-between">
+                              <span className="text-sm">Qty: {quantity}</span>
+                              <span className="font-medium">
+                                ${price.toFixed(2)}
+                              </span>
+                            </div>
                           </div>
                         </div>
-                      </div>
-                    ))}
+                      );
+                    })}
                   </div>
                 </div>
               </div>

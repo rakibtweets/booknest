@@ -11,7 +11,21 @@ import { ActionResponse, ErrorResponse } from "@/types/global";
 import handleError from "../handlers/error";
 import dbConnect from "../mongoose";
 
-export async function getOrders(page = 1, limit = 10, query = {}) {
+export async function getOrders(
+  page = 1,
+  limit = 10,
+  query = {}
+): Promise<
+  ActionResponse<{
+    orders: IOrder[];
+    pagination: {
+      total: number;
+      pages: number;
+      page: number;
+      limit: number;
+    };
+  }>
+> {
   try {
     await dbConnect();
 
@@ -23,24 +37,33 @@ export async function getOrders(page = 1, limit = 10, query = {}) {
       .skip(skip)
       .limit(limit);
 
+    if (!orders) {
+      throw new Error("No orders found");
+    }
+
     const total = await Order.countDocuments(query);
 
     return {
-      orders,
-      pagination: {
-        total,
-        pages: Math.ceil(total / limit),
-        page,
-        limit,
+      success: true,
+      data: {
+        orders: JSON.parse(JSON.stringify(orders)),
+        pagination: {
+          total,
+          pages: Math.ceil(total / limit),
+          page,
+          limit,
+        },
       },
     };
   } catch (error) {
     console.error("Error fetching orders:", error);
-    throw new Error("Failed to fetch orders");
+    return handleError(error) as ErrorResponse;
   }
 }
 
-export async function getOrderById(id: string) {
+export async function getOrderById(
+  id: string
+): Promise<ActionResponse<{ order: IOrder }>> {
   try {
     await dbConnect();
 
@@ -50,43 +73,87 @@ export async function getOrderById(id: string) {
 
     const order = await Order.findById(id)
       .populate("user", "name email")
-      .populate("items.book");
+      .populate({
+        path: "items.book",
+        select: "title coverImage _id",
+        populate: {
+          path: "author",
+          select: "name",
+        },
+      });
 
     if (!order) {
       throw new Error("Order not found");
     }
 
-    return order;
+    return {
+      success: true,
+      data: {
+        order: JSON.parse(JSON.stringify(order)) as IOrder,
+      },
+    };
   } catch (error) {
     console.error("Error fetching order:", error);
     throw new Error("Failed to fetch order");
   }
 }
 
-export async function getUserOrders(userId: string, page = 1, limit = 10) {
+export async function getUserOrders(
+  userId: string,
+  page = 1,
+  limit = 10
+): Promise<
+  ActionResponse<{
+    orders: IOrder[];
+    pagination: {
+      total: number;
+      pages: number;
+      page: number;
+      limit: number;
+    };
+  }>
+> {
   try {
     await dbConnect();
 
-    if (!mongoose.Types.ObjectId.isValid(userId)) {
-      throw new Error("Invalid user ID");
+    const user = await User.findOne({
+      clerkId: userId,
+    });
+
+    if (!user) {
+      throw new Error("User not found");
     }
 
     const skip = (page - 1) * limit;
-    const orders = await Order.find({ user: userId })
-      .populate("items.book")
+    const orders = await Order.find({ user: user._id })
+      .populate({
+        path: "items.book",
+        select: "title coverImage _id",
+        populate: {
+          path: "author",
+          select: "name",
+        },
+      })
       .sort({ createdAt: -1 })
       .skip(skip)
       .limit(limit);
 
-    const total = await Order.countDocuments({ user: userId });
+    if (!orders) {
+      throw new Error("No orders found for this user");
+    }
+
+    const total = await Order.countDocuments({ user: user._id });
 
     return {
-      orders,
-      pagination: {
-        total,
-        pages: Math.ceil(total / limit),
-        page,
-        limit,
+      success: true,
+      data: {
+        orders: JSON.parse(JSON.stringify(orders)) as IOrder[],
+        pagination: {
+          total,
+          pages: Math.ceil(total / limit),
+          page,
+          limit,
+        },
       },
     };
   } catch (error) {

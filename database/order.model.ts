@@ -1,10 +1,11 @@
 import mongoose, { Schema, type Document, model, models } from "mongoose";
 
 import baseSchema from "./base-schema";
+import { IBook } from "./book.model";
 
 // Order Schema
 export interface IOrderItem {
-  book: mongoose.Types.ObjectId;
+  book: mongoose.Types.ObjectId | IBook;
   quantity: number;
   price: number;
 }
@@ -12,7 +13,11 @@ export interface IOrderItem {
 export interface IOrder extends Document {
   user: mongoose.Types.ObjectId;
   orderId: string;
-  items: IOrderItem[];
+  items: {
+    book: mongoose.Types.ObjectId | IBook;
+    quantity: number;
+    price: number;
+  }[];
   status: "Processing" | "Shipped" | "Delivered" | "Cancelled";
   total: number;
   subtotal: number;
