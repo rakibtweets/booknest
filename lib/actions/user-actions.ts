@@ -131,7 +131,6 @@ export const getUserStateData = async (
       .reduce((acc, order) => acc + order.total, 0);
 
     const wishlistItems = user.wishlist.length;
-    console.log(" wishlistItems:", wishlistItems);
 
     return {
       success: true,
