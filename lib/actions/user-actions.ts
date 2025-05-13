@@ -1,5 +1,6 @@
 "use server";
 
+import Order from "@/database/order.model";
 import User, { IUser } from "@/database/user.model";
 import {
   clerkUserUpdateParams,
@@ -90,5 +91,59 @@ export const deleteUser = async (params: DeleteUserParams) => {
   } catch (error) {
     console.log(error);
     throw error;
+  }
+};
+
+export const getUserStateData = async (
+  userId: string
+): Promise<
+  ActionResponse<{
+    totalOrders: number;
+    pendingOrders: number;
+    totalSpent: number;
+    wishlistItems: number;
+  }>
+> => {
+  try {
+    const user = await User.findById(userId);
+    // .populate({
+    //   path: "orders",
+    //   model: Order,
+    // })
+    // .populate({
+    //   path: "wishlist",
+    //   model: Book,
+    // });
+
+    if (!user) throw new Error("User not found");
+
+    const orders = await Order.find({ user: user._id });
+
+    if (!orders) throw new Error("Orders not found");
+
+    const totalOrders = orders.length;
+    const pendingOrders = orders.filter(
+      (order) => order.status === "Processing"
+    ).length;
+
+    const totalSpent = orders
+      .filter((order) => order.paymentStatus === "Paid")
+      .reduce((acc, order) => acc + order.total, 0);
+
+    const wishlistItems = user.wishlist.length;
+    console.log(" wishlistItems:", wishlistItems);
+
+    return {
+      success: true,
+      data: {
+        totalOrders,
+        pendingOrders,
+        totalSpent: parseFloat(totalSpent.toFixed(2)),
+        wishlistItems,
+      },
+    };
+  } catch (error) {
+    console.error("Error in getUserStateData:", error);
+    return handleError(error) as ErrorResponse;
   }
 };

@@ -94,7 +94,7 @@ export async function getOrderById(
     };
   } catch (error) {
     console.error("Error fetching order:", error);
-    throw new Error("Failed to fetch order");
+    return handleError(error) as ErrorResponse;
   }
 }
 
@@ -158,7 +158,7 @@ export async function getUserOrders(
     };
   } catch (error) {
     console.error("Error fetching user orders:", error);
-    throw new Error("Failed to fetch user orders");
+    return handleError(error) as ErrorResponse;
   }
 }
 
@@ -206,7 +206,14 @@ export async function createOrder(
     if (!newOrder) {
       throw new Error("Failed to create order");
     }
-    await User.findByIdAndUpdate(user, { $set: { cart: [] } }, { new: true });
+    await User.findByIdAndUpdate(
+      user,
+      {
+        $push: { orders: newOrder._id },
+        $set: { cart: [] },
+      },
+      { new: true }
+    );
 
     revalidatePath("/orders");
     revalidatePath("/cart");
