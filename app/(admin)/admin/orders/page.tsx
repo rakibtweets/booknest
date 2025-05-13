@@ -20,14 +20,17 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { orders } from "@/constants/admin";
+// import { orders } from "@/constants/admin";
+import { getOrders } from "@/lib/actions/order-actions";
 
 export const metadata: Metadata = {
   title: "Manage Orders - BookNext Admin",
   description: "Manage orders in the BookNext store",
 };
 
-export default function AdminOrdersPage() {
+export default async function AdminOrdersPage() {
+  const response = await getOrders({});
+  const orders = response.data?.orders || [];
   return (
     <>
       <div className="flex flex-col gap-4">
@@ -61,17 +64,6 @@ export default function AdminOrdersPage() {
               <option>Delivered</option>
               <option>Cancelled</option>
             </select>
-            <select className="text-sm border rounded-md px-2 py-1 w-full sm:w-auto">
-              <option>All Payment Methods</option>
-              <option>Credit Card</option>
-              <option>PayPal</option>
-            </select>
-            <select className="text-sm border rounded-md px-2 py-1 w-full sm:w-auto">
-              <option>Last 30 days</option>
-              <option>Last 7 days</option>
-              <option>Today</option>
-              <option>All time</option>
-            </select>
           </div>
         </div>
       </div>
@@ -91,82 +83,92 @@ export default function AdminOrdersPage() {
             </TableRow>
           </TableHeader>
           <TableBody>
-            {orders.map((order) => (
-              <TableRow key={order.id}>
-                <TableCell className="font-medium">{order.id}</TableCell>
-                <TableCell>
-                  <div>
-                    <div>{order.customer}</div>
-                    <div className="text-xs text-muted-foreground">
-                      {order.email}
+            {orders?.length > 0 ? (
+              orders?.map((order) => (
+                <TableRow key={order._id}>
+                  <TableCell className="font-medium">
+                    {order.orderId.substring(0, 8).toUpperCase()}
+                  </TableCell>
+                  <TableCell>
+                    <div>
+                      <div>{order.customer}</div>
+                      <div className="text-xs text-muted-foreground">
+                        {order.email}
+                      </div>
                     </div>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  {new Date(order.date).toLocaleDateString()}
-                </TableCell>
-                <TableCell>
-                  <span
-                    className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                      order.status === "Delivered"
-                        ? "bg-green-100 text-green-800"
-                        : order.status === "Shipped"
-                          ? "bg-blue-100 text-blue-800"
-                          : order.status === "Processing"
-                            ? "bg-orange-100 text-orange-800"
-                            : "bg-red-100 text-red-800"
-                    }`}
-                  >
-                    {order.status}
-                  </span>
-                </TableCell>
-                <TableCell>{order.items}</TableCell>
-                <TableCell>${order.total.toFixed(2)}</TableCell>
-                <TableCell>
-                  <span
-                    className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                      order.paymentStatus === "Paid"
-                        ? "bg-green-100 text-green-800"
-                        : order.paymentStatus === "Refunded"
-                          ? "bg-red-100 text-red-800"
-                          : "bg-yellow-100 text-yellow-800"
-                    }`}
-                  >
-                    {order.paymentStatus}
-                  </span>
-                </TableCell>
-                <TableCell className="text-right">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="sm">
-                        <MoreHorizontal className="h-4 w-4" />
-                        <span className="sr-only">Actions</span>
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem asChild>
-                        <Link href={`/admin/orders/${order.id}`}>
-                          View Details
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem>Update Status</DropdownMenuItem>
-                      <DropdownMenuItem asChild>
-                        <Link href={`/admin/users/${order.email}`}>
-                          View Customer
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem>Print Invoice</DropdownMenuItem>
-                      <DropdownMenuItem className="text-red-600">
-                        Cancel Order
-                      </DropdownMenuItem>
-                    </DropdownMenuContent>
-                  </DropdownMenu>
+                  </TableCell>
+                  <TableCell>
+                    {new Date(order.date).toLocaleDateString()}
+                  </TableCell>
+                  <TableCell>
+                    <span
+                      className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                        order.status === "Delivered"
+                          ? "bg-green-100 text-green-800"
+                          : order.status === "Shipped"
+                            ? "bg-blue-100 text-blue-800"
+                            : order.status === "Processing"
+                              ? "bg-orange-100 text-orange-800"
+                              : "bg-red-100 text-red-800"
+                      }`}
+                    >
+                      {order.status}
+                    </span>
+                  </TableCell>
+                  <TableCell>{order?.items}</TableCell>
+                  <TableCell>${order?.total.toFixed(2)}</TableCell>
+                  <TableCell>
+                    <span
+                      className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                        order.paymentStatus === "Paid"
+                          ? "bg-green-100 text-green-800"
+                          : order.paymentStatus === "Refunded"
+                            ? "bg-red-100 text-red-800"
+                            : "bg-yellow-100 text-yellow-800"
+                      }`}
+                    >
+                      {order?.paymentStatus}
+                    </span>
+                  </TableCell>
+                  <TableCell className="text-right">
+                    <DropdownMenu>
+                      <DropdownMenuTrigger asChild>
+                        <Button variant="ghost" size="sm">
+                          <MoreHorizontal className="h-4 w-4" />
+                          <span className="sr-only">Actions</span>
+                        </Button>
+                      </DropdownMenuTrigger>
+                      <DropdownMenuContent align="end">
+                        <DropdownMenuLabel>Actions</DropdownMenuLabel>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem asChild>
+                          <Link href={`/admin/orders/${order?._id}`}>
+                            View Details
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuItem>Update Status</DropdownMenuItem>
+                        <DropdownMenuItem asChild>
+                          <Link href={`/admin/users/${order?.userId}`}>
+                            View Customer
+                          </Link>
+                        </DropdownMenuItem>
+                        <DropdownMenuSeparator />
+                        <DropdownMenuItem>Print Invoice</DropdownMenuItem>
+                        <DropdownMenuItem className="text-red-600">
+                          Cancel Order
+                        </DropdownMenuItem>
+                      </DropdownMenuContent>
+                    </DropdownMenu>
+                  </TableCell>
+                </TableRow>
+              ))
+            ) : (
+              <TableRow>
+                <TableCell colSpan={8} className="text-center">
+                  No orders found
                 </TableCell>
               </TableRow>
-            ))}
+            )}
           </TableBody>
         </Table>
       </div>

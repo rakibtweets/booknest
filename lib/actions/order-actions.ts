@@ -11,15 +11,31 @@ import { ActionResponse, ErrorResponse } from "@/types/global";
 import handleError from "../handlers/error";
 import dbConnect from "../mongoose";
 
-export async function getOrders(
+export async function getOrders({
+  query = {},
   page = 1,
   limit = 10,
-  query = {}
-): Promise<
+}: {
+  query?: Record<string, string | number | boolean>;
+  page?: number;
+  limit?: number;
+}): Promise<
   ActionResponse<{
-    orders: IOrder[];
-    pagination: {
+    orders: {
+      _id: string;
+      orderId: string;
+      userId: string;
+      customer: string;
+      email: string;
+      date: string;
+      status: string;
       total: number;
+      items: number;
+      paymentStatus: string;
+      paymentMethod: string;
+    }[];
+    pagination: {
+      totalOrders: number;
       pages: number;
       page: number;
       limit: number;
@@ -31,7 +47,7 @@ export async function getOrders(
 
     const skip = (page - 1) * limit;
     const orders = await Order.find(query)
-      .populate("user", "name email")
+      .populate("user", "name email _id")
       .populate("items.book")
       .sort({ createdAt: -1 })
       .skip(skip)
@@ -43,12 +59,26 @@ export async function getOrders(
 
     const total = await Order.countDocuments(query);
 
+    const formattedOrders = orders.map((order) => ({
+      _id: order._id,
+      orderId: order.orderId,
+      customer: order.user.name,
+      userId: order.user._id,
+      email: order.user.email,
+      date: order.createdAt.toISOString(),
+      status: order.status,
+      total: order.total,
+      items: order.items.length,
+      paymentStatus: order.paymentStatus,
+      paymentMethod: order.paymentMethod,
+    }));
+
     return {
       success: true,
       data: {
-        orders: JSON.parse(JSON.stringify(orders)),
+        orders: JSON.parse(JSON.stringify(formattedOrders)),
         pagination: {
-          total,
+          totalOrders: total,
           pages: Math.ceil(total / limit),
           page,
           limit,
@@ -131,7 +161,7 @@ export async function getUserOrders(
         select: "title coverImage _id",
         populate: {
           path: "author",
-          select: "name",
+          select: "name email",
         },
       })
       .sort({ createdAt: -1 })
