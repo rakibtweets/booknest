@@ -1,3 +1,4 @@
+import { auth } from "@clerk/nextjs/server";
 import { BookOpen, DollarSign, Package, ShoppingCart } from "lucide-react";
 import { Metadata } from "next";
 import Image from "next/image";
@@ -6,6 +7,9 @@ import Link from "next/link";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { IOrder } from "@/database/order.model";
+import { getUserOrders } from "@/lib/actions/order-actions";
+import { getUserByClerkId } from "@/lib/actions/user-actions";
 
 export const metadata: Metadata = {
   title: "Dashboard - BookNext",
@@ -75,14 +79,18 @@ const dashboardData = {
   ],
 };
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  const { userId } = await auth();
+  const userData = await getUserByClerkId(userId as string);
+  const user = userData.data?.user || null;
+  const response = await getUserOrders(userId as string);
+  const orders = response.data?.orders as IOrder[];
   return (
     <>
       <div className="flex flex-col gap-4">
         <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
         <p className="text-muted-foreground">
-          Welcome back, {"Rakib Hasan"}! Here&apos;s an overview of your
-          account.
+          Welcome back, {user?.name}! Here&apos;s an overview of your account.
         </p>
       </div>
 
@@ -156,16 +164,19 @@ export default function DashboardPage() {
               </p>
             </div>
             <div className="border-t">
-              {dashboardData.recentOrders.map((order) => (
+              {orders?.map((order) => (
                 <div
-                  key={order.id}
+                  key={order._id as string}
                   className="flex items-center justify-between p-4 border-b last:border-b-0"
                 >
                   <div>
-                    <div className="font-medium">{order.id}</div>
+                    <div className="font-medium">
+                      {order?.orderId?.substring(0, 8).toUpperCase()}
+                    </div>
                     <div className="text-sm text-muted-foreground">
-                      {new Date(order.date).toLocaleDateString()} •{" "}
-                      {order.items} {order.items === 1 ? "item" : "items"}
+                      {new Date(order?.createdAt).toLocaleDateString()} •{" "}
+                      {order?.items?.length}{" "}
+                      {order?.items?.length === 1 ? "item" : "items"}
                     </div>
                   </div>
                   <div className="flex items-center gap-4">
@@ -186,7 +197,7 @@ export default function DashboardPage() {
                       </div>
                     </div>
                     <Button variant="ghost" size="sm" asChild>
-                      <Link href={`/orders/${order.id}`}>View</Link>
+                      <Link href={`/orders/${order._id}`}>View</Link>
                     </Button>
                   </div>
                 </div>
