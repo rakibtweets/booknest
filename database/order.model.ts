@@ -103,6 +103,7 @@ const OrderSchema = new Schema<IOrder>({
         enum: [
           "Order Placed",
           "Payment Confirmed",
+          "Processing",
           "Shipped",
           "Delivered",
           "Cancelled",
