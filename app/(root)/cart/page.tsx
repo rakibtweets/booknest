@@ -25,7 +25,6 @@ export default async function CartPage() {
   const userData = await getUserByClerkId(userId as string);
   const user = userData.data?.user || null;
   const catResult = await getUserCart(user?._id as string);
-  console.log(" CartPage catResult:", catResult);
   const cartItems = catResult.data?.cart || [];
   const subtotal = catResult.data?.subtotal || 0;
   const shipping = catResult.data?.shipping || 0;

@@ -73,6 +73,7 @@ export async function addToWishlist(
     );
 
     revalidatePath("/wishlist");
+    revalidatePath("/dashboard");
     return { success: true };
   } catch (error) {
     console.error("Error adding to wishlist:", error);
@@ -105,6 +106,7 @@ export async function removeFromWishlist(
     }
 
     revalidatePath("/wishlist");
+    revalidatePath("/dashboard");
     return { success: true };
   } catch (error) {
     console.error("Error removing from wishlist:", error);
@@ -152,6 +154,7 @@ export async function clearWishlist(userId: string): Promise<ActionResponse> {
     }
 
     revalidatePath("/wishlist");
+    revalidatePath("/dashboard");
     return { success: true };
   } catch (error) {
     console.error("Error clearing wishlist:", error);

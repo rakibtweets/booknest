@@ -7,20 +7,21 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { dashboardData } from "@/constants/admin";
+import { getAdminDashboardStats } from "@/lib/actions/user-actions";
 
 export const metadata: Metadata = {
   title: "Admin Dashboard - BookNext",
   description: "Admin dashboard for BookNext",
 };
 
-export default function AdminDashboardPage() {
+export default async function AdminDashboardPage() {
+  const response = await getAdminDashboardStats();
+  const dashboardStats = response?.data;
   return (
     <>
       <div className="flex flex-col gap-4">
@@ -39,7 +40,7 @@ export default function AdminDashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              ${dashboardData.stats.totalSales.toFixed(2)}
+              ${dashboardStats?.stats?.totalSales.toFixed(2)}
             </div>
             <div className="flex items-center text-xs text-muted-foreground">
               <TrendingUp className="mr-1 h-3 w-3 text-green-500" />
@@ -55,11 +56,11 @@ export default function AdminDashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {dashboardData.stats.totalOrders}
+              {dashboardStats?.stats?.totalOrders}
             </div>
             <div className="flex items-center text-xs text-muted-foreground">
               <span className="text-orange-500">
-                {dashboardData.stats.pendingOrders} pending
+                {dashboardStats?.stats?.pendingOrders} pending
               </span>
             </div>
           </CardContent>
@@ -71,7 +72,7 @@ export default function AdminDashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {dashboardData.stats.totalUsers}
+              {dashboardStats?.stats?.totalUsers}
             </div>
             <div className="flex items-center text-xs text-muted-foreground">
               <TrendingUp className="mr-1 h-3 w-3 text-green-500" />
@@ -87,12 +88,12 @@ export default function AdminDashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              {dashboardData.stats.totalBooks}
+              {dashboardStats?.stats?.totalBooks}
             </div>
             <div className="flex items-center text-xs text-muted-foreground">
               <AlertTriangle className="mr-1 h-3 w-3 text-orange-500" />
               <span className="text-orange-500">
-                {dashboardData.stats.lowStock} low stock
+                {dashboardStats?.stats?.lowStock} low stock
               </span>
             </div>
           </CardContent>
@@ -102,7 +103,7 @@ export default function AdminDashboardPage() {
       <Tabs defaultValue="orders" className="mt-6">
         <TabsList>
           <TabsTrigger value="orders">Recent Orders</TabsTrigger>
-          <TabsTrigger value="books">Top Selling Books</TabsTrigger>
+
           <TabsTrigger value="users">Recent Users</TabsTrigger>
         </TabsList>
         <TabsContent value="orders" className="space-y-4">
@@ -122,14 +123,16 @@ export default function AdminDashboardPage() {
                 <div>Total</div>
                 <div className="text-right">Actions</div>
               </div>
-              {dashboardData.recentOrders.map((order) => (
+              {dashboardStats?.recentOrders?.map((order) => (
                 <div
-                  key={order.id}
+                  key={order?._id}
                   className="grid grid-cols-6 px-4 py-3 border-t text-sm"
                 >
-                  <div className="font-medium">{order.id}</div>
-                  <div>{order.customer}</div>
-                  <div>{new Date(order.date).toLocaleDateString()}</div>
+                  <div className="font-medium">
+                    {order?.orderId?.substring(0, 8).toUpperCase()}
+                  </div>
+                  <div>{order?.customer}</div>
+                  <div>{new Date(order?.date).toLocaleDateString()}</div>
                   <div>
                     <span
                       className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
@@ -146,7 +149,7 @@ export default function AdminDashboardPage() {
                   <div>${order.total.toFixed(2)}</div>
                   <div className="text-right">
                     <Button variant="ghost" size="sm" asChild>
-                      <Link href={`/admin/orders/${order.id}`}>View</Link>
+                      <Link href={`/admin/orders/${order?._id}`}>View</Link>
                     </Button>
                   </div>
                 </div>
@@ -159,50 +162,7 @@ export default function AdminDashboardPage() {
             </div>
           </div>
         </TabsContent>
-        <TabsContent value="books">
-          <div className="rounded-md border">
-            <div className="p-4">
-              <h2 className="text-xl font-semibold">Top Selling Books</h2>
-              <p className="text-sm text-muted-foreground">
-                Books with the highest sales
-              </p>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 p-4">
-              {dashboardData.topSellingBooks.map((book) => (
-                <div key={book.id} className="flex gap-4 p-3 border rounded-lg">
-                  <div className="relative aspect-[2/3] h-[100px]">
-                    <Image
-                      src={book.coverImage || "/placeholder.svg"}
-                      alt={book.title}
-                      fill
-                      className="object-cover rounded"
-                      sizes="100px"
-                    />
-                  </div>
-                  <div className="flex flex-col justify-between flex-1">
-                    <div>
-                      <h4 className="font-medium line-clamp-1">{book.title}</h4>
-                      <p className="text-sm text-muted-foreground">
-                        {book.author}
-                      </p>
-                      <p className="text-sm mt-1">${book.price.toFixed(2)}</p>
-                    </div>
-                    <div className="flex items-center text-sm">
-                      <span className="font-medium text-green-600">
-                        {book.sales} sold
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div className="p-4 text-center">
-              <Button variant="outline" asChild>
-                <Link href="/admin/books">Manage Books</Link>
-              </Button>
-            </div>
-          </div>
-        </TabsContent>
+
         <TabsContent value="users">
           <div className="rounded-md border">
             <div className="p-4">
@@ -218,15 +178,15 @@ export default function AdminDashboardPage() {
                 <div>Join Date</div>
                 <div>Orders</div>
               </div>
-              {dashboardData.recentUsers.map((user) => (
+              {dashboardStats?.recentUsers?.map((user) => (
                 <div
-                  key={user.id}
+                  key={user._id as string}
                   className="grid grid-cols-4 px-4 py-3 border-t text-sm"
                 >
-                  <div className="font-medium">{user.name}</div>
-                  <div>{user.email}</div>
-                  <div>{new Date(user.joinDate).toLocaleDateString()}</div>
-                  <div>{user.orders}</div>
+                  <div className="font-medium">{user?.name}</div>
+                  <div>{user?.email}</div>
+                  <div>{new Date(user?.joinDate).toLocaleDateString()}</div>
+                  <div>{user?.orders}</div>
                 </div>
               ))}
             </div>

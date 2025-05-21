@@ -147,9 +147,19 @@ async function handlePaymentIntentSucceeded(
 
   const timeline = [
     {
+      status: "Order Placed",
+      date: new Date(),
+      description: `Your order has been placed successfully.`,
+    },
+    {
       status: "Payment Confirmed",
       date: new Date(),
       description: `Payment of ${total} received.`,
+    },
+    {
+      status: "Processing",
+      date: new Date(),
+      description: `Order is being processed and prepared for shipping.`,
     },
   ];
 

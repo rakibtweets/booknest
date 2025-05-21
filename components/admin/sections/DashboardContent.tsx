@@ -1,11 +1,14 @@
+import { auth } from "@clerk/nextjs/server";
 import { BookOpen, DollarSign, Package, ShoppingCart } from "lucide-react";
 import { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { IOrder } from "@/database/order.model";
+import { getUserOrders } from "@/lib/actions/order-actions";
+import { getUserByClerkId, getUserStateData } from "@/lib/actions/user-actions";
 
 export const metadata: Metadata = {
   title: "Dashboard - BookNext",
@@ -13,76 +16,82 @@ export const metadata: Metadata = {
 };
 
 // Mock data for dashboard
-const dashboardData = {
-  stats: {
-    totalOrders: 12,
-    pendingOrders: 2,
-    totalSpent: 248.95,
-    wishlistItems: 8,
-  },
-  recentOrders: [
-    {
-      id: "ORD-12345",
-      date: "2023-04-15",
-      status: "Delivered",
-      total: 48.97,
-      items: 2,
-    },
-    {
-      id: "ORD-12346",
-      date: "2023-03-28",
-      status: "Shipped",
-      total: 32.99,
-      items: 1,
-    },
-    {
-      id: "ORD-12347",
-      date: "2023-03-10",
-      status: "Processing",
-      total: 75.5,
-      items: 3,
-    },
-  ],
-  recentlyViewed: [
-    {
-      id: "1",
-      title: "The Midnight Library",
-      author: "Matt Haig",
-      coverImage: "/placeholder.svg?height=400&width=300",
-      price: 16.99,
-    },
-    {
-      id: "2",
-      title: "Klara and the Sun",
-      author: "Kazuo Ishiguro",
-      coverImage: "/placeholder.svg?height=400&width=300",
-      price: 18.99,
-    },
-    {
-      id: "3",
-      title: "Project Hail Mary",
-      author: "Andy Weir",
-      coverImage: "/placeholder.svg?height=400&width=300",
-      price: 15.99,
-    },
-    {
-      id: "4",
-      title: "The Four Winds",
-      author: "Kristin Hannah",
-      coverImage: "/placeholder.svg?height=400&width=300",
-      price: 14.99,
-    },
-  ],
-};
+// const dashboardData = {
+//   stats: {
+//     totalOrders: 12,
+//     pendingOrders: 2,
+//     totalSpent: 248.95,
+//     wishlistItems: 8,
+//   },
+//   recentOrders: [
+//     {
+//       id: "ORD-12345",
+//       date: "2023-04-15",
+//       status: "Delivered",
+//       total: 48.97,
+//       items: 2,
+//     },
+//     {
+//       id: "ORD-12346",
+//       date: "2023-03-28",
+//       status: "Shipped",
+//       total: 32.99,
+//       items: 1,
+//     },
+//     {
+//       id: "ORD-12347",
+//       date: "2023-03-10",
+//       status: "Processing",
+//       total: 75.5,
+//       items: 3,
+//     },
+//   ],
+//   recentlyViewed: [
+//     {
+//       id: "1",
+//       title: "The Midnight Library",
+//       author: "Matt Haig",
+//       coverImage: "/placeholder.svg?height=400&width=300",
+//       price: 16.99,
+//     },
+//     {
+//       id: "2",
+//       title: "Klara and the Sun",
+//       author: "Kazuo Ishiguro",
+//       coverImage: "/placeholder.svg?height=400&width=300",
+//       price: 18.99,
+//     },
+//     {
+//       id: "3",
+//       title: "Project Hail Mary",
+//       author: "Andy Weir",
+//       coverImage: "/placeholder.svg?height=400&width=300",
+//       price: 15.99,
+//     },
+//     {
+//       id: "4",
+//       title: "The Four Winds",
+//       author: "Kristin Hannah",
+//       coverImage: "/placeholder.svg?height=400&width=300",
+//       price: 14.99,
+//     },
+//   ],
+// };
 
-export default function DashboardPage() {
+export default async function DashboardPage() {
+  const { userId } = await auth();
+  const userData = await getUserByClerkId(userId as string);
+  const user = userData.data?.user || null;
+  const response = await getUserOrders(userId as string);
+  const orders = response.data?.orders as IOrder[];
+  const statsData = await getUserStateData(user?._id as string);
+  const { data: stats } = statsData || {};
   return (
     <>
       <div className="flex flex-col gap-4">
         <h1 className="text-3xl font-bold tracking-tight">Dashboard</h1>
         <p className="text-muted-foreground">
-          Welcome back, {"Rakib Hasan"}! Here&apos;s an overview of your
-          account.
+          Welcome back, {user?.name}! Here&apos;s an overview of your account.
         </p>
       </div>
 
@@ -94,11 +103,9 @@ export default function DashboardPage() {
             <ShoppingCart className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {dashboardData.stats.totalOrders}
-            </div>
+            <div className="text-2xl font-bold">{stats?.totalOrders}</div>
             <p className="text-xs text-muted-foreground">
-              {dashboardData.stats.pendingOrders} pending
+              {stats?.pendingOrders} pending
             </p>
           </CardContent>
         </Card>
@@ -109,7 +116,7 @@ export default function DashboardPage() {
           </CardHeader>
           <CardContent>
             <div className="text-2xl font-bold">
-              ${dashboardData.stats.totalSpent.toFixed(2)}
+              ${stats?.totalSpent.toFixed(2)}
             </div>
             <p className="text-xs text-muted-foreground">Lifetime purchases</p>
           </CardContent>
@@ -120,9 +127,7 @@ export default function DashboardPage() {
             <BookOpen className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {dashboardData.stats.wishlistItems}
-            </div>
+            <div className="text-2xl font-bold">{stats?.wishlistItems}</div>
             <p className="text-xs text-muted-foreground">Saved for later</p>
           </CardContent>
         </Card>
@@ -134,9 +139,7 @@ export default function DashboardPage() {
             <Package className="h-4 w-4 text-muted-foreground" />
           </CardHeader>
           <CardContent>
-            <div className="text-2xl font-bold">
-              {dashboardData.stats.pendingOrders}
-            </div>
+            <div className="text-2xl font-bold">{stats?.pendingOrders}</div>
             <p className="text-xs text-muted-foreground">In transit</p>
           </CardContent>
         </Card>
@@ -145,7 +148,7 @@ export default function DashboardPage() {
       <Tabs defaultValue="orders" className="mt-6">
         <TabsList>
           <TabsTrigger value="orders">Recent Orders</TabsTrigger>
-          <TabsTrigger value="viewed">Recently Viewed</TabsTrigger>
+          {/* <TabsTrigger value="viewed">Recently Viewed</TabsTrigger> */}
         </TabsList>
         <TabsContent value="orders" className="space-y-4">
           <div className="rounded-md border">
@@ -156,16 +159,19 @@ export default function DashboardPage() {
               </p>
             </div>
             <div className="border-t">
-              {dashboardData.recentOrders.map((order) => (
+              {orders?.map((order) => (
                 <div
-                  key={order.id}
+                  key={order._id as string}
                   className="flex items-center justify-between p-4 border-b last:border-b-0"
                 >
                   <div>
-                    <div className="font-medium">{order.id}</div>
+                    <div className="font-medium">
+                      {order?.orderId?.substring(0, 8).toUpperCase()}
+                    </div>
                     <div className="text-sm text-muted-foreground">
-                      {new Date(order.date).toLocaleDateString()} •{" "}
-                      {order.items} {order.items === 1 ? "item" : "items"}
+                      {new Date(order?.createdAt).toLocaleDateString()} •{" "}
+                      {order?.items?.length}{" "}
+                      {order?.items?.length === 1 ? "item" : "items"}
                     </div>
                   </div>
                   <div className="flex items-center gap-4">
@@ -186,7 +192,7 @@ export default function DashboardPage() {
                       </div>
                     </div>
                     <Button variant="ghost" size="sm" asChild>
-                      <Link href={`/orders/${order.id}`}>View</Link>
+                      <Link href={`/orders/${order._id}`}>View</Link>
                     </Button>
                   </div>
                 </div>
@@ -199,7 +205,7 @@ export default function DashboardPage() {
             </div>
           </div>
         </TabsContent>
-        <TabsContent value="viewed">
+        {/* <TabsContent value="viewed">
           <div className="rounded-md border">
             <div className="p-4">
               <h2 className="text-xl font-semibold">Recently Viewed</h2>
@@ -236,7 +242,7 @@ export default function DashboardPage() {
               ))}
             </div>
           </div>
-        </TabsContent>
+        </TabsContent> */}
       </Tabs>
     </>
   );

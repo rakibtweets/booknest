@@ -1,4 +1,5 @@
 import mongoose, { Schema, type Document, model, models } from "mongoose";
+
 import baseSchema from "./base-schema";
 
 // User Schema
@@ -8,14 +9,14 @@ export interface IUser extends Document {
   email: string;
   roles: string[];
   picture: string;
-  orders?: mongoose.Types.ObjectId[]; // Reference to orders
-  wishlist?: mongoose.Types.ObjectId[]; // Reference to books in wishlist
+  orders?: mongoose.Types.ObjectId[];
+  wishlist?: mongoose.Types.ObjectId[];
   cart?: {
     book: mongoose.Types.ObjectId;
     quantity: number;
     addedAt: Date;
   }[];
-  reviews?: mongoose.Types.ObjectId[]; // Reference to reviews
+  reviews?: mongoose.Types.ObjectId[];
   status: "active" | "inactive" | "suspended";
   createdAt: Date;
   updatedAt: Date;
