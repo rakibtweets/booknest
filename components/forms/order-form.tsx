@@ -88,11 +88,7 @@ export function OrderForm({ userId, books, initialData }: OrderFormProps) {
 
       if (initialData?._id) {
         // Update existing order status
-        const result = await updateOrderStatus(
-          initialData._id,
-          data.status,
-          `Order status updated to ${data.status}`
-        );
+        const result = await updateOrderStatus(initialData._id, data.status);
 
         if (result.success) {
           // Also update payment status if changed
@@ -103,7 +99,7 @@ export function OrderForm({ userId, books, initialData }: OrderFormProps) {
           toast.success("The order has been updated successfully.");
           router.push("/admin/orders");
         } else {
-          toast.error(result.error || "Failed to update order");
+          toast.error(result?.error?.message || "Failed to update order");
         }
       } else {
         // const result = await createOrder({ user: userId as string, ...data });

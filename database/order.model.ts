@@ -42,7 +42,12 @@ export interface IOrder extends Document {
     country: string;
   };
   timeline: {
-    status: "Order Placed" | "Payment Confirmed" | "Shipped" | "Delivered";
+    status:
+      | "Order Placed"
+      | "Payment Confirmed"
+      | "Shipped"
+      | "Delivered"
+      | "Cancelled";
     date: Date;
     description?: string;
   }[];
@@ -95,7 +100,13 @@ const OrderSchema = new Schema<IOrder>({
     {
       status: {
         type: String,
-        enum: ["Order Placed", "Payment Confirmed", "Shipped", "Delivered"],
+        enum: [
+          "Order Placed",
+          "Payment Confirmed",
+          "Shipped",
+          "Delivered",
+          "Cancelled",
+        ],
         required: true,
       },
       date: { type: Date, default: Date.now },

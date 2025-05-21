@@ -7,13 +7,11 @@ import {
   AlertTriangle,
 } from "lucide-react";
 import type { Metadata } from "next";
-import Image from "next/image";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
-import { dashboardData } from "@/constants/admin";
 import { getAdminDashboardStats } from "@/lib/actions/user-actions";
 
 export const metadata: Metadata = {
@@ -24,7 +22,6 @@ export const metadata: Metadata = {
 export default async function AdminDashboardPage() {
   const response = await getAdminDashboardStats();
   const dashboardStats = response?.data;
-  console.log(" AdminDashboardPage dashboardStats:", dashboardStats);
   return (
     <>
       <div className="flex flex-col gap-4">
@@ -106,7 +103,7 @@ export default async function AdminDashboardPage() {
       <Tabs defaultValue="orders" className="mt-6">
         <TabsList>
           <TabsTrigger value="orders">Recent Orders</TabsTrigger>
-          <TabsTrigger value="books">Top Selling Books</TabsTrigger>
+
           <TabsTrigger value="users">Recent Users</TabsTrigger>
         </TabsList>
         <TabsContent value="orders" className="space-y-4">
@@ -165,50 +162,7 @@ export default async function AdminDashboardPage() {
             </div>
           </div>
         </TabsContent>
-        <TabsContent value="books">
-          <div className="rounded-md border">
-            <div className="p-4">
-              <h2 className="text-xl font-semibold">Top Selling Books</h2>
-              <p className="text-sm text-muted-foreground">
-                Books with the highest sales
-              </p>
-            </div>
-            <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-4 gap-4 p-4">
-              {dashboardData.topSellingBooks.map((book) => (
-                <div key={book.id} className="flex gap-4 p-3 border rounded-lg">
-                  <div className="relative aspect-[2/3] h-[100px]">
-                    <Image
-                      src={book.coverImage || "/placeholder.svg"}
-                      alt={book.title}
-                      fill
-                      className="object-cover rounded"
-                      sizes="100px"
-                    />
-                  </div>
-                  <div className="flex flex-col justify-between flex-1">
-                    <div>
-                      <h4 className="font-medium line-clamp-1">{book.title}</h4>
-                      <p className="text-sm text-muted-foreground">
-                        {book.author}
-                      </p>
-                      <p className="text-sm mt-1">${book.price.toFixed(2)}</p>
-                    </div>
-                    <div className="flex items-center text-sm">
-                      <span className="font-medium text-green-600">
-                        {book.sales} sold
-                      </span>
-                    </div>
-                  </div>
-                </div>
-              ))}
-            </div>
-            <div className="p-4 text-center">
-              <Button variant="outline" asChild>
-                <Link href="/admin/books">Manage Books</Link>
-              </Button>
-            </div>
-          </div>
-        </TabsContent>
+
         <TabsContent value="users">
           <div className="rounded-md border">
             <div className="p-4">

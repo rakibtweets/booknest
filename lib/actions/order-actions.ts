@@ -214,6 +214,8 @@ export async function createOrder(
       paymentStatus,
     } = data;
 
+    console.log("timeline", timeline);
+
     // Create new order
     const newOrder = new Order({
       user: user,
@@ -258,9 +260,12 @@ export async function createOrder(
 
 export async function updateOrderStatus(
   id: string,
-  status: "Processing" | "Shipped" | "Delivered" | "Cancelled",
-  description: string
-) {
+  status: "Processing" | "Shipped" | "Delivered" | "Cancelled"
+): Promise<
+  ActionResponse<{
+    order: IOrder;
+  }>
+> {
   try {
     await dbConnect();
 
@@ -278,7 +283,6 @@ export async function updateOrderStatus(
     const timelineEntry = {
       status,
       date: new Date(),
-      description,
     };
 
     // Update order
@@ -306,13 +310,15 @@ export async function updateOrderStatus(
     revalidatePath(`/orders/${id}`);
     revalidatePath("/orders");
 
-    return { success: true, order: updatedOrder };
+    return {
+      success: true,
+      data: {
+        order: JSON.parse(JSON.stringify(updatedOrder)) as IOrder,
+      },
+    };
   } catch (error) {
     console.error("Error updating order status:", error);
-    if (error instanceof Error) {
-      return { success: false, error: error.message };
-    }
-    return { success: false, error: "Failed to update order status" };
+    return handleError(error) as ErrorResponse;
   }
 }
 

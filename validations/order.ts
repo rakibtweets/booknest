@@ -38,4 +38,10 @@ export const orderSchema = z.object({
     .optional(),
 });
 
+export const orderStatusSchema = z.object({
+  status: z.enum(["Processing", "Shipped", "Delivered", "Cancelled"]),
+});
+
+export type OrderStatusFormValues = z.infer<typeof orderStatusSchema>;
+
 export type OrderFormValues = z.infer<typeof orderSchema>;

@@ -15,14 +15,8 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import OrderStatusForm from "@/components/forms/order-status-form";
 import { Button } from "@/components/ui/button";
-import {
-  Select,
-  SelectContent,
-  SelectItem,
-  SelectTrigger,
-  SelectValue,
-} from "@/components/ui/select";
 import { Separator } from "@/components/ui/separator";
 import { IBook } from "@/database/book.model";
 import { getOrderById } from "@/lib/actions/order-actions";
@@ -129,6 +123,7 @@ export default async function AdminOrderDetailsPage({
   const { id } = await params;
   const response = await getOrderById(id);
   const order = response.data?.order;
+  const orderTimelineStatus = order?.timeline.map((event) => event.status);
   if (!order) {
     notFound();
   }
@@ -154,21 +149,11 @@ export default async function AdminOrderDetailsPage({
             </p>
           </div>
           <div className="flex flex-col sm:flex-row items-center gap-2">
-            <div className="flex items-center gap-2 w-full">
-              <span className="text-sm font-medium">Status:</span>
-              <Select defaultValue={order?.status}>
-                <SelectTrigger className="w-[180px] h-8">
-                  <SelectValue placeholder="Select status" />
-                </SelectTrigger>
-                <SelectContent>
-                  <SelectItem value="Processing">Processing</SelectItem>
-                  <SelectItem value="Shipped">Shipped</SelectItem>
-                  <SelectItem value="Delivered">Delivered</SelectItem>
-                  <SelectItem value="Cancelled">Cancelled</SelectItem>
-                </SelectContent>
-              </Select>
-              <Button size="sm">Update</Button>
-            </div>
+            <OrderStatusForm
+              orderId={order?._id as string}
+              status={order?.status}
+              orderTimelineStatus={orderTimelineStatus ?? []}
+            />
             <Button variant="outline" size="sm">
               <Printer className="mr-2 h-4 w-4" />
               Print Invoice
@@ -265,7 +250,9 @@ export default async function AdminOrderDetailsPage({
                     <time className="block text-xs text-muted-foreground mb-1">
                       {new Date(event.date).toLocaleDateString()}
                     </time>
-                    <p className="text-sm">{event.description}</p>
+                    {event?.description ? (
+                      <p className="text-sm">{event.description}</p>
+                    ) : null}
                   </li>
                 ))}
               </ol>
@@ -342,7 +329,7 @@ export default async function AdminOrderDetailsPage({
                 <div>
                   <p className="font-medium">Payment Method</p>
                   <p className="text-sm text-muted-foreground">
-                    {order.paymentMethod}
+                    {order?.paymentMethod}
                   </p>
                 </div>
               </div>
@@ -352,12 +339,12 @@ export default async function AdminOrderDetailsPage({
                   <p className="font-medium">Payment Status</p>
                   <span
                     className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                      order.paymentStatus === "Paid"
+                      order?.paymentStatus === "Paid"
                         ? "bg-green-100 text-green-800"
                         : "bg-red-100 text-red-800"
                     }`}
                   >
-                    {order.paymentStatus}
+                    {order?.paymentStatus}
                   </span>
                 </div>
               </div>
@@ -373,11 +360,11 @@ export default async function AdminOrderDetailsPage({
               <div className="space-y-2">
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Subtotal</span>
-                  <span>${order.subtotal.toFixed(2)}</span>
+                  <span>${order?.subtotal.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Shipping</span>
-                  <span>${order.shipping.toFixed(2)}</span>
+                  <span>${order?.shipping.toFixed(2)}</span>
                 </div>
                 <div className="flex justify-between">
                   <span className="text-muted-foreground">Tax</span>
