@@ -1,8 +1,11 @@
+/* eslint-disable @typescript-eslint/no-unused-vars */
 import { PlusCircle, Search, Edit } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 
 import DeleteAuthorButton from "@/components/buttons/DeleteAuthorButton";
+import { authorsColumns } from "@/components/tables/author-table/author-column";
+import AuthorsTable from "@/components/tables/author-table/author-table";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
@@ -110,133 +113,9 @@ export default async function AdminAuthorsPage() {
             </Link>
           </Button>
         </div>
-
-        <div className="flex flex-col sm:flex-row justify-between items-start sm:items-center gap-4 mt-2">
-          <div className="relative w-full sm:w-64">
-            <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-            <Input
-              type="search"
-              placeholder="Search authors..."
-              className="pl-8"
-            />
-          </div>
-          <div className="flex items-center gap-2 w-full sm:w-auto">
-            <select className="text-sm border rounded-md px-2 py-1 w-full sm:w-auto">
-              <option>All Genres</option>
-              <option>Horror</option>
-              <option>Fantasy</option>
-              <option>Thriller</option>
-              <option>Romance</option>
-              <option>Literary Fiction</option>
-            </select>
-            <select className="text-sm border rounded-md px-2 py-1 w-full sm:w-auto">
-              <option>All Authors</option>
-              <option>Featured Only</option>
-              <option>Non-Featured</option>
-            </select>
-          </div>
-        </div>
       </div>
 
-      <div className="rounded-md border mt-6">
-        <Table>
-          <TableHeader>
-            <TableRow>
-              <TableHead>Author</TableHead>
-              <TableHead>Genres</TableHead>
-              <TableHead>Books</TableHead>
-              <TableHead>Featured</TableHead>
-              <TableHead className="text-right">Actions</TableHead>
-            </TableRow>
-          </TableHeader>
-          <TableBody>
-            {authors.map((author) => (
-              <TableRow key={author.id}>
-                <TableCell>
-                  <div className="flex items-center gap-3">
-                    <Avatar className="h-10 w-10">
-                      <AvatarImage src={author.image} alt={author.name} />
-                      <AvatarFallback>
-                        {author.name
-                          .split(" ")
-                          .map((n) => n[0])
-                          .join("")}
-                      </AvatarFallback>
-                    </Avatar>
-                    <div>
-                      <div className="font-medium">{author.name}</div>
-                      <div className="text-xs text-muted-foreground line-clamp-1 max-w-[300px]">
-                        {author.bio}
-                      </div>
-                    </div>
-                  </div>
-                </TableCell>
-                <TableCell>
-                  <div className="flex flex-wrap gap-1">
-                    {author.genres.map((genre) => (
-                      <Badge key={genre} variant="outline" className="text-xs">
-                        {genre}
-                      </Badge>
-                    ))}
-                  </div>
-                </TableCell>
-                <TableCell>{author.booksCount}</TableCell>
-                <TableCell>
-                  {author.featured ? (
-                    <span className="inline-flex items-center rounded-full bg-green-100 px-2.5 py-0.5 text-xs font-medium text-green-800">
-                      Featured
-                    </span>
-                  ) : (
-                    <span className="inline-flex items-center rounded-full bg-gray-100 px-2.5 py-0.5 text-xs font-medium text-gray-800">
-                      Standard
-                    </span>
-                  )}
-                </TableCell>
-                <TableCell className="text-right">
-                  <DropdownMenu>
-                    <DropdownMenuTrigger asChild>
-                      <Button variant="ghost" size="sm">
-                        Actions
-                      </Button>
-                    </DropdownMenuTrigger>
-                    <DropdownMenuContent align="end">
-                      <DropdownMenuLabel>Actions</DropdownMenuLabel>
-                      <DropdownMenuSeparator />
-                      <DropdownMenuItem asChild>
-                        <Link href={`/authors/${author._id}`}>
-                          View Profile
-                        </Link>
-                      </DropdownMenuItem>
-                      <DropdownMenuItem asChild>
-                        <Link href={`/admin/authors/${author._id}/edit`}>
-                          <Edit className="mr-2 h-4 w-4" />
-                          Edit
-                        </Link>
-                      </DropdownMenuItem>
-                      <DeleteAuthorButton authorId={author._id} />
-                    </DropdownMenuContent>
-                  </DropdownMenu>
-                </TableCell>
-              </TableRow>
-            ))}
-          </TableBody>
-        </Table>
-      </div>
-
-      <div className="flex items-center justify-between mt-4">
-        <div className="text-sm text-muted-foreground">
-          Showing <strong>1</strong> to <strong>6</strong> of <strong>6</strong>{" "}
-          authors
-        </div>
-        <div className="flex items-center gap-2">
-          <Button variant="outline" size="sm" disabled>
-            Previous
-          </Button>
-          <Button variant="outline" size="sm" disabled>
-            Next
-          </Button>
-        </div>
-      </div>
+      <AuthorsTable data={authors} columns={authorsColumns} />
     </>
   );
 }

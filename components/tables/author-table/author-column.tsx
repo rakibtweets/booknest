@@ -1,8 +1,11 @@
 "use client";
 
 import { ColumnDef } from "@tanstack/react-table";
-import { ArrowUpDown, Edit, Link } from "lucide-react";
+import { Edit, MoreHorizontal } from "lucide-react";
+import Link from "next/link";
 
+import DeleteAuthorButton from "@/components/buttons/DeleteAuthorButton";
+import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -14,7 +17,7 @@ import {
   DropdownMenuTrigger,
 } from "@/components/ui/dropdown-menu";
 
-import DeleteAuthorButton from "../buttons/DeleteAuthorButton";
+import { DataTableColumnHeader } from "../data-table-column-header";
 
 interface IAuthorTable {
   _id: string;
@@ -42,31 +45,35 @@ export const authorsColumns: ColumnDef<IAuthorTable>[] = [
   },
   {
     accessorKey: "name",
-    header: ({ column }) => {
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Author" />
+    ),
+    cell: ({ row }) => {
+      const author = row.original;
       return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Author
-          <ArrowUpDown className="ml-2 size-4" />
-        </Button>
+        <div className="flex items-center gap-3">
+          <Avatar className="h-10 w-10">
+            <AvatarImage src={author.image} alt={author.name} />
+            <AvatarFallback>
+              {author.name
+                .split(" ")
+                .map((n) => n[0])
+                .join("")}
+            </AvatarFallback>
+          </Avatar>
+          <div>
+            <div className="font-medium">{author.name}</div>
+          </div>
+        </div>
       );
     },
+    enableGlobalFilter: true,
   },
   {
     accessorKey: "genres",
-    header: ({ column }) => {
-      return (
-        <Button
-          variant="ghost"
-          onClick={() => column.toggleSorting(column.getIsSorted() === "asc")}
-        >
-          Genres
-          <ArrowUpDown className="ml-2 size-4" />
-        </Button>
-      );
-    },
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Genres" />
+    ),
     cell: ({ row }) => {
       const genres = row.getValue("genres") as string[];
       return (
@@ -79,19 +86,41 @@ export const authorsColumns: ColumnDef<IAuthorTable>[] = [
         </div>
       );
     },
+    enableGlobalFilter: true,
+    filterFn: (row, columnId, filterValue) => {
+      const genres = row.getValue(columnId) as string[];
+      return genres.some((genre) =>
+        genre.toLowerCase().includes(filterValue.toLowerCase())
+      );
+    },
   },
   {
     accessorKey: "books",
-    header: "Books",
+    header: ({ column }) => (
+      <DataTableColumnHeader column={column} title="Books" />
+    ),
     cell: ({ row }) => {
-      return new Date(row.getValue("books"));
+      const booksCount = row.original.booksCount;
+      return (
+        <div className="flex flex-wrap gap-1">
+          {booksCount ? (
+            <Badge variant="outline" className="text-xs">
+              {booksCount}
+            </Badge>
+          ) : (
+            <Badge variant="outline" className="text-xs">
+              0
+            </Badge>
+          )}
+        </div>
+      );
     },
   },
   {
     accessorKey: "featured",
     header: "Featured",
     cell: ({ row }) => {
-      const featured = row.getValue("featured");
+      const featured = row.original.featured;
       return (
         <>
           {featured ? (
@@ -110,13 +139,15 @@ export const authorsColumns: ColumnDef<IAuthorTable>[] = [
 
   {
     id: "actions",
+    enableHiding: false,
     cell: ({ row }) => {
       const author = row.original;
       return (
         <DropdownMenu>
           <DropdownMenuTrigger className="cursor-pointer" asChild>
             <Button className="cursor-pointer" variant="ghost" size="sm">
-              Actions
+              <span className="sr-only">Open Actions</span>
+              <MoreHorizontal className="ml-2 h-4 w-4" />
             </Button>
           </DropdownMenuTrigger>
           <DropdownMenuContent align="end">
