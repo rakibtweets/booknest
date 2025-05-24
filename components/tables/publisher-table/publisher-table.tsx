@@ -38,7 +38,6 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { genres } from "@/constants";
 
 import { DataTablePagination } from "../data-table-pagination";
 
@@ -47,7 +46,7 @@ interface DataTableProps<TData, TValue> {
   data: TData[];
 }
 
-export default function AuthorsTable<TData, TValue>({
+export default function PublisherTable<TData, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
@@ -90,44 +89,17 @@ export default function AuthorsTable<TData, TValue>({
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-col lg:flex-row justify-between  gap-2 py-2">
+      <div className="flex flex-col md:flex-row justify-between  gap-2 py-2">
         <Input
           placeholder="Filter Authors..."
           value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
           onChange={(event) => {
             const value = event.target.value;
             table.getColumn("name")?.setFilterValue(value);
-            table.getColumn("genres")?.setFilterValue(value);
           }}
           className="max-w-sm"
         />
         <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
-          <div>
-            <Select
-              value={
-                (table.getColumn("genres")?.getFilterValue() as string) || "all"
-              }
-              onValueChange={(value) => {
-                if (value === "all") {
-                  table.getColumn("genres")?.setFilterValue(undefined);
-                } else {
-                  table.getColumn("genres")?.setFilterValue(value);
-                }
-              }}
-            >
-              <SelectTrigger className="w-full sm:w-auto">
-                <SelectValue placeholder="All Genres" />
-              </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Genres</SelectItem>
-                {genres.map((genre) => (
-                  <SelectItem key={genre} value={genre}>
-                    {genre}
-                  </SelectItem>
-                ))}
-              </SelectContent>
-            </Select>
-          </div>
           <div>
             <Select
               value={
@@ -148,16 +120,16 @@ export default function AuthorsTable<TData, TValue>({
               }}
             >
               <SelectTrigger className="w-full sm:w-auto">
-                <SelectValue placeholder="All Authors" />
+                <SelectValue placeholder="All Publisher" />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Authors</SelectItem>
+              <SelectContent className="mr-0">
+                <SelectItem value="all">All Publisher</SelectItem>
                 <SelectItem value="featured">Featured Only</SelectItem>
                 <SelectItem value="standard">Non-Featured</SelectItem>
               </SelectContent>
             </Select>
           </div>
-          {isFiltered && (
+          {isFiltered ? (
             <Button
               variant="ghost"
               onClick={() => table.resetColumnFilters()}
@@ -166,33 +138,35 @@ export default function AuthorsTable<TData, TValue>({
               Reset
               <X className="ml-2 h-4 w-4" />
             </Button>
-          )}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="ml-auto">
-                View
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              {table
-                .getAllColumns()
-                .filter((column) => column.getCanHide())
-                ?.map((column) => {
-                  return (
-                    <DropdownMenuCheckboxItem
-                      key={column.id}
-                      className="capitalize"
-                      checked={column.getIsVisible()}
-                      onCheckedChange={(value) =>
-                        column.toggleVisibility(!!value)
-                      }
-                    >
-                      {column.id}
-                    </DropdownMenuCheckboxItem>
-                  );
-                })}
-            </DropdownMenuContent>
-          </DropdownMenu>
+          ) : null}
+          <div>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="ml-auto">
+                  View
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {table
+                  .getAllColumns()
+                  .filter((column) => column.getCanHide())
+                  ?.map((column) => {
+                    return (
+                      <DropdownMenuCheckboxItem
+                        key={column.id}
+                        className="capitalize"
+                        checked={column.getIsVisible()}
+                        onCheckedChange={(value) =>
+                          column.toggleVisibility(!!value)
+                        }
+                      >
+                        {column.id}
+                      </DropdownMenuCheckboxItem>
+                    );
+                  })}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
       </div>
       <div className="rounded-md border">

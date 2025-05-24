@@ -25,7 +25,7 @@ export function DataTablePagination<TData>({
   table,
 }: DataTablePaginationProps<TData>) {
   return (
-    <div className="flex items-center justify-between px-2">
+    <div className="flex flex-col lg:flex-row items-center justify-between gap-2 px-2">
       <div className="flex-1 text-sm text-muted-foreground">
         {table.getFilteredRowModel().rows.length} author(s) found.
       </div>
