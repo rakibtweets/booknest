@@ -221,7 +221,7 @@ export default function PublisherTable<TData, TValue>({
           </TableBody>
         </Table>
       </div>
-      <DataTablePagination table={table} />
+      <DataTablePagination tableName="Publisher" table={table} />
     </div>
   );
 }

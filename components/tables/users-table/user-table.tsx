@@ -38,16 +38,20 @@ import {
   TableHeader,
   TableRow,
 } from "@/components/ui/table";
-import { genres } from "@/constants";
 
 import { DataTablePagination } from "../data-table-pagination";
 
-interface DataTableProps<TData, TValue> {
+interface UserLike {
+  name: string;
+  email: string;
+}
+
+interface DataTableProps<TData extends UserLike, TValue> {
   columns: ColumnDef<TData, TValue>[];
   data: TData[];
 }
 
-export default function AuthorsTable<TData, TValue>({
+export default function UserTable<TData extends UserLike, TValue>({
   columns,
   data,
 }: DataTableProps<TData, TValue>) {
@@ -75,14 +79,12 @@ export default function AuthorsTable<TData, TValue>({
       columnVisibility,
     },
     globalFilterFn: (row, columnId, filterValue) => {
-      const name = row.getValue("name") as string;
-      const genres = row.getValue("genres") as string[]; // assuming genres is array
-
+      const user = row.original;
+      const name = user?.name.toLowerCase();
+      const email = user?.email.toLowerCase();
       const search = filterValue.toLowerCase();
-      return (
-        name.toLowerCase().includes(search) ||
-        genres.some((g) => g.toLowerCase().includes(search))
-      );
+
+      return name.includes(search) || email.includes(search);
     },
   });
 
@@ -90,74 +92,62 @@ export default function AuthorsTable<TData, TValue>({
 
   return (
     <div className="space-y-4">
-      <div className="flex flex-col lg:flex-row justify-between  gap-2 py-2">
+      <div className="flex flex-col md:flex-row justify-between  gap-2 py-2">
         <Input
-          placeholder="Filter Authors..."
-          value={(table.getColumn("name")?.getFilterValue() as string) ?? ""}
-          onChange={(event) => {
-            const value = event.target.value;
-            table.getColumn("name")?.setFilterValue(value);
-            table.getColumn("genres")?.setFilterValue(value);
-          }}
+          placeholder="Filter user by name and email..."
+          value={table.getState().globalFilter || ""}
+          onChange={(e) => table.setGlobalFilter(e.target.value)}
           className="max-w-sm"
         />
         <div className="flex flex-wrap items-center gap-2 w-full sm:w-auto">
           <div>
             <Select
               value={
-                (table.getColumn("genres")?.getFilterValue() as string) || "all"
+                (table.getColumn("roles")?.getFilterValue() as string) || "all"
               }
               onValueChange={(value) => {
                 if (value === "all") {
-                  table.getColumn("genres")?.setFilterValue(undefined);
+                  table.getColumn("roles")?.setFilterValue(undefined);
                 } else {
-                  table.getColumn("genres")?.setFilterValue(value);
+                  table.getColumn("roles")?.setFilterValue(value);
                 }
               }}
             >
               <SelectTrigger className="w-full sm:w-auto">
-                <SelectValue placeholder="All Genres" />
+                <SelectValue placeholder="All Roles" />
               </SelectTrigger>
               <SelectContent>
-                <SelectItem value="all">All Genres</SelectItem>
-                {genres.map((genre) => (
-                  <SelectItem key={genre} value={genre}>
-                    {genre}
-                  </SelectItem>
-                ))}
+                <SelectItem value="all">All Roles</SelectItem>
+                <SelectItem value={"admin"}>Admin</SelectItem>
+                <SelectItem value={"user"}>User</SelectItem>
               </SelectContent>
             </Select>
           </div>
           <div>
             <Select
               value={
-                table.getColumn("featured")?.getFilterValue() === undefined
-                  ? "all"
-                  : table.getColumn("featured")?.getFilterValue() === true
-                    ? "featured"
-                    : "standard"
+                (table.getColumn("status")?.getFilterValue() as string) || "all"
               }
               onValueChange={(value) => {
                 if (value === "all") {
-                  table.getColumn("featured")?.setFilterValue(undefined);
-                } else if (value === "featured") {
-                  table.getColumn("featured")?.setFilterValue(true);
+                  table.getColumn("status")?.setFilterValue(undefined);
                 } else {
-                  table.getColumn("featured")?.setFilterValue(false);
+                  table.getColumn("status")?.setFilterValue(value);
                 }
               }}
             >
               <SelectTrigger className="w-full sm:w-auto">
-                <SelectValue placeholder="All Authors" />
+                <SelectValue placeholder="All Publisher" />
               </SelectTrigger>
-              <SelectContent>
-                <SelectItem value="all">All Authors</SelectItem>
-                <SelectItem value="featured">Featured Only</SelectItem>
-                <SelectItem value="standard">Non-Featured</SelectItem>
+              <SelectContent className="mr-0">
+                <SelectItem value="all">All Status</SelectItem>
+                <SelectItem value="active">Active</SelectItem>
+                <SelectItem value="inactive">In Active</SelectItem>
+                <SelectItem value="suspended">Suspended</SelectItem>
               </SelectContent>
             </Select>
           </div>
-          {isFiltered && (
+          {isFiltered ? (
             <Button
               variant="ghost"
               onClick={() => table.resetColumnFilters()}
@@ -166,33 +156,35 @@ export default function AuthorsTable<TData, TValue>({
               Reset
               <X className="ml-2 h-4 w-4" />
             </Button>
-          )}
-          <DropdownMenu>
-            <DropdownMenuTrigger asChild>
-              <Button variant="outline" className="ml-auto">
-                View
-              </Button>
-            </DropdownMenuTrigger>
-            <DropdownMenuContent align="end">
-              {table
-                .getAllColumns()
-                .filter((column) => column.getCanHide())
-                ?.map((column) => {
-                  return (
-                    <DropdownMenuCheckboxItem
-                      key={column.id}
-                      className="capitalize"
-                      checked={column.getIsVisible()}
-                      onCheckedChange={(value) =>
-                        column.toggleVisibility(!!value)
-                      }
-                    >
-                      {column.id}
-                    </DropdownMenuCheckboxItem>
-                  );
-                })}
-            </DropdownMenuContent>
-          </DropdownMenu>
+          ) : null}
+          <div>
+            <DropdownMenu>
+              <DropdownMenuTrigger asChild>
+                <Button variant="outline" className="ml-auto">
+                  View
+                </Button>
+              </DropdownMenuTrigger>
+              <DropdownMenuContent align="end">
+                {table
+                  .getAllColumns()
+                  .filter((column) => column.getCanHide())
+                  ?.map((column) => {
+                    return (
+                      <DropdownMenuCheckboxItem
+                        key={column.id}
+                        className="capitalize"
+                        checked={column.getIsVisible()}
+                        onCheckedChange={(value) =>
+                          column.toggleVisibility(!!value)
+                        }
+                      >
+                        {column.id}
+                      </DropdownMenuCheckboxItem>
+                    );
+                  })}
+              </DropdownMenuContent>
+            </DropdownMenu>
+          </div>
         </div>
       </div>
       <div className="rounded-md border">
@@ -240,14 +232,14 @@ export default function AuthorsTable<TData, TValue>({
                   colSpan={columns.length}
                   className="h-24 text-center"
                 >
-                  No Authors Found
+                  No Users Found
                 </TableCell>
               </TableRow>
             )}
           </TableBody>
         </Table>
       </div>
-      <DataTablePagination tableName="Author" table={table} />
+      <DataTablePagination tableName="User" table={table} />
     </div>
   );
 }
