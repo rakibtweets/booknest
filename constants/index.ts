@@ -208,3 +208,10 @@ export const genres = [
   "Erotica",
   "Fairy Tales & Folklore",
 ];
+
+export const filterOders = [
+  { name: "Processing", value: "processing" },
+  { name: "Shipped", value: "shipped" },
+  { name: "Delivered", value: "delivered" },
+  { name: "Cancelled", value: "cancelled" },
+];
