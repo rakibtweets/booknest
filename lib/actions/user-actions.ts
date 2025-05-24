@@ -13,14 +13,24 @@ import { ActionResponse, ErrorResponse } from "@/types/global";
 import handleError from "../handlers/error";
 import dbConnect from "../mongoose";
 
-export const getUsers = async () => {
+export const getUsers = async (): Promise<
+  ActionResponse<{ users: IUser[] }>
+> => {
   try {
     await dbConnect();
     const users = await User.find({}).sort({ createdAt: -1 });
-    console.log("users", users);
-    return { success: true, data: JSON.parse(JSON.stringify(users)) };
+    if (!users) {
+      throw new Error("Users not found");
+    }
+    return {
+      success: true,
+      data: {
+        users: JSON.parse(JSON.stringify(users)),
+      },
+    };
   } catch (error) {
     console.log(error);
+    return handleError(error) as ErrorResponse;
   }
 };
 
