@@ -57,31 +57,48 @@ export const getUserByClerkId = async (
   }
 };
 
-export const createUser = async (userData: CreateUserParams) => {
+export const createUser = async (
+  userData: CreateUserParams
+): Promise<ActionResponse<{ user: IUser }>> => {
   try {
     await dbConnect();
     const newUser = await User.create(userData);
-
-    console.log("newUser", newUser);
-    return { success: true, data: JSON.parse(JSON.stringify(newUser)) };
+    if (!newUser) {
+      throw new Error("User not created");
+    }
+    return {
+      success: true,
+      data: {
+        user: JSON.parse(JSON.stringify(newUser)),
+      },
+    };
   } catch (error) {
-    console.log(error);
+    return handleError(error) as ErrorResponse;
   }
 };
 
-export const updateUser = async (params: clerkUserUpdateParams) => {
+export const updateUser = async (
+  params: clerkUserUpdateParams
+): Promise<ActionResponse<{ user: IUser }>> => {
   try {
     await dbConnect();
 
     const { clerkId, updateData } = params;
-    console.log("updateData", updateData);
 
     const udpatedUser = await User.findOneAndUpdate({ clerkId }, updateData, {
       new: true,
     });
-    return { success: true, data: JSON.parse(JSON.stringify(udpatedUser)) };
+    if (!udpatedUser) {
+      throw new Error("User not found or update failed");
+    }
+    return {
+      success: true,
+      data: {
+        user: JSON.parse(JSON.stringify(udpatedUser)),
+      },
+    };
   } catch (error) {
-    console.log(error);
+    return handleError(error) as ErrorResponse;
   }
 };
 

@@ -6,6 +6,6 @@ export const checkRole = async (role: Roles) => {
   const { sessionClaims } = await auth();
   // eslint-disable-next-line @typescript-eslint/ban-ts-comment
   //@ts-ignore
-  const roles = sessionClaims?.metadata?.roles || [];
+  const roles = sessionClaims?.metadata.roles || [];
   return roles.includes(role);
 };
