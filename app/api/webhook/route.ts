@@ -1,6 +1,8 @@
-import { createUser, deleteUser, updateUser } from "@/lib/actions/user-actions";
+import { clerkClient } from "@clerk/nextjs/server";
 import { verifyWebhook } from "@clerk/nextjs/webhooks";
 import { NextResponse } from "next/server";
+
+import { createUser, deleteUser, updateUser } from "@/lib/actions/user-actions";
 
 export async function POST(req: Request) {
   try {
@@ -16,41 +18,65 @@ export async function POST(req: Request) {
     // console.log("Webhook payload:", evt.data);
     // Handle to event
     if (eventType === "user.created") {
+      const client = await clerkClient();
       // get user data
       const { id, email_addresses, image_url, first_name, last_name } =
         evt.data;
 
+      const isAdminEmail =
+        email_addresses[0].email_address === process.env.ADMIN_EMAIL;
+
       // create a server action to create a user in the database
 
-      const mongoUser = await createUser({
+      const { success, data } = await createUser({
         clerkId: id,
         name: `${first_name} ${last_name ? ` ${last_name}` : ""}`,
         email: email_addresses[0].email_address,
         picture: image_url,
-        roles: ["user"],
+        roles: isAdminEmail ? ["admin", "user"] : ["user"],
       });
-      console.log("mongo user", mongoUser);
 
-      return NextResponse.json({ messsage: "OK", user: mongoUser });
+      if (success && data?.user) {
+        await client.users.updateUser(data.user.clerkId, {
+          publicMetadata: {
+            roles: isAdminEmail ? ["admin", "user"] : ["user"],
+          },
+        });
+      }
+
+      return NextResponse.json({ messsage: "OK", user: data?.user });
     }
 
     if (eventType === "user.updated") {
+      const client = await clerkClient();
       // get user data
       const { id, email_addresses, image_url, first_name, last_name } =
         evt.data;
+      const isAdminEmail =
+        email_addresses[0].email_address === process.env.ADMIN_EMAIL;
 
       // create a server action to create a user in the database
 
-      const mongoUser = await updateUser({
+      const { success, data } = await updateUser({
         clerkId: id,
         updateData: {
           name: `${first_name} ${last_name ? ` ${last_name}` : ""}`,
           email: email_addresses[0].email_address,
           picture: image_url,
+          roles: isAdminEmail ? ["admin", "user"] : ["user"],
         },
       });
 
-      return NextResponse.json({ messsage: "OK", user: mongoUser });
+      if (success && data?.user) {
+        // If the user is created successfully, we can also set the user in Clerk
+        await client.users.updateUser(data.user.clerkId, {
+          publicMetadata: {
+            roles: isAdminEmail ? ["admin", "user"] : ["user"],
+          },
+        });
+      }
+
+      return NextResponse.json({ messsage: "OK", user: data?.user });
     }
 
     if (eventType === "user.deleted") {
