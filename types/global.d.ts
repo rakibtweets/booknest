@@ -10,6 +10,9 @@ declare global {
       roles?: Roles[];
     };
   }
+  interface UserPublicMetadata {
+    roles?: Roles[];
+  }
 }
 
 type ActionResponse<T = null> = {

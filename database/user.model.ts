@@ -2,12 +2,14 @@ import mongoose, { Schema, type Document, model, models } from "mongoose";
 
 import baseSchema from "./base-schema";
 
+type Roles = "user" | "admin";
+
 // User Schema
 export interface IUser extends Document {
   clerkId: string; // Clerk ID for authentication
   name: string;
   email: string;
-  roles: string[];
+  roles: Roles[];
   picture: string;
   orders?: mongoose.Types.ObjectId[];
   wishlist?: mongoose.Types.ObjectId[];
