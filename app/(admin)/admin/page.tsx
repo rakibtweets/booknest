@@ -11,6 +11,14 @@ import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
+import {
+  Table,
+  TableBody,
+  TableCell,
+  TableHead,
+  TableHeader,
+  TableRow,
+} from "@/components/ui/table";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getAdminDashboardStats } from "@/lib/actions/user-actions";
 
@@ -114,47 +122,59 @@ export default async function AdminDashboardPage() {
                 Manage and track recent orders
               </p>
             </div>
-            <div className="border-t">
-              <div className="grid grid-cols-6 bg-muted px-4 py-3 text-sm font-medium">
-                <div>Order ID</div>
-                <div>Customer</div>
-                <div>Date</div>
-                <div>Status</div>
-                <div>Total</div>
-                <div className="text-right">Actions</div>
-              </div>
-              {dashboardStats?.recentOrders?.map((order) => (
-                <div
-                  key={order?._id}
-                  className="grid grid-cols-6 px-4 py-3 border-t text-sm"
-                >
-                  <div className="font-medium">
-                    {order?.orderId?.substring(0, 8).toUpperCase()}
-                  </div>
-                  <div>{order?.customer}</div>
-                  <div>{new Date(order?.date).toLocaleDateString()}</div>
-                  <div>
-                    <span
-                      className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
-                        order.status === "Delivered"
-                          ? "bg-green-100 text-green-800"
-                          : order.status === "Shipped"
-                            ? "bg-blue-100 text-blue-800"
-                            : "bg-orange-100 text-orange-800"
-                      }`}
-                    >
-                      {order.status}
-                    </span>
-                  </div>
-                  <div>${order.total.toFixed(2)}</div>
-                  <div className="text-right">
-                    <Button variant="ghost" size="sm" asChild>
-                      <Link href={`/admin/orders/${order?._id}`}>View</Link>
-                    </Button>
-                  </div>
-                </div>
-              ))}
-            </div>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Order ID</TableHead>
+                  <TableHead>Customer</TableHead>
+                  <TableHead>Date</TableHead>
+                  <TableHead>Status</TableHead>
+                  <TableHead>Total</TableHead>
+                  <TableHead className="text-right">Actions</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {dashboardStats?.recentOrders &&
+                dashboardStats.recentOrders.length > 0 ? (
+                  dashboardStats?.recentOrders?.map((order) => (
+                    <TableRow key={order?._id}>
+                      <TableCell className="font-medium">
+                        {order?.orderId?.substring(0, 8).toUpperCase()}
+                      </TableCell>
+                      <TableCell>{order?.customer}</TableCell>
+                      <TableCell>
+                        {new Date(order?.date).toLocaleDateString()}
+                      </TableCell>
+                      <TableCell>
+                        <span
+                          className={`inline-flex items-center rounded-full px-2.5 py-0.5 text-xs font-medium ${
+                            order.status === "Delivered"
+                              ? "bg-green-100 text-green-800"
+                              : order.status === "Shipped"
+                                ? "bg-blue-100 text-blue-800"
+                                : "bg-orange-100 text-orange-800"
+                          }`}
+                        >
+                          {order.status}
+                        </span>
+                      </TableCell>
+                      <TableCell>${order.total.toFixed(2)}</TableCell>
+                      <TableCell className="text-right">
+                        <Button variant="ghost" size="sm" asChild>
+                          <Link href={`/admin/orders/${order?._id}`}>View</Link>
+                        </Button>
+                      </TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={6} className="text-center">
+                      No recent orders found.
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
             <div className="p-4 text-center">
               <Button variant="outline" asChild>
                 <Link href="/admin/orders">View All Orders</Link>
@@ -171,25 +191,39 @@ export default async function AdminDashboardPage() {
                 Recently registered users
               </p>
             </div>
-            <div className="border-t">
-              <div className="grid grid-cols-4 bg-muted px-4 py-3 text-sm font-medium">
-                <div>Name</div>
-                <div>Email</div>
-                <div>Join Date</div>
-                <div>Orders</div>
-              </div>
-              {dashboardStats?.recentUsers?.map((user) => (
-                <div
-                  key={user._id as string}
-                  className="grid grid-cols-4 px-4 py-3 border-t text-sm"
-                >
-                  <div className="font-medium">{user?.name}</div>
-                  <div>{user?.email}</div>
-                  <div>{new Date(user?.joinDate).toLocaleDateString()}</div>
-                  <div>{user?.orders}</div>
-                </div>
-              ))}
-            </div>
+            <Table>
+              <TableHeader>
+                <TableRow>
+                  <TableHead>Name</TableHead>
+                  <TableHead>Email</TableHead>
+                  <TableHead>Join Date</TableHead>
+                  <TableHead>Orders</TableHead>
+                </TableRow>
+              </TableHeader>
+              <TableBody>
+                {dashboardStats?.recentUsers &&
+                dashboardStats.recentUsers.length > 0 ? (
+                  dashboardStats.recentUsers.map((user) => (
+                    <TableRow key={user._id as string}>
+                      <TableCell className="font-medium">
+                        {user?.name}
+                      </TableCell>
+                      <TableCell>{user?.email}</TableCell>
+                      <TableCell>
+                        {new Date(user?.joinDate).toLocaleDateString()}
+                      </TableCell>
+                      <TableCell>{user?.orders}</TableCell>
+                    </TableRow>
+                  ))
+                ) : (
+                  <TableRow>
+                    <TableCell colSpan={4} className="text-center">
+                      No recent users found.
+                    </TableCell>
+                  </TableRow>
+                )}
+              </TableBody>
+            </Table>
             <div className="p-4 text-center">
               <Button variant="outline" asChild>
                 <Link href="/admin/users">Manage Users</Link>

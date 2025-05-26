@@ -10,6 +10,7 @@ import {
 } from "@/types/action";
 import { ActionResponse, ErrorResponse } from "@/types/global";
 
+import action from "../handlers/action";
 import handleError from "../handlers/error";
 import dbConnect from "../mongoose";
 
@@ -103,6 +104,13 @@ export const updateUser = async (
 };
 
 export const deleteUser = async (params: DeleteUserParams) => {
+  const validationResult = await action({
+    authorizeRole: "user",
+  });
+
+  if (validationResult instanceof Error) {
+    return handleError(validationResult) as ErrorResponse;
+  }
   try {
     await dbConnect();
 

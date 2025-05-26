@@ -9,6 +9,7 @@ import {
   ErrorResponse,
   PaginatedSearchParams,
 } from "@/types/global";
+import { idSchema, IdType } from "@/validations";
 import { AuthorFormValues, authorSchema } from "@/validations/author";
 
 import action from "../handlers/action";
@@ -16,6 +17,7 @@ import handleError from "../handlers/error";
 import dbConnect from "../mongoose";
 
 // const authors = [
+
 //   {
 //     id: "stephen-king",
 //     name: "Stephen King",
@@ -117,7 +119,7 @@ export const createAuthor = async (
   const validationResult = await action({
     params,
     schema: authorSchema,
-    authorize: true,
+    authorizeRole: "admin",
   });
   if (validationResult instanceof Error) {
     return handleError(validationResult) as ErrorResponse;
@@ -153,7 +155,7 @@ export const updateAuthor = async (
   const validationResult = await action({
     params,
     schema: authorSchema,
-    authorize: true,
+    authorizeRole: "admin",
   });
 
   if (validationResult instanceof Error) {
@@ -196,11 +198,12 @@ export const updateAuthor = async (
 };
 
 export const deleteAuthor = async (
-  id: string
+  id: IdType
 ): Promise<ActionResponse<{ author: IAuthor }>> => {
   const validationResult = await action({
-    params: { id },
-    authorize: true,
+    params: id,
+    schema: idSchema,
+    authorizeRole: "admin",
   });
 
   if (validationResult instanceof Error) {

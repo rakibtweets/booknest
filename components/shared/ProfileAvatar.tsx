@@ -20,7 +20,6 @@ import { Skeleton } from "@/components/ui/skeleton";
 const ProfileAvatar = () => {
   const { user, isLoaded } = useUser();
   const isAdmin = (user?.publicMetadata?.roles ?? []).includes("admin");
-  console.log(" ProfileAvatar isAdmin:", isAdmin);
 
   return (
     <>

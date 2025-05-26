@@ -12,6 +12,7 @@ import {
   IGetBooksParams,
 } from "@/types/action";
 import { ActionResponse, ErrorResponse } from "@/types/global";
+import { idSchema, IdType } from "@/validations";
 import { BookFormValues, bookSchema } from "@/validations/book";
 
 import action from "../handlers/action";
@@ -177,7 +178,7 @@ export const createBook = async (
   const validationResult = await action({
     params,
     schema: bookSchema,
-    authorize: true,
+    authorizeRole: "admin",
   });
   if (validationResult instanceof Error) {
     return handleError(validationResult) as ErrorResponse;
@@ -216,7 +217,7 @@ export const updateBook = async (
   const validationResult = await action({
     params,
     schema: bookSchema,
-    authorize: true,
+    authorizeRole: "admin",
   });
 
   if (validationResult instanceof Error) {
@@ -259,11 +260,12 @@ export const updateBook = async (
 };
 
 export const deleteBook = async (
-  id: string
+  id: IdType
 ): Promise<ActionResponse<{ book: IBook }>> => {
   const validationResult = await action({
-    params: { id },
-    authorize: true,
+    params: id,
+    schema: idSchema,
+    authorizeRole: "admin",
   });
 
   if (validationResult instanceof Error) {

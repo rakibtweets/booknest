@@ -28,18 +28,22 @@ const DeleteBookButton = ({ bookId }: DeleteBookButtonProps) => {
   const handleDelete = async (id: string) => {
     setIsLoading(true);
     try {
-      const result = await deleteBook(id);
-      if (result.success) {
-        toast.success("Book deleted successfully!");
-        setIsOpen(false);
-      } else {
-        toast.error(result.error?.message || "Failed to delete book.");
-        setIsLoading(false);
-      }
-      // eslint-disable-next-line @typescript-eslint/no-unused-vars
-    } catch (error) {
-      setIsLoading(false);
-      toast.error("Failed to delete book. Please try again.");
+      await toast.promise(
+        (async () => {
+          const result = await deleteBook(id);
+          if (!result.success) {
+            throw new Error(result.error?.message || "Failed to delete book.");
+          }
+          setIsOpen(false);
+          setIsLoading(false);
+          return result;
+        })(),
+        {
+          loading: "Deleting book...",
+          success: "Book deleted successfully!",
+          error: (err) => err.message || "Failed to delete book.",
+        }
+      );
     } finally {
       setIsLoading(false);
     }
