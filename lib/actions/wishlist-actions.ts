@@ -6,7 +6,9 @@ import { revalidatePath } from "next/cache";
 import Book from "@/database/book.model";
 import User from "@/database/user.model";
 import { ActionResponse, ErrorResponse } from "@/types/global";
+import { idSchema, IdType } from "@/validations";
 
+import action from "../handlers/action";
 import handleError from "../handlers/error";
 import dbConnect from "../mongoose";
 
@@ -44,6 +46,13 @@ export async function addToWishlist(
   userId: string,
   bookId: string
 ): Promise<ActionResponse> {
+  const validationResult = await action({
+    params: { userId, bookId },
+    authorizeRole: "user",
+  });
+  if (validationResult instanceof Error) {
+    return handleError(validationResult) as ErrorResponse;
+  }
   try {
     await dbConnect();
 
@@ -86,6 +95,13 @@ export async function removeFromWishlist(
   userId: string,
   bookId: string
 ): Promise<ActionResponse> {
+  const validationResult = await action({
+    params: { userId, bookId },
+    authorizeRole: "user",
+  });
+  if (validationResult instanceof Error) {
+    return handleError(validationResult) as ErrorResponse;
+  }
   try {
     await dbConnect();
 
@@ -139,7 +155,15 @@ export async function isBookInWishlist(
 }
 
 // Clear entire wishlist
-export async function clearWishlist(userId: string): Promise<ActionResponse> {
+export async function clearWishlist(userId: IdType): Promise<ActionResponse> {
+  const validationResult = await action({
+    params: userId,
+    schema: idSchema,
+    authorizeRole: "user",
+  });
+  if (validationResult instanceof Error) {
+    return handleError(validationResult) as ErrorResponse;
+  }
   try {
     await dbConnect();
 
@@ -158,6 +182,65 @@ export async function clearWishlist(userId: string): Promise<ActionResponse> {
     return { success: true };
   } catch (error) {
     console.error("Error clearing wishlist:", error);
+    return handleError(error) as ErrorResponse;
+  }
+}
+
+// Add all wishlist items to cart
+export async function addAllWishlistToCart(
+  userId: IdType
+): Promise<ActionResponse> {
+  const validationResult = await action({
+    params: userId,
+    schema: idSchema,
+    authorizeRole: "user",
+  });
+  if (validationResult instanceof Error) {
+    return handleError(validationResult) as ErrorResponse;
+  }
+  try {
+    await dbConnect();
+
+    const user = await User.findById(userId).populate("wishlist");
+    if (!user) {
+      throw new Error("User not found");
+    }
+
+    if (user.wishlist.length === 0) {
+      throw new Error("Wishlist is empty");
+    }
+
+    // Add each book in the wishlist to the user's cart
+    for (const book of user.wishlist) {
+      const bookId = book._id;
+
+      const existingCartItem = user.cart.find(
+        // eslint-disable-next-line @typescript-eslint/no-explicit-any
+        (item: any) => item.book.toString() === bookId.toString()
+      );
+
+      if (existingCartItem) {
+        // Increase quantity by 1
+        await User.updateOne(
+          { _id: userId, "cart.book": bookId },
+          { $inc: { "cart.$.quantity": 1 } }
+        );
+      } else {
+        // Add new book to cart with quantity 1
+        await User.findByIdAndUpdate(userId, {
+          $addToSet: { cart: { book: bookId, quantity: 1 } },
+        });
+      }
+    }
+
+    await User.findByIdAndUpdate(userId, { $set: { wishlist: [] } });
+
+    revalidatePath("/cart");
+    revalidatePath("/wishlist");
+    revalidatePath("/dashboard");
+    return { success: true };
+  } catch (error) {
+    console.error("Error adding wishlist to cart:", error);
     return handleError(error) as ErrorResponse;
   }
 }

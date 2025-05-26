@@ -88,7 +88,7 @@ export const createBookReview = async (
   const validationResult = await action({
     params,
     schema: bookReviewSchema,
-    authorize: true,
+    authorizeRole: "user",
   });
   if (validationResult instanceof Error) {
     return handleError(validationResult) as ErrorResponse;
@@ -142,7 +142,7 @@ export const upvoteReview = async (
 ): Promise<ActionResponse<IBookReview>> => {
   const validationResult = await action({
     params,
-    authorize: true,
+    authorizeRole: "user",
   });
   if (validationResult instanceof Error) {
     return handleError(validationResult) as ErrorResponse;
@@ -198,7 +198,7 @@ export const downvoteReview = async (
 ): Promise<ActionResponse<IBookReview>> => {
   const validationResult = await action({
     params,
-    authorize: true,
+    authorizeRole: "user",
   });
   if (validationResult instanceof Error) {
     return handleError(validationResult) as ErrorResponse;

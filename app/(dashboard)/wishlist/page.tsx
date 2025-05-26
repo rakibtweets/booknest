@@ -1,10 +1,12 @@
 import { auth } from "@clerk/nextjs/server";
-import { ShoppingCart, AlertCircle } from "lucide-react";
+import { AlertCircle } from "lucide-react";
 import { Heart } from "lucide-react";
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 
+import AddAllWishlistToCart from "@/components/buttons/AddAllWishlistToCart";
+import AddToCartButton from "@/components/buttons/AddToCartButton";
 import ClearWishlistButton from "@/components/buttons/ClearWishlistButton";
 import { WishlistButton } from "@/components/buttons/WishListButton";
 import { Button } from "@/components/ui/button";
@@ -124,10 +126,13 @@ export default async function WishlistPage() {
                       </div>
                       <div className="mt-4 flex justify-between items-center">
                         <div className="flex space-x-2">
-                          <Button size="sm">
-                            <ShoppingCart className="h-4 w-4 mr-2" />
-                            Add to Cart
-                          </Button>
+                          <AddToCartButton
+                            bookId={book._id as string}
+                            userId={user?._id as string}
+                            quantity={1}
+                            className="cursor-pointer"
+                            title="Add to Cart"
+                          />
                           <WishlistButton
                             bookId={book._id as string}
                             userId={user?._id as string}
@@ -156,10 +161,7 @@ export default async function WishlistPage() {
             <Button variant="outline" asChild>
               <Link href="/books">Continue Shopping</Link>
             </Button>
-            <Button>
-              <ShoppingCart className="h-4 w-4 mr-2" />
-              Add All to Cart
-            </Button>
+            <AddAllWishlistToCart userId={user?._id as string} />
           </div>
         </div>
       )}
