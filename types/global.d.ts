@@ -40,8 +40,12 @@ interface Author extends IAuthor {
 interface PaginatedSearchParams {
   page?: number;
   pageSize?: number;
-  limit?: number;
   query?: string;
   filter?: string;
   sort?: string;
+}
+
+export interface URLProps {
+  params: { id: string };
+  searchParams: Promise<{ [key: string]: string }>;
 }

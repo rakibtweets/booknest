@@ -201,7 +201,7 @@ export const createPublisher = async (
   const validationResult = await action({
     params,
     schema: publisherSchema,
-    authorize: true,
+    authorizeRole: "admin",
   });
   if (validationResult instanceof Error) {
     return handleError(validationResult) as ErrorResponse;
@@ -237,7 +237,7 @@ export const updatePublisher = async (
   const validationResult = await action({
     params,
     schema: publisherSchema,
-    authorize: true,
+    authorizeRole: "admin",
   });
 
   if (validationResult instanceof Error) {
@@ -284,7 +284,7 @@ export const deletePublisher = async (
 ): Promise<ActionResponse<{ publisher: IPublisher }>> => {
   const validationResult = await action({
     params: { id },
-    authorize: true,
+    authorizeRole: "admin",
   });
 
   if (validationResult instanceof Error) {

@@ -1,5 +1,5 @@
 export const authorFilters = [
-  { name: "Alphabetical", value: "alphabetical" },
+  { name: "Alphabetical(a-z)", value: "alphabetical(a-z)" },
   { name: "Number of Books", value: "booksCount" },
   { name: "Ascending Order", value: "ascending" },
   { name: "Descending Order", value: "descending" },
@@ -214,4 +214,10 @@ export const filterOders = [
   { name: "Shipped", value: "shipped" },
   { name: "Delivered", value: "delivered" },
   { name: "Cancelled", value: "cancelled" },
+];
+export const filterReviews = [
+  { name: "Oldest", value: "oldest" },
+  { name: "Newest", value: "newest" },
+  { name: "Rating Hight > Low", value: "hightolow" },
+  { name: "Rating Low > High", value: "lowtohigh" },
 ];

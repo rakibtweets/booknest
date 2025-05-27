@@ -6,7 +6,9 @@ import { revalidatePath } from "next/cache";
 import Book, { IBook } from "@/database/book.model";
 import User from "@/database/user.model";
 import { ActionResponse, ErrorResponse } from "@/types/global";
+import { idSchema, IdType } from "@/validations";
 
+import action from "../handlers/action";
 import handleError from "../handlers/error";
 import dbConnect from "../mongoose";
 
@@ -73,8 +75,8 @@ export async function getUserCart(userId: string): Promise<
       success: true,
       data: {
         cart: JSON.parse(JSON.stringify(user.cart)) || [],
-        subtotal,
-        shipping,
+        subtotal: parseFloat(subtotal.toFixed(2)),
+        shipping: parseFloat(shipping.toFixed(2)),
         tax: parseFloat(tax.toFixed(2)),
         total: total.toFixed(2),
       },
@@ -91,6 +93,12 @@ export async function addToCart(
   bookId: string,
   quantity = 1
 ): Promise<ActionResponse> {
+  const validationResult = await action({
+    authorizeRole: "user",
+  });
+  if (validationResult instanceof Error) {
+    return handleError(validationResult) as ErrorResponse;
+  }
   try {
     await dbConnect();
 
@@ -142,6 +150,12 @@ export async function removeFromCart(
   userId: string,
   bookId: string
 ): Promise<ActionResponse> {
+  const validationResult = await action({
+    authorizeRole: "user",
+  });
+  if (validationResult instanceof Error) {
+    return handleError(validationResult) as ErrorResponse;
+  }
   try {
     await dbConnect();
 
@@ -169,6 +183,12 @@ export async function updateCartItemQuantity(
   bookId: string,
   quantity: number
 ): Promise<ActionResponse> {
+  const validationResult = await action({
+    authorizeRole: "user",
+  });
+  if (validationResult instanceof Error) {
+    return handleError(validationResult) as ErrorResponse;
+  }
   try {
     await dbConnect();
 
@@ -214,7 +234,15 @@ export async function updateCartItemQuantity(
 }
 
 // Clear entire cart
-export async function clearCart(userId: string): Promise<ActionResponse> {
+export async function clearCart(userId: IdType): Promise<ActionResponse> {
+  const validationResult = await action({
+    params: userId,
+    schema: idSchema,
+    authorizeRole: "user",
+  });
+  if (validationResult instanceof Error) {
+    return handleError(validationResult) as ErrorResponse;
+  }
   try {
     await dbConnect();
 

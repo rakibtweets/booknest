@@ -5,6 +5,7 @@ import Link from "next/link";
 import React from "react";
 
 import AddToCartButton from "@/components/buttons/AddToCartButton";
+import ServerPagination from "@/components/sections/ServerPagination";
 import Filter from "@/components/shared/Filter";
 import LocalSearchBar from "@/components/shared/LocalSearchBar";
 import { AspectRatio } from "@/components/ui/aspect-ratio";
@@ -27,7 +28,7 @@ const Page = async ({ searchParams }: RouteParams) => {
   const { page, pageSize, query, filter } = await searchParams;
   const bookResult = await getBooks({
     page: Number(page) || 1,
-    pageSize: Number(pageSize) || 10,
+    pageSize: Number(pageSize) || 8,
     query,
     filter,
   });
@@ -94,7 +95,7 @@ const Page = async ({ searchParams }: RouteParams) => {
                 </Link>
                 <div className="flex items-center mt-1">
                   <div className="flex">
-                    {[...Array(book?.rating)].map((_, i) => (
+                    {[...Array({ length: book?.rating || 0 })].map((_, i) => (
                       <svg
                         key={i}
                         className={`h-3 w-3 ${
@@ -141,6 +142,16 @@ const Page = async ({ searchParams }: RouteParams) => {
             <p className="text-muted-foreground">No books found</p>
           </div>
         )}
+      </div>
+
+      {/* pagination */}
+      <div className="mt-8">
+        <ServerPagination
+          currentPage={bookResult.data?.currentPage}
+          totalPages={bookResult.data?.totalPages}
+          nextPage={bookResult.data?.nextPage}
+          prevPage={bookResult.data?.prevPage}
+        />
       </div>
     </>
   );

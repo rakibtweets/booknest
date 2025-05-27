@@ -1,3 +1,4 @@
+import mongoose from "mongoose";
 import { z } from "zod";
 
 export const bookReviewSchema = z.object({
@@ -13,3 +14,18 @@ export const bookReviewSchema = z.object({
 });
 
 export type ReviewFormValues = z.infer<typeof bookReviewSchema>;
+
+export const deleleReviewSchema = z.object({
+  reviewId: z.string().min(1, {
+    message: "Review ID is required",
+  }),
+  bookId: z.string().min(1, {
+    message: "Book ID is required",
+  }),
+  userId: z.string().refine((val) => mongoose.Types.ObjectId.isValid(val), {
+    message: "Invalid ObjectId",
+  }),
+  path: z.string().min(1, {
+    message: "Path is required",
+  }),
+});

@@ -39,7 +39,7 @@ export default function RootLayout({
         <Suspense>
           <ClerkProvider dynamic>{children}</ClerkProvider>
         </Suspense>
-        <Toaster />
+        <Toaster richColors />
         <BreakPointIndicator />
       </body>
     </html>

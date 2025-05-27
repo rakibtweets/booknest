@@ -12,6 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getBookById } from "@/lib/actions/book-actions";
 import { getUserByClerkId } from "@/lib/actions/user-actions";
 import { isBookInWishlist } from "@/lib/actions/wishlist-actions";
+import { URLProps } from "@/types/global";
 
 // const books = [
 //   {
@@ -36,11 +37,11 @@ import { isBookInWishlist } from "@/lib/actions/wishlist-actions";
 
 export default async function BookDetailsPage({
   params,
-}: {
-  params: { id: string };
-}) {
+  searchParams,
+}: URLProps) {
   const { userId } = await auth();
   const { id } = await params;
+  const { page = 1, filter } = await searchParams;
   const bookResult = await getBookById(id);
   const book = bookResult.data?.book || null;
   const userData = await getUserByClerkId(userId as string);
@@ -235,7 +236,11 @@ export default async function BookDetailsPage({
           </div>
         </TabsContent>
         <TabsContent value="reviews" className="py-4">
-          <BookReviews bookId={book._id as string} />
+          <BookReviews
+            bookId={book._id as string}
+            page={Number(page)}
+            filter={filter || ""}
+          />
         </TabsContent>
       </Tabs>
     </div>

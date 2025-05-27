@@ -28,21 +28,35 @@ const AddToWishlist = ({
       return;
     }
 
+    if (isInWishlist) {
+      toast.error("Already in wishlist, the book is already in your wishlist.");
+      return;
+    }
+
     setIsLoading(true);
+
     try {
-      if (isInWishlist) {
-        toast.error(
-          "Already in wishlist, The book is already in your wishlist"
-        );
-      } else {
-        const result = await addToWishlist(userId, bookId);
-        if (result.success) {
+      toast.promise(
+        (async () => {
+          const result = await addToWishlist(userId, bookId);
+
+          if (!result.success) {
+            throw new Error(
+              result.error?.message
+                ? `${result.status}: ${result.error?.message}`
+                : "Failed to add to wishlist"
+            );
+          }
+
           setIsInWishlist(true);
-          toast.success("Added to wishlist");
-        } else {
-          toast.error(result.error?.message || "Failed to add to wishlist");
+          return result;
+        })(),
+        {
+          loading: "Adding to wishlist...",
+          success: "Book added to wishlist!",
+          error: (err) => err.message || "Failed to add book to wishlist.",
         }
-      }
+      );
     } catch (error) {
       toast.error(error instanceof Error ? error.message : "An error occurred");
     } finally {

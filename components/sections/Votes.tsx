@@ -2,6 +2,7 @@
 
 import { ThumbsUp, ThumbsDown } from "lucide-react";
 import { usePathname } from "next/navigation";
+import { useState } from "react";
 import { toast } from "sonner";
 
 import { Button } from "@/components/ui/button";
@@ -25,6 +26,7 @@ const Votes = ({
   hasupVoted,
 }: IVotesParams) => {
   const pathname = usePathname();
+  const [isLoading, setIsLoading] = useState(false);
 
   const handleVote = async (action: string) => {
     if (!userId) {
@@ -32,6 +34,7 @@ const Votes = ({
     }
     // upvote
     if (action === "upvote") {
+      setIsLoading(true);
       const response = await upvoteReview({
         reviewId: reviewId as string,
         userId: userId,
@@ -40,14 +43,17 @@ const Votes = ({
         path: pathname,
       });
       if (response.success) {
+        setIsLoading(false);
         toast.success(`Upvoted ${!hasupVoted ? "Successful" : "Removed"}`);
       } else {
+        setIsLoading(false);
         toast.error("Failed to upvote review.");
       }
     }
 
     // downvote
     if (action === "downvote") {
+      setIsLoading(true);
       const response = await downvoteReview({
         reviewId: reviewId as string,
         userId: userId,
@@ -56,8 +62,10 @@ const Votes = ({
         path: pathname,
       });
       if (response.success) {
+        setIsLoading(false);
         toast.success(`Downvoted ${!hasdownVoted ? "Successful" : "Removed"}`);
       } else {
+        setIsLoading(false);
         toast.error("Failed to upvote review.");
       }
     }
@@ -69,6 +77,7 @@ const Votes = ({
         <Button
           variant="ghost"
           size="sm"
+          disabled={isLoading}
           className="h-8 text-xs cursor-pointer"
           onClick={() => handleVote("upvote")}
         >
@@ -82,6 +91,7 @@ const Votes = ({
         <Button
           variant="ghost"
           size="sm"
+          disabled={isLoading}
           className="h-8 text-xs cursor-pointer"
           onClick={() => handleVote("downvote")}
         >

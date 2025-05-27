@@ -76,7 +76,7 @@ export default function AuthorsTable<TData, TValue>({
     },
     globalFilterFn: (row, columnId, filterValue) => {
       const name = row.getValue("name") as string;
-      const genres = row.getValue("genres") as string[]; // assuming genres is array
+      const genres = row.getValue("genres") as string[];
 
       const search = filterValue.toLowerCase();
       return (

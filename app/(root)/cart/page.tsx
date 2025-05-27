@@ -8,8 +8,6 @@ import QuantityButton from "@/components/buttons/QuantityButton";
 import RemoveFromCartButton from "@/components/buttons/RemoveFromCartButton";
 import { Button } from "@/components/ui/button";
 import { Card, CardContent, CardFooter } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import { IBook } from "@/database/book.model";
 import { getUserCart } from "@/lib/actions/cart-actions";
@@ -138,13 +136,13 @@ export default async function CartPage() {
               <Button className="w-full cursor-pointer" asChild>
                 <Link href="/checkout">Proceed to Checkout</Link>
               </Button>
-              <div className="space-y-2">
+              {/* <div className="space-y-2">
                 <Label htmlFor="coupon">Coupon Code</Label>
                 <div className="flex gap-2">
                   <Input id="coupon" placeholder="Enter coupon code" />
                   <Button variant="outline">Apply</Button>
                 </div>
-              </div>
+              </div> */}
             </CardFooter>
           </Card>
         </div>

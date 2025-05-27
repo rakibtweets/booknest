@@ -2,6 +2,7 @@ import {
   Home,
   LayoutDashboard,
   ListOrdered,
+  ShoppingBag,
   ShoppingCart,
   UserCheck,
 } from "lucide-react";
@@ -46,6 +47,11 @@ const items = [
   {
     title: "Wishlist",
     url: "/wishlist",
+    icon: ShoppingBag,
+  },
+  {
+    title: "Cart",
+    url: "/cart",
     icon: ShoppingCart,
   },
 ];

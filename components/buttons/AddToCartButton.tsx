@@ -38,7 +38,7 @@ export default function AddToCartButton({
       const result = await addToCart(userId, bookId, quantity);
 
       if (result.success) {
-        toast("Added to cart");
+        toast.success("Item added to cart");
       } else {
         toast.error(result.error?.message || "Failed to add book to cart.");
       }

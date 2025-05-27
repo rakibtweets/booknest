@@ -1,14 +1,17 @@
 "use server";
 
-import mongoose from "mongoose";
+import mongoose, { FilterQuery } from "mongoose";
 import { revalidatePath } from "next/cache";
 
 import Author, { IAuthor } from "@/database/author.model";
+import { IBook } from "@/database/book.model";
+import { IGetAuthorParams } from "@/types/action";
 import {
   ActionResponse,
   ErrorResponse,
   PaginatedSearchParams,
 } from "@/types/global";
+import { idSchema, IdType } from "@/validations";
 import { AuthorFormValues, authorSchema } from "@/validations/author";
 
 import action from "../handlers/action";
@@ -16,6 +19,7 @@ import handleError from "../handlers/error";
 import dbConnect from "../mongoose";
 
 // const authors = [
+
 //   {
 //     id: "stephen-king",
 //     name: "Stephen King",
@@ -71,18 +75,69 @@ import dbConnect from "../mongoose";
 //     featured: true,
 //   },
 // ];
-export const getAuthors = async (): Promise<
-  ActionResponse<{ authors: IAuthor[]; total: number }>
+export const getAuthors = async (
+  params: IGetAuthorParams
+): Promise<
+  ActionResponse<{
+    authors: IAuthor[];
+    total: number;
+    totalPages: number;
+    currentPage: number;
+    nextPage: number | null;
+    prevPage: number | null;
+  }>
 > => {
   try {
     await dbConnect();
-    const authors = await Author.find().sort({ createdAt: -1 });
+    const { page = 1, pageSize = 10, query, filter } = params;
+    const skip = (Number(page) - 1) * pageSize;
+    const limit = pageSize;
     const totalAuthors = await Author.countDocuments();
+    const totalPages = Math.ceil(totalAuthors / limit);
+    let sortCriteria = {};
+    const filterQuery: FilterQuery<IBook> = {};
+    // Search
+    if (query) {
+      filterQuery.$or = [
+        { name: { $regex: query, $options: "i" } },
+        { categories: { $regex: query, $options: "i" } },
+      ];
+    }
+
+    // Filters
+    switch (filter) {
+      case "alphabetical(a-z)":
+        sortCriteria = { name: 1 };
+        break;
+      case "booksCount":
+        sortCriteria = { booksCount: -1 };
+        break;
+      case "ascending":
+        sortCriteria = { price: 1 };
+        break;
+      case "descending":
+        sortCriteria = { price: -1 };
+        break;
+      default:
+        sortCriteria = { createdAt: -1 };
+        break;
+    }
+    const authors = await Author.find(filterQuery)
+      .sort(sortCriteria)
+      .skip(skip)
+      .limit(limit);
+
+    const nextPage = page < totalPages ? page + 1 : null;
+    const prevPage = page > 1 ? page - 1 : null;
     return {
       success: true,
       data: {
         authors: JSON.parse(JSON.stringify(authors)),
         total: totalAuthors,
+        totalPages: totalPages,
+        currentPage: page,
+        nextPage,
+        prevPage,
       },
     };
   } catch (error) {
@@ -117,7 +172,7 @@ export const createAuthor = async (
   const validationResult = await action({
     params,
     schema: authorSchema,
-    authorize: true,
+    authorizeRole: "admin",
   });
   if (validationResult instanceof Error) {
     return handleError(validationResult) as ErrorResponse;
@@ -153,7 +208,7 @@ export const updateAuthor = async (
   const validationResult = await action({
     params,
     schema: authorSchema,
-    authorize: true,
+    authorizeRole: "admin",
   });
 
   if (validationResult instanceof Error) {
@@ -196,11 +251,12 @@ export const updateAuthor = async (
 };
 
 export const deleteAuthor = async (
-  id: string
+  id: IdType
 ): Promise<ActionResponse<{ author: IAuthor }>> => {
   const validationResult = await action({
-    params: { id },
-    authorize: true,
+    params: id,
+    schema: idSchema,
+    authorizeRole: "admin",
   });
 
   if (validationResult instanceof Error) {
@@ -237,8 +293,8 @@ export const getFeaturedAuthors = async (
 ): Promise<ActionResponse<{ authors: IAuthor[] }>> => {
   try {
     await dbConnect();
-    const { limit = 4 } = params;
-    const authors = await Author.find({ featured: true }).limit(limit);
+    const { pageSize = 4 } = params;
+    const authors = await Author.find({ featured: true }).limit(pageSize);
     return {
       success: true,
       data: { authors: JSON.parse(JSON.stringify(authors)) },

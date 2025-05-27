@@ -46,7 +46,7 @@ import { getFeaturedAuthors } from "@/lib/actions/author-actions";
 export default async function PopularAuthors() {
   // Fetch popular authors from an API or database
   const result = await getFeaturedAuthors({
-    limit: 6,
+    pageSize: 6,
   });
   if (!result.success) {
     return <div>Error fetching popular authors</div>;

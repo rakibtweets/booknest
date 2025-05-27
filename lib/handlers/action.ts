@@ -1,15 +1,17 @@
 "use server";
 
-import { auth } from "@clerk/nextjs/server";
 import { ZodError, type ZodSchema } from "zod";
 
 import { UnauthorizedError, ValidationError } from "../http-errors";
 import dbConnect from "../mongoose";
+import { checkRole } from "../roles";
+
+type Roles = "admin" | "user";
 
 type ActionOptions<T> = {
   params?: T;
   schema?: ZodSchema<T>;
-  authorize?: boolean;
+  authorizeRole?: Roles | undefined;
 };
 
 // 1. Checking whether the schema and params are provided and validated.
@@ -17,11 +19,7 @@ type ActionOptions<T> = {
 // 3. Connecting to the database.
 // 4. Returning the params and session.
 
-async function action<T>({
-  params,
-  schema,
-  authorize = false,
-}: ActionOptions<T>) {
+async function action<T>({ params, schema, authorizeRole }: ActionOptions<T>) {
   if (schema && params) {
     try {
       schema.parse(params);
@@ -36,25 +34,19 @@ async function action<T>({
     }
   }
 
-  let session = null;
+  if (authorizeRole) {
+    const isAuthorized = await checkRole(authorizeRole);
 
-  if (authorize) {
-    // Get the Clerk auth session
-    // eslint-disable-next-line @typescript-eslint/ban-ts-comment
-    //@ts-ignore
-    const { userId } = await auth();
-
-    if (!userId) {
-      return new UnauthorizedError();
+    if (!isAuthorized) {
+      return new UnauthorizedError(
+        "You do not have permission to perform this action"
+      );
     }
-
-    // You can store the userId or fetch additional user data if needed
-    session = { userId };
   }
 
   await dbConnect();
 
-  return { params, session };
+  return { params };
 }
 
 export default action;
