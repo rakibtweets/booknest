@@ -33,7 +33,7 @@ export const getBookReviewsByBookId = async (
   }>
 > => {
   await dbConnect();
-  const { page = 1, pageSize = 10, filter, bookId } = params;
+  const { page = 1, pageSize = 5, filter, bookId } = params;
   const skip = (Number(page) - 1) * pageSize;
   const limit = pageSize;
 

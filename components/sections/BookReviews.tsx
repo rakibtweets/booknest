@@ -12,6 +12,7 @@ import { getBookReviewsByBookId } from "@/lib/actions/review-actions";
 import { getUserByClerkId } from "@/lib/actions/user-actions";
 import { getTimeStamp } from "@/lib/utils";
 
+import ServerPagination from "./ServerPagination";
 import Votes from "./Votes";
 import ReviewActionButton from "../buttons/ReviewActionButton";
 import ReviewForm from "../forms/review-form";
@@ -19,17 +20,21 @@ import SignInAlert from "../ui/signin-alert";
 
 interface BookReviewsProps {
   bookId: string | undefined;
+  page?: number;
 }
 
-export default async function BookReviews({ bookId }: BookReviewsProps) {
+export default async function BookReviews({
+  bookId,
+  page = 1,
+}: BookReviewsProps) {
   const { userId } = await auth();
   const userResult = await getUserByClerkId(userId as string);
   const mongoUser = userResult.data?.user;
 
   const result = await getBookReviewsByBookId({
     bookId,
-    page: 1,
-    limit: 6,
+    page: Number(page),
+    pageSize: 8,
   });
 
   const reviews = result.data?.reviews || [];
@@ -123,6 +128,15 @@ export default async function BookReviews({ bookId }: BookReviewsProps) {
             No reviews yet. Be the first to write a review!
           </div>
         )}
+      </div>
+
+      <div className="mb-8">
+        <ServerPagination
+          currentPage={result.data?.currentPage}
+          totalPages={result.data?.totalPages}
+          nextPage={result.data?.nextPage}
+          prevPage={result.data?.prevPage}
+        />
       </div>
 
       <div>
