@@ -82,7 +82,9 @@ export default async function DashboardPage() {
   const { userId } = await auth();
   const userData = await getUserByClerkId(userId as string);
   const user = userData.data?.user || null;
-  const response = await getUserOrders(userId as string);
+  const response = await getUserOrders({
+    userId: userId as string,
+  });
   const orders = response.data?.orders as IOrder[];
   const statsData = await getUserStateData(user?._id as string);
   const { data: stats } = statsData || {};
