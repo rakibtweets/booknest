@@ -7,11 +7,13 @@ import type React from "react";
 
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
+import { IBookReview } from "@/database/review.model";
 import { getBookReviewsByBookId } from "@/lib/actions/review-actions";
 import { getUserByClerkId } from "@/lib/actions/user-actions";
 import { getTimeStamp } from "@/lib/utils";
 
 import Votes from "./Votes";
+import ReviewActionButton from "../buttons/ReviewActionButton";
 import ReviewForm from "../forms/review-form";
 import SignInAlert from "../ui/signin-alert";
 
@@ -38,7 +40,7 @@ export default async function BookReviews({ bookId }: BookReviewsProps) {
         <h3 className="text-xl font-semibold mb-4">Customer Reviews</h3>
 
         {reviews?.length > 0 ? (
-          reviews?.map((review) => (
+          reviews?.map((review: IBookReview) => (
             <div key={review?._id as string} className="mb-6">
               <div className="flex items-start gap-4">
                 <Avatar>
@@ -58,7 +60,7 @@ export default async function BookReviews({ bookId }: BookReviewsProps) {
                   </AvatarFallback>
                 </Avatar>
                 <div className="flex-1">
-                  <div className="flex items-center">
+                  <div className="flex justify-between items-center">
                     <h4 className="font-medium">
                       {
                         //@ts-ignore
@@ -70,6 +72,14 @@ export default async function BookReviews({ bookId }: BookReviewsProps) {
                         Verified Purchase
                       </span>
                     )}
+                    {review.clerkId === userId ? (
+                      <ReviewActionButton
+                        reviewId={review?._id as string}
+                        userId={review?.user?._id as unknown as string}
+                        bookId={review?.book?._id as unknown as string}
+                        clerkId={review.clerkId}
+                      />
+                    ) : null}
                   </div>
                   <div className="flex items-center mt-1">
                     <div className="flex">

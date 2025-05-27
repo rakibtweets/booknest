@@ -56,12 +56,10 @@ const ReviewForm = ({ bookId }: BookReviewsFormProps) => {
       });
 
       if (response.success) {
-        console.log(values);
         toast.success("Review submitted successfully!");
       } else {
         toast.error(response.error?.message || "Failed to create book review");
       }
-
       form.reset();
     } catch (error) {
       console.error("Form submission error", error);

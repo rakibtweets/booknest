@@ -1,4 +1,3 @@
-import { IUser } from "@/database/user.model";
 import { PaginatedSearchParams } from "@/types/global";
 
 export interface CreateUserParams {
@@ -39,6 +38,13 @@ export interface createBookReviewParams {
   userId: string;
   rating: number;
   content: string;
+  path: string;
+}
+export interface DeleteBookReviewParams {
+  reviewId: string;
+  userId: string;
+  clerkId: string;
+  bookId: string;
   path: string;
 }
 
