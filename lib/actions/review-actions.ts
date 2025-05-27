@@ -45,13 +45,16 @@ export const getBookReviewsByBookId = async (
   // Filters
   switch (filter) {
     case "oldest":
-      sortCriteria = { createAt: -1 };
+      sortCriteria = { createAt: 1 };
       break;
     case "newest":
-      sortCriteria = { createdAt: 1 };
+      sortCriteria = { createdAt: -1 };
       break;
-    case "rating":
+    case "hightolow":
       sortCriteria = { rating: -1 };
+      break;
+    case "lowtohigh":
+      sortCriteria = { rating: 1 };
       break;
 
     default:

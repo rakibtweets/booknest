@@ -41,7 +41,7 @@ export default async function BookDetailsPage({
 }: URLProps) {
   const { userId } = await auth();
   const { id } = await params;
-  const { page = 1 } = await searchParams;
+  const { page = 1, filter } = await searchParams;
   const bookResult = await getBookById(id);
   const book = bookResult.data?.book || null;
   const userData = await getUserByClerkId(userId as string);
@@ -236,7 +236,11 @@ export default async function BookDetailsPage({
           </div>
         </TabsContent>
         <TabsContent value="reviews" className="py-4">
-          <BookReviews bookId={book._id as string} page={Number(page)} />
+          <BookReviews
+            bookId={book._id as string}
+            page={Number(page)}
+            filter={filter || ""}
+          />
         </TabsContent>
       </Tabs>
     </div>

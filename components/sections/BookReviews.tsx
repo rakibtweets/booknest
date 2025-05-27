@@ -5,8 +5,10 @@ import { Star } from "lucide-react";
 import mongoose from "mongoose";
 import type React from "react";
 
+import Filter from "@/components/shared/Filter";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Separator } from "@/components/ui/separator";
+import { filterReviews } from "@/constants";
 import { IBookReview } from "@/database/review.model";
 import { getBookReviewsByBookId } from "@/lib/actions/review-actions";
 import { getUserByClerkId } from "@/lib/actions/user-actions";
@@ -21,11 +23,13 @@ import SignInAlert from "../ui/signin-alert";
 interface BookReviewsProps {
   bookId: string | undefined;
   page?: number;
+  filter?: string;
 }
 
 export default async function BookReviews({
   bookId,
   page = 1,
+  filter,
 }: BookReviewsProps) {
   const { userId } = await auth();
   const userResult = await getUserByClerkId(userId as string);
@@ -35,6 +39,7 @@ export default async function BookReviews({
     bookId,
     page: Number(page),
     pageSize: 8,
+    filter: filter,
   });
 
   const reviews = result.data?.reviews || [];
@@ -42,7 +47,13 @@ export default async function BookReviews({
   return (
     <div>
       <div className="mb-8">
-        <h3 className="text-xl font-semibold mb-4">Customer Reviews</h3>
+        <div className="flex flex-col sm:flex-row sm:items-center sm:justify-between gap-4 mb-8">
+          <h3 className="text-xl font-semibold mb-4">Customer Reviews</h3>
+          <Filter
+            filters={filterReviews}
+            otherClasses="min-h-[48px] sm:min-w-[170px] w-full sm:w-auto"
+          />
+        </div>
 
         {reviews?.length > 0 ? (
           reviews?.map((review: IBookReview) => (

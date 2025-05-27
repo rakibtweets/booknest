@@ -1,5 +1,5 @@
 "use client";
-import { Edit, MoreVertical, Trash } from "lucide-react";
+import { MoreVertical, Trash } from "lucide-react";
 import { usePathname } from "next/navigation";
 import { useState } from "react";
 import { toast } from "sonner";
@@ -78,11 +78,11 @@ const ReviewActionButton = ({
       <DropdownMenuContent align="end">
         <DropdownMenuLabel>Actions</DropdownMenuLabel>
         <DropdownMenuSeparator />
-        <DropdownMenuItem className="cursor-pointer" variant="default">
+        {/* <DropdownMenuItem className="cursor-pointer" variant="default">
           <Edit className="mr-2" /> Edit
         </DropdownMenuItem>
 
-        <DropdownMenuSeparator />
+        <DropdownMenuSeparator /> */}
 
         <DropdownMenuItem
           className="cursor-pointer"
