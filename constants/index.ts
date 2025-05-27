@@ -221,3 +221,10 @@ export const filterReviews = [
   { name: "Rating Hight > Low", value: "hightolow" },
   { name: "Rating Low > High", value: "lowtohigh" },
 ];
+
+export const filderOders = [
+  { name: "Newest", value: "newest" },
+  { name: "Oldest", value: "oldest" },
+  { name: "Price: High to Low", value: "highToLow" },
+  { name: "Price: Low to High", value: "lowToHigh" },
+];

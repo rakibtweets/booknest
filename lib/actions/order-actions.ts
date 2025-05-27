@@ -1,11 +1,13 @@
 "use server";
 
-import mongoose from "mongoose";
+import mongoose, { FilterQuery } from "mongoose";
 import { revalidatePath } from "next/cache";
 
+import Author from "@/database/author.model";
 import Book from "@/database/book.model";
 import Order, { IOrder } from "@/database/order.model";
 import User from "@/database/user.model";
+import { IGetUserOrders } from "@/types/action";
 import { ActionResponse, ErrorResponse } from "@/types/global";
 
 import handleError from "../handlers/error";
@@ -105,10 +107,11 @@ export async function getOrderById(
       .populate("user", "name email")
       .populate({
         path: "items.book",
-        select: "title coverImage _id",
+        select: "title coverImage _id author",
         populate: {
           path: "author",
           select: "name",
+          model: Author,
         },
       });
 
@@ -128,23 +131,22 @@ export async function getOrderById(
   }
 }
 
-export async function getUserOrders(
-  userId: string,
-  page = 1,
-  limit = 10
-): Promise<
+export async function getUserOrders(params: IGetUserOrders): Promise<
   ActionResponse<{
     orders: IOrder[];
     pagination: {
-      total: number;
-      pages: number;
-      page: number;
-      limit: number;
+      totalPages: number;
+      currentPage: number;
+      nextPage: number | null;
+      prevPage: number | null;
     };
   }>
 > {
   try {
     await dbConnect();
+    const { page = 1, pageSize = 10, query, filter, userId } = params;
+    const skip = (Number(page) - 1) * pageSize;
+    const limit = pageSize;
 
     const user = await User.findOne({
       clerkId: userId,
@@ -154,17 +156,47 @@ export async function getUserOrders(
       throw new Error("User not found");
     }
 
-    const skip = (page - 1) * limit;
-    const orders = await Order.find({ user: user._id })
+    const totalOrders = await Order.countDocuments({ user: user._id });
+
+    const totalPages = Math.ceil(totalOrders / limit);
+    let sortCriteria = {};
+    const filterQuery: FilterQuery<IOrder> = { user: user._id };
+
+    // Search
+    if (query) {
+      filterQuery.$or = [{ orderId: { $regex: query, $options: "i" } }];
+    }
+
+    // Filters
+    switch (filter) {
+      case "newest":
+        sortCriteria = { createdAt: -1 };
+        break;
+      case "oldest":
+        sortCriteria = { createdAt: 1 };
+        break;
+      case "lowToHigh":
+        sortCriteria = { total: 1 };
+        break;
+      case "highToLow":
+        sortCriteria = { total: -1 };
+        break;
+      default:
+        sortCriteria = { createdAt: -1 };
+        break;
+    }
+
+    const orders = await Order.find(filterQuery)
       .populate({
         path: "items.book",
-        select: "title coverImage _id",
+        select: "title coverImage _id author",
         populate: {
           path: "author",
-          select: "name email",
+          select: "name",
+          model: Author,
         },
       })
-      .sort({ createdAt: -1 })
+      .sort(sortCriteria)
       .skip(skip)
       .limit(limit);
 
@@ -172,17 +204,18 @@ export async function getUserOrders(
       throw new Error("No orders found for this user");
     }
 
-    const total = await Order.countDocuments({ user: user._id });
+    const nextPage = page < totalPages ? page + 1 : null;
+    const prevPage = page > 1 ? page - 1 : null;
 
     return {
       success: true,
       data: {
         orders: JSON.parse(JSON.stringify(orders)) as IOrder[],
         pagination: {
-          total,
-          pages: Math.ceil(total / limit),
-          page,
-          limit,
+          totalPages: totalPages,
+          currentPage: page,
+          nextPage,
+          prevPage,
         },
       },
     };

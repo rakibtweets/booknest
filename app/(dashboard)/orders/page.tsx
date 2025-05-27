@@ -1,15 +1,18 @@
 import { auth } from "@clerk/nextjs/server";
-import { Package, Search, TruckIcon } from "lucide-react";
+import { Package, TruckIcon } from "lucide-react";
 import type { Metadata } from "next";
 import Image from "next/image";
 import Link from "next/link";
 
+import Filter from "@/components/shared/Filter";
+import LocalSearchBar from "@/components/shared/LocalSearchBar";
 import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { filderOders } from "@/constants";
 import { IBook } from "@/database/book.model";
 import { IOrder } from "@/database/order.model";
 import { getUserOrders } from "@/lib/actions/order-actions";
+import { RouteParams } from "@/types/global";
 
 export const metadata: Metadata = {
   title: "Orders - BookNext",
@@ -140,9 +143,16 @@ export const metadata: Metadata = {
 //   },
 // ];
 
-export default async function OrdersPage() {
+export default async function OrdersPage({ searchParams }: RouteParams) {
   const { userId } = await auth();
-  const response = await getUserOrders(userId as string);
+  const { page, pageSize, filter, query } = await searchParams;
+  const response = await getUserOrders({
+    userId: userId as string,
+    page: Number(page) || 1,
+    pageSize: Number(pageSize) || 8,
+    query,
+    filter,
+  });
   const orders = response.data?.orders as IOrder[];
 
   return (
@@ -154,25 +164,19 @@ export default async function OrdersPage() {
         </p>
       </div>
 
-      <div className="flex flex-col md:flex-row justify-between items-start md:items-center gap-4 mt-6">
-        <div className="relative w-full md:w-64">
-          <Search className="absolute left-2.5 top-2.5 h-4 w-4 text-muted-foreground" />
-          <Input
-            type="search"
-            placeholder="Search orders..."
-            className="pl-8"
-          />
-        </div>
-        <div className="flex items-center gap-2">
-          <span className="text-sm text-muted-foreground">Filter by:</span>
-          <select className="text-sm border rounded-md px-2 py-1">
-            <option>All Orders</option>
-            <option>newest</option>
-            <option>oldest</option>
-            <option>{"High > Low"}</option>
-            <option>{"Low > Hight"}</option>
-          </select>
-        </div>
+      {/* Search options */}
+      <div className="mt-11 flex justify-between gap-5 max-sm:flex-col sm:items-center">
+        <LocalSearchBar
+          route="/orders"
+          iconPosition="left"
+          placeholder="Search for orders by orderId..."
+          otherClasses="flex-1"
+        />
+
+        <Filter
+          filters={filderOders}
+          otherClasses="min-h-[56px] sm:min-w-[170px]"
+        />
       </div>
 
       <Tabs defaultValue="all" className="mt-6">

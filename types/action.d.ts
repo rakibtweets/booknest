@@ -56,6 +56,9 @@ export interface DeleteBookReviewParams {
 export interface IGetBookReviewParams extends PaginatedSearchParams {
   bookId: string | undefined;
 }
+export interface IGetUserOrders extends PaginatedSearchParams {
+  userId: string | undefined;
+}
 
 export interface ReviewVoteParams {
   reviewId: string;
