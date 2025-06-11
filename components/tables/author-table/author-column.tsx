@@ -26,8 +26,8 @@ interface IAuthorTable {
   bio: string;
   image: string;
   coverImage?: string;
-  birthDate?: string;
-  deathDate?: string;
+  birthDate?: Date;
+  deathDate?: Date;
   birthPlace?: string;
   website?: string;
   email?: string;

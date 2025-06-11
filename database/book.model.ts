@@ -9,7 +9,7 @@ export interface IBook extends Document {
   coverImage: string;
   price: number;
   isbn: string;
-  publishDate: string;
+  publishDate: Date;
   pages: number;
   language: string;
   stock: number;
@@ -31,7 +31,7 @@ const BookSchema = new Schema<IBook>({
   coverImage: { type: String, required: true },
   price: { type: Number, required: true },
   isbn: { type: String, required: true, unique: true },
-  publishDate: { type: String, required: true },
+  publishDate: { type: Date, required: true },
   pages: { type: Number, required: true },
   language: { type: String, required: true },
   stock: { type: Number, required: true, default: 0 },

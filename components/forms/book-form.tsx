@@ -39,6 +39,7 @@ import { IAuthor } from "@/database/author.model";
 import { IBook } from "@/database/book.model";
 import { IPublisher } from "@/database/publisher.model";
 import { createBook, updateBook } from "@/lib/actions/book-actions";
+import { cn } from "@/lib/utils";
 import { BookFormValues, bookSchema } from "@/validations/book";
 
 interface BookFormProps {
@@ -65,7 +66,7 @@ export function BookForm({
       coverImage: "",
       price: 0,
       isbn: "",
-      publishDate: "",
+      publishDate: undefined,
       pages: 0,
       language: "English",
       stock: 0,
@@ -306,10 +307,13 @@ export function BookForm({
                     <FormControl>
                       <Button
                         variant={"outline"}
-                        className={`w-full pl-3 text-left font-normal ${!field.value ? "text-muted-foreground" : ""}`}
+                        className={cn(
+                          "w-[240px] pl-3 text-left font-normal",
+                          !field.value && "text-muted-foreground"
+                        )}
                       >
                         {field.value ? (
-                          format(new Date(field.value), "PPP")
+                          format(field.value, "PPP")
                         ) : (
                           <span>Pick a date</span>
                         )}
@@ -320,14 +324,16 @@ export function BookForm({
                   <PopoverContent className="w-auto p-0" align="start">
                     <Calendar
                       mode="single"
-                      selected={field.value ? new Date(field.value) : undefined}
-                      onSelect={(date) =>
-                        field.onChange(date ? format(date, "yyyy-MM-dd") : "")
+                      selected={field.value}
+                      onSelect={field.onChange}
+                      disabled={(date) =>
+                        date > new Date() || date < new Date("1900-01-01")
                       }
-                      initialFocus
+                      captionLayout="dropdown"
                     />
                   </PopoverContent>
                 </Popover>
+
                 <FormMessage />
               </FormItem>
             )}
