@@ -2,6 +2,7 @@ import { ClerkProvider } from "@clerk/nextjs";
 import type { Metadata } from "next";
 import { Inter, Space_Grotesk } from "next/font/google";
 import "./globals.css";
+import { ThemeProvider } from "next-themes";
 import NextTopLoader from "nextjs-toploader";
 import { Suspense } from "react";
 
@@ -37,7 +38,14 @@ export default function RootLayout({
       >
         <NextTopLoader showSpinner={false} />
         <Suspense>
-          <ClerkProvider dynamic>{children}</ClerkProvider>
+          <ThemeProvider
+            attribute="class"
+            defaultTheme="system"
+            enableSystem
+            disableTransitionOnChange
+          >
+            <ClerkProvider dynamic>{children}</ClerkProvider>
+          </ThemeProvider>
         </Suspense>
         <Toaster richColors />
         <BreakPointIndicator />

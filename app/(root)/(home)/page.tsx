@@ -2,6 +2,7 @@ import { Metadata } from "next";
 import React from "react";
 
 import BookCategories from "@/components/sections/BookCategories";
+import FAQSection from "@/components/sections/FaqSection";
 import FeaturedBooks from "@/components/sections/FeaturedBooks";
 import Hero from "@/components/sections/Hero";
 import PopularAuthors from "@/components/sections/PopularAuthors";
@@ -20,6 +21,7 @@ const Home = async () => {
       <PopularAuthors />
       <FeaturedBooks />
       <RecommendedBooks />
+      <FAQSection />
     </>
   );
 };

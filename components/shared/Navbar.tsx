@@ -8,6 +8,7 @@ import { navLinks } from "@/constants";
 import MobileNav from "./MobileNav";
 import ProfileAvatar from "./ProfileAvatar";
 import { Input } from "../ui/input";
+import { ThemeToggle } from "../ui/theme-toggle";
 
 const Navbar = () => {
   const pathname = usePathname();
@@ -47,7 +48,7 @@ const Navbar = () => {
           </nav>
         </div>
 
-        <div className="flex items-center justify-center space-x-3">
+        <div className="flex items-center justify-center gap-x-2 lg:gap-x-4">
           <div className="relative max-w-lg">
             <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
               <Search className="h-4 w-4 text-gray-400" />
@@ -58,11 +59,12 @@ const Navbar = () => {
               placeholder="Search Books, Authors..."
             />
           </div>
-          <div>
-            <Link href={"/cart"}>
-              <ShoppingCart className="h-6 w-6 text-gray-500" />
-            </Link>
-          </div>
+
+          <Link href={"/cart"}>
+            <ShoppingCart className="size-4 text-gray-500" />
+          </Link>
+
+          <ThemeToggle />
           <div className="flex  rounded-full  cursor-pointer">
             <ProfileAvatar />
           </div>

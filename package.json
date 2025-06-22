@@ -6,6 +6,7 @@
     "dev": "next dev --turbopack",
     "build": "next build",
     "start": "next start",
+    "clerk": "lt --port 3000 --subdomain booknest-online",
     "lint": "next lint",
     "start:stripe": "stripe listen --forward-to http://localhost:3000/api/stripe/webhook"
   },
@@ -13,6 +14,7 @@
     "@clerk/nextjs": "^6.14.1",
     "@hookform/resolvers": "^5.0.1",
     "@internationalized/date": "^3.8.0",
+    "@radix-ui/react-accordion": "^1.2.11",
     "@radix-ui/react-alert-dialog": "^1.1.7",
     "@radix-ui/react-aspect-ratio": "^1.1.2",
     "@radix-ui/react-avatar": "^1.1.3",
