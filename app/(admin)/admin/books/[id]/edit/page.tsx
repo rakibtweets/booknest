@@ -94,9 +94,9 @@ export default async function EditBookPage({ params }: EditBookPageProps) {
     // Fetch book, authors, and publishers for the form
     const bookResult = await getBookById(id);
     const book = bookResult?.data?.book;
-    const authorResult = await getAuthors();
+    const authorResult = await getAuthors({});
     const authors = authorResult?.data?.authors || [];
-    const publisherResult = await getPublishers();
+    const publisherResult = await getPublishers({});
     const publishers = publisherResult?.data?.publishers || [];
 
     return (

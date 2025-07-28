@@ -13,7 +13,7 @@ const categories = [
     id: "fiction",
     name: "Fiction",
     description: "Novels, short stories, and literary works",
-    count: 1245,
+
     image: "https://placehold.co/200x200?text=Genre",
     featured: true,
     subcategories: ["Contemporary Fiction", "Classics", "Literary Fiction"],
@@ -22,7 +22,7 @@ const categories = [
     id: "non-fiction",
     name: "Non-Fiction",
     description: "Biographies, history, and educational books",
-    count: 876,
+
     image: "https://placehold.co/200x200?text=Genre",
     featured: true,
     subcategories: ["Biographies", "History", "Science", "Self-Help"],
@@ -31,7 +31,7 @@ const categories = [
     id: "sci-fi",
     name: "Science Fiction",
     description: "Futuristic and speculative fiction",
-    count: 543,
+
     image: "https://placehold.co/200x200?text=Genre",
     featured: true,
     subcategories: ["Space Opera", "Dystopian", "Hard Sci-Fi", "Cyberpunk"],
@@ -40,7 +40,7 @@ const categories = [
     id: "mystery",
     name: "Mystery & Thriller",
     description: "Suspenseful and crime novels",
-    count: 678,
+
     image: "https://placehold.co/200x200?text=Genre",
     featured: true,
     subcategories: [
@@ -54,7 +54,7 @@ const categories = [
     id: "romance",
     name: "Romance",
     description: "Love stories and relationships",
-    count: 921,
+
     image: "https://placehold.co/200x200?text=Genre",
     featured: true,
     subcategories: [
@@ -67,7 +67,7 @@ const categories = [
     id: "children",
     name: "Children's Books",
     description: "Books for young readers",
-    count: 432,
+
     image: "https://placehold.co/200x200?text=Genre",
     featured: true,
     subcategories: ["Picture Books", "Middle Grade", "Early Readers"],
@@ -76,7 +76,7 @@ const categories = [
     id: "fantasy",
     name: "Fantasy",
     description: "Magical worlds and mythical creatures",
-    count: 567,
+
     image: "https://placehold.co/200x200?text=Genre",
     featured: false,
     subcategories: [
@@ -90,7 +90,7 @@ const categories = [
     id: "horror",
     name: "Horror",
     description: "Frightening and supernatural stories",
-    count: 321,
+
     image: "https://placehold.co/200x200?text=Genre",
     featured: false,
     subcategories: ["Supernatural", "Psychological Horror", "Gothic Horror"],
@@ -99,7 +99,7 @@ const categories = [
     id: "poetry",
     name: "Poetry",
     description: "Verse and poetic expression",
-    count: 189,
+
     image: "https://placehold.co/200x200?text=Genre",
     featured: false,
     subcategories: ["Contemporary Poetry", "Classical Poetry", "Epic Poetry"],
@@ -108,7 +108,7 @@ const categories = [
     id: "biography",
     name: "Biography",
     description: "Life stories and memoirs",
-    count: 412,
+
     image: "https://placehold.co/200x200?text=Genre",
     featured: false,
     subcategories: ["Autobiography", "Memoir", "Historical Biography"],
@@ -117,7 +117,7 @@ const categories = [
     id: "cooking",
     name: "Cooking & Food",
     description: "Recipes and culinary exploration",
-    count: 276,
+
     image: "https://placehold.co/200x200?text=Genre",
     featured: false,
     subcategories: ["Baking", "International Cuisine", "Healthy Cooking"],
@@ -126,7 +126,7 @@ const categories = [
     id: "business",
     name: "Business & Economics",
     description: "Professional and financial guidance",
-    count: 354,
+
     image: "https://placehold.co/200x200?text=Genre",
     featured: false,
     subcategories: ["Leadership", "Finance", "Entrepreneurship", "Marketing"],

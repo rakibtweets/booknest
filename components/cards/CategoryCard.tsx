@@ -1,5 +1,7 @@
-import Link from "next/link";
 import { ChevronRight } from "lucide-react";
+import Link from "next/link";
+
+import { Badge } from "@/components/ui/badge";
 import {
   Card,
   CardContent,
@@ -8,13 +10,11 @@ import {
   CardHeader,
   CardTitle,
 } from "@/components/ui/card";
-import { Badge } from "@/components/ui/badge";
 
 interface Category {
   id: string;
   name: string;
   description: string;
-  count: number;
   image: string;
   featured: boolean;
   subcategories: string[];
@@ -32,9 +32,6 @@ export default function CategoryCard({ category }: CategoryCardProps) {
         <CardDescription>{category.description}</CardDescription>
       </CardHeader>
       <CardContent>
-        <p className="text-sm text-muted-foreground mb-3">
-          {category.count} books
-        </p>
         <div className="flex flex-wrap gap-2">
           {category.subcategories.slice(0, 3).map((subcategory) => (
             <Badge
@@ -54,7 +51,7 @@ export default function CategoryCard({ category }: CategoryCardProps) {
       </CardContent>
       <CardFooter>
         <Link
-          href={`/categories/${category.id}`}
+          href={`/books?cat=${category.id}`}
           className="text-sm text-primary flex items-center hover:underline"
         >
           Browse category

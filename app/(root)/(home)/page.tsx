@@ -6,7 +6,6 @@ import FAQSection from "@/components/sections/FaqSection";
 import FeaturedBooks from "@/components/sections/FeaturedBooks";
 import Hero from "@/components/sections/Hero";
 import PopularAuthors from "@/components/sections/PopularAuthors";
-import RecommendedBooks from "@/components/sections/RecomendedBooks";
 
 export const metadata: Metadata = {
   title: "Home",
@@ -20,7 +19,7 @@ const Home = async () => {
       <BookCategories />
       <PopularAuthors />
       <FeaturedBooks />
-      <RecommendedBooks />
+      {/* <RecommendedBooks /> */}
       <FAQSection />
     </>
   );

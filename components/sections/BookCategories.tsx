@@ -14,37 +14,31 @@ const categories = [
     id: "fiction",
     name: "Fiction",
     description: "Novels, short stories, and literary works",
-    count: 1245,
   },
   {
     id: "non-fiction",
     name: "Non-Fiction",
     description: "Biographies, history, and educational books",
-    count: 876,
   },
   {
     id: "sci-fi",
     name: "Science Fiction",
     description: "Futuristic and speculative fiction",
-    count: 543,
   },
   {
     id: "mystery",
     name: "Mystery & Thriller",
     description: "Suspenseful and crime novels",
-    count: 678,
   },
   {
     id: "romance",
     name: "Romance",
     description: "Love stories and relationships",
-    count: 921,
   },
   {
     id: "children",
     name: "Children's Books",
     description: "Books for young readers",
-    count: 432,
   },
 ];
 
@@ -63,17 +57,13 @@ export default function BookCategories() {
       </div>
       <div className="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 gap-4">
         {categories.map((category) => (
-          <Link key={category.id} href={`/categories/${category.id}`}>
+          <Link key={category.id} href={`/books?cat=${category.id}`}>
             <Card className="h-full transition-colors hover:border-primary">
               <CardHeader className="pb-2">
                 <CardTitle>{category.name}</CardTitle>
                 <CardDescription>{category.description}</CardDescription>
               </CardHeader>
-              <CardContent>
-                <p className="text-sm text-muted-foreground">
-                  {category.count} books
-                </p>
-              </CardContent>
+              <CardContent></CardContent>
             </Card>
           </Link>
         ))}
