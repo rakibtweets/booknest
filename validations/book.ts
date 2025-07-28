@@ -7,7 +7,9 @@ export const bookSchema = z.object({
   coverImage: z.string().min(1, "Cover image is required"),
   price: z.coerce.number().positive("Price must be positive"),
   isbn: z.string().min(10, "ISBN must be at least 10 characters"),
-  publishDate: z.string().min(1, "Publish date is required"),
+  publishDate: z.date({
+    required_error: "A date of publish date is required.",
+  }),
   pages: z.coerce.number().int().positive("Pages must be a positive integer"),
   language: z.string().min(1, "Language is required"),
   stock: z.coerce

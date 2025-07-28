@@ -31,7 +31,7 @@ export const getBooks = async (
   }>
 > => {
   await dbConnect();
-  const { page = 1, pageSize = 10, query, filter } = params;
+  const { page = 1, pageSize = 10, query, filter, cat, publisher } = params;
   const skip = (Number(page) - 1) * pageSize;
   const limit = pageSize;
 
@@ -46,6 +46,12 @@ export const getBooks = async (
       { title: { $regex: query, $options: "i" } },
       { categories: { $regex: query, $options: "i" } },
     ];
+  }
+  if (cat) {
+    filterQuery.categories = { $regex: cat, $options: "i" };
+  }
+  if (publisher) {
+    filterQuery.publisher = publisher;
   }
 
   // Filters

@@ -3,29 +3,9 @@ import { PlusCircle, Search, Edit } from "lucide-react";
 import type { Metadata } from "next";
 import Link from "next/link";
 
-import DeleteAuthorButton from "@/components/buttons/DeleteAuthorButton";
 import { authorsColumns } from "@/components/tables/author-table/author-column";
 import AuthorsTable from "@/components/tables/author-table/author-table";
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
-import {
-  DropdownMenu,
-  DropdownMenuContent,
-  DropdownMenuItem,
-  DropdownMenuLabel,
-  DropdownMenuSeparator,
-  DropdownMenuTrigger,
-} from "@/components/ui/dropdown-menu";
-import { Input } from "@/components/ui/input";
-import {
-  Table,
-  TableBody,
-  TableCell,
-  TableHead,
-  TableHeader,
-  TableRow,
-} from "@/components/ui/table";
 import { getAuthors } from "@/lib/actions/author-actions";
 
 export const metadata: Metadata = {
@@ -92,7 +72,7 @@ export const metadata: Metadata = {
 // ];
 
 export default async function AdminAuthorsPage() {
-  const result = await getAuthors();
+  const result = await getAuthors({});
   const authors = result.data?.authors || [];
   return (
     <>

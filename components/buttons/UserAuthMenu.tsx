@@ -19,7 +19,7 @@ export default function UserAuthMenu() {
           variant="ghost"
           className="flex  w-full  justify-center items-center"
         >
-          <User className="size-7" />
+          <User className="size-4" />
           <span className="sr-only">User menu</span>
         </Button>
       </DropdownMenuTrigger>

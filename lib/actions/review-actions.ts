@@ -20,7 +20,6 @@ import handleError from "../handlers/error";
 import dbConnect from "../mongoose";
 
 // get all reviews for a book using book id
-
 export const getBookReviewsByBookId = async (
   params: IGetBookReviewParams
 ): Promise<
@@ -106,7 +105,6 @@ export const createBookReview = async (
   const session = await mongoose.startSession();
   session.startTransaction();
   try {
-    // start creating a new Book
     const { bookId, userId, content, rating, path } = params;
 
     await dbConnect();

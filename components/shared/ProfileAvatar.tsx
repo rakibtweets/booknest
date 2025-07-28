@@ -22,16 +22,16 @@ const ProfileAvatar = () => {
   const isAdmin = (user?.publicMetadata?.roles ?? []).includes("admin");
 
   return (
-    <>
+    <div>
       <SignedIn>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="secondary" className="size-8 rounded-full">
+            <Button variant="secondary" className="size-4 rounded-full">
               {!isLoaded ? (
-                <Skeleton className="size-8 rounded-full" />
+                <Skeleton className="size-4 rounded-full" />
               ) : (
-                <Avatar className="size-8 ">
-                  <AvatarImage src={user?.imageUrl} />
+                <Avatar className="size-4 ">
+                  <AvatarImage src={user?.imageUrl} height={16} width={16} />
                   <AvatarFallback>
                     {user?.firstName?.charAt(0) ?? ""}
                   </AvatarFallback>
@@ -104,7 +104,7 @@ const ProfileAvatar = () => {
           <UserAuthMenu />
         </div>
       </SignedOut>
-    </>
+    </div>
   );
 };
 export default ProfileAvatar;

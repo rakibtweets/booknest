@@ -59,7 +59,7 @@ const MobileNav = () => {
           className=" px-0 text-base hover:bg-transparent focus-visible:bg-transparent focus-visible:ring-0 focus-visible:ring-offset-0 "
         >
           <AlignJustifyIcon
-            className="size-7 text-gray-400 hover:text-gray-500"
+            className="size-4 text-gray-400 hover:text-gray-500"
             aria-hidden="true"
           />
           <span className="sr-only">Toggle Menu</span>

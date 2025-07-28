@@ -17,8 +17,8 @@ export interface IAuthor extends Document {
   bio: string;
   image: string;
   coverImage?: string;
-  birthDate?: string;
-  deathDate?: string;
+  birthDate?: Date;
+  deathDate?: Date;
   birthPlace?: string;
   booksCount?: number;
   website?: string;
@@ -38,8 +38,8 @@ const AuthorSchema = new Schema<IAuthor>({
   image: { type: String, required: true },
   booksCount: { type: Number, default: 0 },
   coverImage: { type: String },
-  birthDate: { type: String },
-  deathDate: { type: String },
+  birthDate: { type: Date },
+  deathDate: { type: Date },
   birthPlace: { type: String },
   website: { type: String },
   email: { type: String },

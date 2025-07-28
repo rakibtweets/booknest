@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 
 import { Button } from "@/components/ui/button";
@@ -30,10 +31,42 @@ export default function Hero() {
             <div className="relative w-full max-w-md aspect-[4/3] bg-gradient-to-br from-primary/20 to-primary/10 rounded-lg">
               <div className="absolute inset-0 flex items-center justify-center">
                 <div className="grid grid-cols-2 gap-4 transform rotate-6">
-                  <div className="h-40 w-32 bg-background shadow-lg rounded-md transform -rotate-6"></div>
-                  <div className="h-40 w-32 bg-background shadow-lg rounded-md transform rotate-3"></div>
-                  <div className="h-40 w-32 bg-background shadow-lg rounded-md transform rotate-12"></div>
-                  <div className="h-40 w-32 bg-background shadow-lg rounded-md transform -rotate-3"></div>
+                  <div className="h-40 w-32 shadow-lg rounded-md transform -rotate-6">
+                    <Image
+                      src="/images/alchemist.jpg"
+                      alt="Book Cover - The Alchemist"
+                      width={128}
+                      height={160}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="h-40 w-32 shadow-lg rounded-md transform rotate-3">
+                    <Image
+                      src="/images/atomic_habits.jpg"
+                      alt="Book Cover - Atomic Habits"
+                      width={128}
+                      height={160}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="h-40 w-32 shadow-lg rounded-md transform rotate-12">
+                    <Image
+                      src="/images/mans-search-for-meaning.jpg"
+                      alt="Book Cover - Man's Search for Meaning"
+                      width={128}
+                      height={160}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
+                  <div className="h-40 w-32  shadow-lg rounded-md transform -rotate-3">
+                    <Image
+                      src="/images/show-your-work.jpg"
+                      alt="Book Cover - Show Your Work"
+                      width={128}
+                      height={160}
+                      className="w-full h-full object-cover"
+                    />
+                  </div>
                 </div>
               </div>
             </div>

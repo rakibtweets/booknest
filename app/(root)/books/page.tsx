@@ -25,12 +25,14 @@ const Page = async ({ searchParams }: RouteParams) => {
   const { userId } = await auth();
   const userData = await getUserByClerkId(userId as string);
   const user = userData.data?.user || null;
-  const { page, pageSize, query, filter } = await searchParams;
+  const { page, pageSize, query, filter, cat, publisher } = await searchParams;
   const bookResult = await getBooks({
     page: Number(page) || 1,
     pageSize: Number(pageSize) || 8,
     query,
     filter,
+    cat: cat || "",
+    publisher: publisher || "",
   });
   const books = bookResult.data?.books || [];
   return (
