@@ -31,7 +31,15 @@ export const getBooks = async (
   }>
 > => {
   await dbConnect();
-  const { page = 1, pageSize = 10, query, filter, cat, publisher } = params;
+  const {
+    page = 1,
+    pageSize = 10,
+    query,
+    filter,
+    cat,
+    publisher,
+    author,
+  } = params;
   const skip = (Number(page) - 1) * pageSize;
   const limit = pageSize;
 
@@ -52,6 +60,9 @@ export const getBooks = async (
   }
   if (publisher) {
     filterQuery.publisher = publisher;
+  }
+  if (author) {
+    filterQuery.author = author;
   }
 
   // Filters

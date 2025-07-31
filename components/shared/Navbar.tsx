@@ -1,13 +1,13 @@
 "use client";
-import { BookOpenText, Search, ShoppingCart } from "lucide-react";
+import { BookOpenText, ShoppingCart } from "lucide-react";
 import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import { navLinks } from "@/constants";
 
+import GlobalSearchCommandBar from "./GlobalSearchCommandBar";
 import MobileNav from "./MobileNav";
 import ProfileAvatar from "./ProfileAvatar";
-import { Input } from "../ui/input";
 import { ThemeToggle } from "../ui/theme-toggle";
 
 const Navbar = () => {
@@ -50,14 +50,7 @@ const Navbar = () => {
 
         <div className="flex items-center justify-center gap-x-2 lg:gap-x-4">
           <div className="relative max-w-lg">
-            <div className="pointer-events-none absolute inset-y-0 left-0 flex items-center pl-3">
-              <Search className="h-4 w-4 text-gray-400" />
-            </div>
-            <Input
-              type="text"
-              className="block w-full rounded-md border-0 py-1.5 pl-10 pr-3 text-gray-900 ring-1 ring-inset ring-gray-300 placeholder:text-gray-400 focus:ring-2  sm:text-sm sm:leading-6"
-              placeholder="Search Books, Authors..."
-            />
+            <GlobalSearchCommandBar />
           </div>
 
           <Link href={"/cart"}>

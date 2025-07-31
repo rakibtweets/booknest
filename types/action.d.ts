@@ -23,6 +23,7 @@ export interface IGetBooksParams extends PaginatedSearchParams {
   order?: "asc" | "desc";
   cat?: string;
   publisher?: string;
+  author?: string;
 }
 export interface IGetAuthorParams extends PaginatedSearchParams {
   limit?: number;

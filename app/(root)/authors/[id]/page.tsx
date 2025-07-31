@@ -14,204 +14,6 @@ import { getBooksByAuthorId } from "@/lib/actions/book-actions";
 import { getYear } from "@/lib/utils";
 import { Author } from "@/types/global";
 
-// This would typically come from a database or API
-// const authors = [
-//   {
-//     id: "stephen-king",
-//     name: "Stephen King",
-//     image: "https://placehold.co/400x400?text=Author",
-//     coverImage: "https://placehold.co/400x1200?text=Cover",
-//     bio: "Stephen Edwin King is an American author of horror, supernatural fiction, suspense, crime, science-fiction, and fantasy novels. His books have sold more than 350 million copies, and many have been adapted into films, television series, miniseries, and comic books. King has published 63 novels, including seven under the pen name Richard Bachman, and five non-fiction books. He has also written approximately 200 short stories, most of which have been published in book collections.",
-//     birthDate: "September 21, 1947",
-//     birthPlace: "Portland, Maine, USA",
-//     website: "https://stephenking.com",
-//     email: "contact@stephenking.com",
-//     twitter: "@StephenKing",
-//     booksCount: 64,
-//     genres: [
-//       "Horror",
-//       "Thriller",
-//       "Science Fiction",
-//       "Fantasy",
-//       "Mystery",
-//       "Supernatural Fiction",
-//     ],
-//     awards: [
-//       "Bram Stoker Award",
-//       "World Fantasy Award",
-//       "British Fantasy Society Award",
-//       "National Medal of Arts",
-//     ],
-//     books: [
-//       {
-//         id: "the-shining",
-//         title: "The Shining",
-//         coverImage: "https://placehold.co/400x300?text=Books",
-//         publishYear: 1977,
-//         genre: "Horror",
-//         rating: 4.2,
-//         price: 14.99,
-//       },
-//       {
-//         id: "it",
-//         title: "It",
-//         coverImage: "https://placehold.co/400x300?text=Books",
-//         publishYear: 1986,
-//         genre: "Horror",
-//         rating: 4.3,
-//         price: 16.99,
-//       },
-//       {
-//         id: "the-stand",
-//         title: "The Stand",
-//         coverImage: "https://placehold.co/400x300?text=Books",
-//         publishYear: 1978,
-//         genre: "Horror",
-//         rating: 4.5,
-//         price: 15.99,
-//       },
-//       {
-//         id: "misery",
-//         title: "Misery",
-//         coverImage: "https://placehold.co/400x300?text=Books",
-//         publishYear: 1987,
-//         genre: "Thriller",
-//         rating: 4.1,
-//         price: 13.99,
-//       },
-//       {
-//         id: "pet-sematary",
-//         title: "Pet Sematary",
-//         coverImage: "https://placehold.co/400x300?text=Books",
-//         publishYear: 1983,
-//         genre: "Horror",
-//         rating: 4.0,
-//         price: 12.99,
-//       },
-//       {
-//         id: "the-green-mile",
-//         title: "The Green Mile",
-//         coverImage: "https://placehold.co/400x300?text=Books",
-//         publishYear: 1996,
-//         genre: "Fantasy",
-//         rating: 4.6,
-//         price: 14.99,
-//       },
-//     ],
-//     relatedAuthors: [
-//       {
-//         id: "neil-gaiman",
-//         name: "Neil Gaiman",
-//         image: "https://placehold.co/200x200?text=authors",
-//       },
-//       {
-//         id: "dean-koontz",
-//         name: "Dean Koontz",
-//         image: "https://placehold.co/200x200?text=authors",
-//       },
-//       {
-//         id: "clive-barker",
-//         name: "Clive Barker",
-//         image: "https://placehold.co/200x200?text=authors",
-//       },
-//     ],
-//   },
-//   {
-//     id: "jk-rowling",
-//     name: "J.K. Rowling",
-//     image: "https://placehold.co/400x400?text=Author",
-//     coverImage: "https://placehold.co/400x400?text=Cover",
-//     bio: "Joanne Rowling, better known by her pen name J. K. Rowling, is a British author and philanthropist. She is best known for writing the Harry Potter fantasy series, which has won multiple awards and sold more than 500 million copies, becoming the best-selling book series in history. The books are the basis of a popular film series, over which Rowling had overall approval on the scripts and was a producer on the final films. She also writes crime fiction under the pen name Robert Galbraith.",
-//     birthDate: "July 31, 1965",
-//     birthPlace: "Yate, Gloucestershire, England",
-//     website: "https://www.jkrowling.com",
-//     email: "info@jkrowling.com",
-//     twitter: "@jk_rowling",
-//     booksCount: 14,
-//     genres: ["Fantasy", "Children's Fiction", "Mystery", "Crime Fiction"],
-//     awards: [
-//       "British Book Awards",
-//       "Hugo Award",
-//       "Bram Stoker Award",
-//       "Hans Christian Andersen Literature Award",
-//     ],
-//     books: [
-//       {
-//         id: "harry-potter-philosophers-stone",
-//         title: "Harry Potter and the Philosopher's Stone",
-//         coverImage: "https://placehold.co/400x300?text=Books",
-//         publishYear: 1997,
-//         genre: "Fantasy",
-//         rating: 4.7,
-//         price: 15.99,
-//       },
-//       {
-//         id: "harry-potter-chamber-secrets",
-//         title: "Harry Potter and the Chamber of Secrets",
-//         coverImage: "https://placehold.co/400x300?text=Books",
-//         publishYear: 1998,
-//         genre: "Fantasy",
-//         rating: 4.6,
-//         price: 15.99,
-//       },
-//       {
-//         id: "harry-potter-prisoner-azkaban",
-//         title: "Harry Potter and the Prisoner of Azkaban",
-//         coverImage: "https://placehold.co/400x300?text=Books",
-//         publishYear: 1999,
-//         genre: "Fantasy",
-//         rating: 4.8,
-//         price: 16.99,
-//       },
-//       {
-//         id: "harry-potter-goblet-fire",
-//         title: "Harry Potter and the Goblet of Fire",
-//         coverImage: "https://placehold.co/400x300?text=Books",
-//         publishYear: 2000,
-//         genre: "Fantasy",
-//         rating: 4.7,
-//         price: 17.99,
-//       },
-//       {
-//         id: "casual-vacancy",
-//         title: "The Casual Vacancy",
-//         coverImage: "https://placehold.co/400x300?text=Books",
-//         publishYear: 2012,
-//         genre: "Drama",
-//         rating: 3.6,
-//         price: 14.99,
-//       },
-//       {
-//         id: "cuckoos-calling",
-//         title: "The Cuckoo's Calling",
-//         coverImage: "https://placehold.co/400x300?text=Books",
-//         publishYear: 2013,
-//         genre: "Crime Fiction",
-//         rating: 3.9,
-//         price: 13.99,
-//       },
-//     ],
-//     relatedAuthors: [
-//       {
-//         id: "neil-gaiman",
-//         name: "Neil Gaiman",
-//         image: "https://placehold.co/200x200?text=author",
-//       },
-//       {
-//         id: "george-rr-martin",
-//         name: "George R.R. Martin",
-//         image: "https://placehold.co/200x200?text=author",
-//       },
-//       {
-//         id: "rick-riordan",
-//         name: "Rick Riordan",
-//         image: "https://placehold.co/200x200?text=author",
-//       },
-//     ],
-//   },
-//   // Other authors would be defined here
-// ];
-
 interface AuthorPageProps {
   params: {
     id: string;
@@ -365,7 +167,7 @@ export default async function AuthorDetailsPage({ params }: AuthorPageProps) {
                       </h3>
                       <div className="flex items-center mt-1">
                         <div className="flex">
-                          {[...Array(book?.rating)]?.map((_, i) => (
+                          {[...Array(5)].map((_, i) => (
                             <svg
                               key={i}
                               className={`h-3 w-3 ${
@@ -388,7 +190,7 @@ export default async function AuthorDetailsPage({ params }: AuthorPageProps) {
                       </div>
                       <div className="flex justify-between items-center mt-1">
                         <p className="text-sm text-muted-foreground">
-                          {getYear(book?.publishDate)}
+                          {getYear(book?.publishDate?.toString())}
                         </p>
                         <p className="font-bold">${book?.price?.toFixed(2)}</p>
                       </div>
@@ -399,7 +201,7 @@ export default async function AuthorDetailsPage({ params }: AuthorPageProps) {
 
               <div className="mt-8 text-center">
                 <Button variant="outline" asChild>
-                  <Link href={`/books?author=${author?.id}`}>
+                  <Link href={`/books?author=${author?._id}`}>
                     View All Books by {author?.name}
                   </Link>
                 </Button>
@@ -422,7 +224,7 @@ export default async function AuthorDetailsPage({ params }: AuthorPageProps) {
                         <div>
                           <p className="font-medium">Birth Date</p>
                           <p className="text-sm text-muted-foreground">
-                            {author.birthDate}
+                            {getYear(author?.birthDate ?? "") || "Unknown"}
                           </p>
                         </div>
                       </div>
@@ -532,7 +334,7 @@ export default async function AuthorDetailsPage({ params }: AuthorPageProps) {
                   {author.genres?.map((genre) => (
                     <Link
                       key={genre}
-                      href={`/books?genre=${genre.toLowerCase().replace(/\s+/g, "-")}`}
+                      href={`/books?cat=${genre.toLowerCase().replace(/\s+/g, "-")}`}
                       className="px-4 py-2 bg-muted rounded-md hover:bg-muted/80 transition-colors"
                     >
                       {genre}
