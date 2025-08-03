@@ -4,10 +4,12 @@ import Link from "next/link";
 import { usePathname } from "next/navigation";
 
 import { navLinks } from "@/constants";
+import { cn } from "@/lib/utils";
 
 import GlobalSearchCommandBar from "./GlobalSearchCommandBar";
 import MobileNav from "./MobileNav";
 import ProfileAvatar from "./ProfileAvatar";
+import { buttonVariants } from "../ui/button";
 import { ThemeToggle } from "../ui/theme-toggle";
 
 const Navbar = () => {
@@ -36,8 +38,8 @@ const Navbar = () => {
                   href={item.path}
                   className={`inline-flex h-16 items-center border-b-2 px-1 pt-1 text-sm font-medium ${
                     isActive
-                      ? "border-indigo-600 text-gray-900"
-                      : " text-gray-500 hover:border-gray-300 hover:text-gray-700"
+                      ? "border-indigo-600 text-gray-900 dark:text-primary dark:border-primary"
+                      : " text-gray-500 hover:border-gray-300 hover:text-gray-700 hover:dark:text-primary hover:dark:border-primary"
                   }`}
                   // onClick={() => setActiveTab(item)}
                 >
@@ -53,16 +55,28 @@ const Navbar = () => {
             <GlobalSearchCommandBar />
           </div>
 
-          <Link href={"/cart"}>
-            <ShoppingCart className="size-4 text-gray-500" />
-          </Link>
+          <div>
+            <Link
+              href={"/cart"}
+              className={cn(
+                buttonVariants({
+                  size: "icon",
+                  variant: "ghost",
+                })
+              )}
+            >
+              <ShoppingCart className="size-7 " />
+            </Link>
+          </div>
 
-          <ThemeToggle />
-          <div className="flex  rounded-full  cursor-pointer">
+          <div>
+            <ThemeToggle />
+          </div>
+          <div>
             <ProfileAvatar />
           </div>
 
-          <div className=" lg:hidden space-x-8 ">
+          <div className="lg:hidden space-x-8 ">
             <MobileNav />
           </div>
         </div>
