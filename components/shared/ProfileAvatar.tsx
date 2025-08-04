@@ -5,7 +5,6 @@ import Link from "next/link";
 
 import UserAuthMenu from "@/components/buttons/UserAuthMenu";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
-import { Button } from "@/components/ui/button";
 import {
   DropdownMenu,
   DropdownMenuContent,
@@ -17,21 +16,26 @@ import {
 } from "@/components/ui/dropdown-menu";
 import { Skeleton } from "@/components/ui/skeleton";
 
+import { Button } from "../ui/button";
+
 const ProfileAvatar = () => {
   const { user, isLoaded } = useUser();
   const isAdmin = (user?.publicMetadata?.roles ?? []).includes("admin");
 
   return (
-    <div>
+    <>
       <SignedIn>
         <DropdownMenu>
           <DropdownMenuTrigger asChild>
-            <Button variant="secondary" className="size-4 rounded-full">
+            <Button variant="secondary" className="size-7 rounded-full">
               {!isLoaded ? (
-                <Skeleton className="size-4 rounded-full" />
+                <Skeleton className="size-7" />
               ) : (
-                <Avatar className="size-4 ">
-                  <AvatarImage src={user?.imageUrl} height={16} width={16} />
+                <Avatar className="size-7">
+                  <AvatarImage
+                    src={user?.imageUrl}
+                    alt={user?.firstName ?? ""}
+                  />
                   <AvatarFallback>
                     {user?.firstName?.charAt(0) ?? ""}
                   </AvatarFallback>
@@ -104,7 +108,7 @@ const ProfileAvatar = () => {
           <UserAuthMenu />
         </div>
       </SignedOut>
-    </div>
+    </>
   );
 };
 export default ProfileAvatar;

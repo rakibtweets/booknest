@@ -228,3 +228,15 @@ export const filderOders = [
   { name: "Price: High to Low", value: "highToLow" },
   { name: "Price: Low to High", value: "lowToHigh" },
 ];
+
+export const GlobalSearchFilters = [
+  { name: "Book", value: "book" },
+  { name: "Author", value: "author" },
+  { name: "Publisher", value: "publisher" },
+];
+
+export const filterAuthorBooks = [
+  { name: "Oldest", value: "oldest" },
+  { name: "Newest", value: "newest" },
+  { name: "Rating", value: "rating" },
+];

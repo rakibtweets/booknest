@@ -6,6 +6,12 @@ export function cn(...inputs: ClassValue[]) {
   return twMerge(clsx(inputs));
 }
 
+export function isMacOs() {
+  if (typeof window === "undefined") return false;
+
+  return window.navigator.userAgent.includes("Mac");
+}
+
 interface UrlQueryParams {
   params: string;
   key: string;
@@ -56,12 +62,9 @@ export function slugify(text: string): string {
     .replace(/^-+|-+$/g, "");
 }
 
-export const getYear = (dateString: string): number => {
-  const date = new Date(dateString);
-  if (isNaN(date.getTime())) {
-    throw new Error("Invalid date format");
-  }
-  return date.getUTCFullYear();
+export const getYear = (dateInput: Date | string | number): number => {
+  const date = new Date(dateInput);
+  return date.getFullYear();
 };
 
 export const getTimeStamp = (createdAt: Date): string => {
