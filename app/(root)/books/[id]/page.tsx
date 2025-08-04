@@ -12,6 +12,7 @@ import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
 import { getBookById } from "@/lib/actions/book-actions";
 import { getUserByClerkId } from "@/lib/actions/user-actions";
 import { isBookInWishlist } from "@/lib/actions/wishlist-actions";
+import { getYear } from "@/lib/utils";
 import { URLProps } from "@/types/global";
 
 // const books = [
@@ -162,7 +163,7 @@ export default async function BookDetailsPage({
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Publication Date</p>
-              <p className="text-sm">{book.publishDate}</p>
+              <p className="text-sm">{getYear(String(book.publishDate))}</p>
             </div>
             <div>
               <p className="text-sm text-muted-foreground">Pages</p>
@@ -213,7 +214,7 @@ export default async function BookDetailsPage({
                 </li>
                 <li>
                   <span className="font-medium">Publication Date:</span>{" "}
-                  {book.publishDate}
+                  {getYear(String(book?.publishDate))}
                 </li>
                 <li>
                   <span className="font-medium">Pages:</span> {book.pages}

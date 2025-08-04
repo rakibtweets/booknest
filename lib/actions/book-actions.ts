@@ -142,13 +142,9 @@ export const getBookById = async (
 };
 
 //get Books by authorId
-export const getBooksByAuthorId = async ({
-  authorId,
-  page = 1,
-  limit = 4,
-  sortBy = "createdAt",
-  order = "desc",
-}: IGetBooksByAuthorIdParams): Promise<
+export const getBooksByAuthorId = async (
+  params: IGetBooksByAuthorIdParams
+): Promise<
   ActionResponse<{
     books: IBook[];
     totalPages: number;
@@ -158,13 +154,32 @@ export const getBooksByAuthorId = async ({
   }>
 > => {
   await dbConnect();
-  const skip = (page - 1) * limit;
-  const sort: { [key: string]: 1 | -1 } = {
-    [sortBy]: order === "asc" ? 1 : -1,
-  };
+  const { authorId, page = 1, pageSize = 4, filter } = params;
+  const skip = (Number(page) - 1) * pageSize;
+  const limit = pageSize;
   const totalBooks = await Book.countDocuments({ author: authorId });
   const totalPages = Math.ceil(totalBooks / limit);
-  const books = await Book.find({ author: authorId })
+
+  let sortCriteria = {};
+  const filterQuery: FilterQuery<IBook> = { author: authorId };
+
+  switch (filter) {
+    case "oldest":
+      sortCriteria = { createdAt: -1 };
+      break;
+    case "newest":
+      sortCriteria = { createdAt: 1 };
+      break;
+    case "rating":
+      sortCriteria = { rating: -1 };
+      break;
+
+    default:
+      sortCriteria = { createdAt: -1 };
+      break;
+  }
+
+  const books = await Book.find(filterQuery)
     .populate([
       {
         path: "author",
@@ -172,7 +187,7 @@ export const getBooksByAuthorId = async ({
         model: Author,
       },
     ])
-    .sort(sort)
+    .sort(sortCriteria)
     .skip(skip)
     .limit(limit);
   const nextPage = page < totalPages ? page + 1 : null;

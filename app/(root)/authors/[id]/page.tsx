@@ -4,25 +4,21 @@ import Image from "next/image";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 
+import Filter from "@/components/shared/Filter";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import { Tabs, TabsContent, TabsList, TabsTrigger } from "@/components/ui/tabs";
+import { filterAuthorBooks } from "@/constants";
 import { IBook } from "@/database/book.model";
 import { getAuthorById } from "@/lib/actions/author-actions";
 import { getBooksByAuthorId } from "@/lib/actions/book-actions";
 import { getYear } from "@/lib/utils";
-import { Author } from "@/types/global";
-
-interface AuthorPageProps {
-  params: {
-    id: string;
-  };
-}
+import { Author, RouteParams } from "@/types/global";
 
 // eslint-disable-next-line @typescript-eslint/ban-ts-comment
 //@ts-ignore
-export async function generateMetadata({ params }: AuthorPageProps): Metadata {
+export async function generateMetadata({ params }: RouteParams): Metadata {
   const { id } = await params;
   const authorResult = await getAuthorById(id);
   const author = (authorResult?.data?.author as Author) || {};
@@ -40,28 +36,25 @@ export async function generateMetadata({ params }: AuthorPageProps): Metadata {
   };
 }
 
-export default async function AuthorDetailsPage({ params }: AuthorPageProps) {
+export default async function AuthorDetailsPage({
+  searchParams,
+  params,
+}: RouteParams) {
   const { id } = await params;
+  const { filter } = await searchParams;
   const authorResult = await getAuthorById(id);
   const author = (authorResult?.data?.author as Author) || {};
-  const authorBookResult = await getBooksByAuthorId({ authorId: id });
+  const authorBookResult = await getBooksByAuthorId({
+    authorId: id,
+    page: 1,
+    pageSize: 4,
+    filter,
+  });
   const authorBooks = (authorBookResult.data?.books as IBook[]) || [];
 
   if (!author) {
     notFound();
   }
-
-  // Group books by genre
-  // const booksByGenre = author.books.reduce(
-  //   (acc, book) => {
-  //     if (!acc[book.genre]) {
-  //       acc[book.genre] = [];
-  //     }
-  //     acc[book.genre].push(book);
-  //     return acc;
-  //   },
-  //   {} as Record<string, typeof author.books>
-  // );
 
   return (
     <div className="container mx-auto px-4 py-8">
@@ -136,12 +129,10 @@ export default async function AuthorDetailsPage({ params }: AuthorPageProps) {
                   <span className="text-sm text-muted-foreground">
                     Sort by:
                   </span>
-                  <select className="text-sm border rounded-md px-2 py-1">
-                    <option>Newest</option>
-                    <option>Oldest</option>
-                    <option>Rating</option>
-                    <option>Title</option>
-                  </select>
+                  <Filter
+                    filters={filterAuthorBooks}
+                    otherClasses="min-h-[40px] sm:min-w-[170px] w-full sm:w-auto"
+                  />
                 </div>
               </div>
 
@@ -263,12 +254,18 @@ export default async function AuthorDetailsPage({ params }: AuthorPageProps) {
                         <Mail className="h-5 w-5 text-muted-foreground shrink-0 mt-0.5" />
                         <div>
                           <p className="font-medium">Email</p>
-                          <a
-                            href={`mailto:${author?.email}`}
-                            className="text-sm text-primary hover:underline"
-                          >
-                            {author?.email}
-                          </a>
+                          {author?.email ? (
+                            <a
+                              href={`mailto:${author.email}`}
+                              className="text-sm text-primary hover:underline"
+                            >
+                              {author.email}
+                            </a>
+                          ) : (
+                            <p className="text-sm text-muted-foreground">
+                              Not provided
+                            </p>
+                          )}
                         </div>
                       </div>
                     </div>
@@ -294,39 +291,6 @@ export default async function AuthorDetailsPage({ params }: AuthorPageProps) {
               <h2 className="text-2xl font-bold mb-6">
                 {author.name}&apos;s Genres
               </h2>
-
-              {/* {Object.entries(booksByGenre)?.map(([genre, books]) => (
-                <div key={genre} className="mb-8">
-                  <h3 className="text-xl font-semibold mb-4">{genre}</h3>
-                  <div className="grid grid-cols-2 sm:grid-cols-3 lg:grid-cols-4 gap-4">
-                    {books.map((book) => (
-                      <Link
-                        key={book.id}
-                        href={`/books/${book.id}`}
-                        className="group"
-                      >
-                        <div className="relative aspect-[2/3] w-full overflow-hidden rounded-md">
-                          <Image
-                            src={book.coverImage || "/placeholder.svg"}
-                            alt={book.title}
-                            fill
-                            className="object-cover transition-transform group-hover:scale-105"
-                            sizes="(max-width: 768px) 50vw, (max-width: 1200px) 33vw, 25vw"
-                          />
-                        </div>
-                        <div className="mt-2">
-                          <h4 className="font-medium line-clamp-1 group-hover:text-primary transition-colors">
-                            {book.title}
-                          </h4>
-                          <p className="text-sm text-muted-foreground">
-                            {book?.publishDate}
-                          </p>
-                        </div>
-                      </Link>
-                    ))}
-                  </div>
-                </div>
-              ))} */}
 
               <div className="mt-6">
                 <h3 className="text-lg font-semibold mb-4">All Genres</h3>
@@ -361,122 +325,9 @@ export default async function AuthorDetailsPage({ params }: AuthorPageProps) {
                   <span className="text-muted-foreground">Genres</span>
                   <span className="font-medium">{author.genres?.length}</span>
                 </div>
-                {/* <div className="flex items-center justify-between">
-                  <span className="text-muted-foreground">Average Rating</span>
-                  <span className="font-medium">
-                    {(
-                      author.books.reduce((sum, book) => sum + book.rating, 0) /
-                      author.books?.length
-                    ).toFixed(1)}
-                  </span>
-                </div> */}
-                {/* <div className="flex items-center justify-between">
-                  <span className="text-muted-foreground">Latest Book</span>
-                  <span className="font-medium">
-                    {
-                      author.books.sort(
-                        (a, b) => b.publishYear - a.publishYear
-                      )[0].publishYear
-                    }
-                  </span>
-                </div> */}
               </div>
             </div>
           </div>
-
-          {/* <div className="border rounded-lg overflow-hidden">
-            <div className="bg-muted p-4">
-              <h2 className="font-semibold">Related Authors</h2>
-            </div>
-            <div className="p-4">
-              <div className="space-y-4">
-                {author.relatedAuthors.map((relatedAuthor) => (
-                  <Link
-                    key={relatedAuthor.id}
-                    href={`/authors/${relatedAuthor.id}`}
-                    className="flex items-center gap-3 hover:bg-muted/50 p-2 rounded-md transition-colors"
-                  >
-                    <Avatar>
-                      <AvatarImage
-                        src={relatedAuthor.image}
-                        alt={relatedAuthor.name}
-                      />
-                      <AvatarFallback>
-                        {relatedAuthor.name
-                          .split(" ")
-                          .map((n) => n[0])
-                          .join("")}
-                      </AvatarFallback>
-                    </Avatar>
-                    <span className="font-medium">{relatedAuthor.name}</span>
-                  </Link>
-                ))}
-              </div>
-            </div>
-          </div> */}
-
-          {/* <div className="border rounded-lg overflow-hidden">
-            <div className="bg-muted p-4">
-              <h2 className="font-semibold">Popular Books</h2>
-            </div>
-            <div className="p-4">
-              <div className="space-y-4">
-                {author.books
-                  .sort((a, b) => b.rating - a.rating)
-                  .slice(0, 3)
-                  .map((book) => (
-                    <Link
-                      key={book.id}
-                      href={`/books/${book.id}`}
-                      className="flex gap-3 hover:bg-muted/50 p-2 rounded-md transition-colors"
-                    >
-                      <div className="relative aspect-[2/3] h-16 w-10">
-                        <Image
-                          src={book.coverImage || "/placeholder.svg"}
-                          alt={book.title}
-                          fill
-                          className="object-cover rounded"
-                          sizes="40px"
-                        />
-                      </div>
-                      <div>
-                        <h4 className="font-medium line-clamp-1">
-                          {book.title}
-                        </h4>
-                        <div className="flex items-center mt-1">
-                          <div className="flex">
-                            {[...Array(5)].map((_, i) => (
-                              <svg
-                                key={i}
-                                className={`h-3 w-3 ${
-                                  i < Math.floor(book.rating)
-                                    ? "text-yellow-400 fill-yellow-400"
-                                    : "text-gray-300 fill-gray-300"
-                                }`}
-                                xmlns="http://www.w3.org/2000/svg"
-                                viewBox="0 0 24 24"
-                              >
-                                <path d="M12 17.27L18.18 21l-1.64-7.03L22 9.24l-7.19-.61L12 2 9.19 8.63 2 9.24l5.46 4.73L5.82 21z" />
-                              </svg>
-                            ))}
-                          </div>
-                          <span className="text-xs text-muted-foreground ml-1">
-                            {book.rating.toFixed(1)}
-                          </span>
-                        </div>
-                      </div>
-                    </Link>
-                  ))}
-              </div>
-              <div className="mt-4">
-                <Button variant="outline" size="sm" className="w-full" asChild>
-                  <Link href={`/books?author=${author.id}`}>
-                    View All Books
-                  </Link>
-                </Button>
-              </div>
-            </div>
-          </div> */}
         </div>
       </div>
     </div>
