@@ -3,6 +3,7 @@ import { verifyWebhook } from "@clerk/nextjs/webhooks";
 import { NextResponse } from "next/server";
 
 import { createUser, deleteUser, updateUser } from "@/lib/actions/user-actions";
+import { Roles } from "@/types/global";
 
 export async function POST(req: Request) {
   try {
@@ -37,11 +38,16 @@ export async function POST(req: Request) {
       });
 
       if (success && data?.user) {
-        await client.users.updateUser(data.user.clerkId, {
-          publicMetadata: {
-            roles: isAdminEmail ? ["admin", "user"] : ["user"],
-          },
-        });
+        // ✅ Only update Clerk if metadata differs
+        const existingRoles = evt.data.public_metadata?.roles || [];
+        const newRoles: Roles[] = isAdminEmail ? ["admin", "user"] : ["user"];
+        if (JSON.stringify(existingRoles) !== JSON.stringify(newRoles)) {
+          await client.users.updateUser(data.user.clerkId, {
+            publicMetadata: {
+              roles: newRoles,
+            },
+          });
+        }
       }
 
       return NextResponse.json({ messsage: "OK", user: data?.user });
@@ -68,12 +74,14 @@ export async function POST(req: Request) {
       });
 
       if (success && data?.user) {
-        // If the user is created successfully, we can also set the user in Clerk
-        await client.users.updateUser(data.user.clerkId, {
-          publicMetadata: {
-            roles: isAdminEmail ? ["admin", "user"] : ["user"],
-          },
-        });
+        // ✅ Prevent infinite loop by checking before updating Clerk
+        const existingRoles = evt.data.public_metadata?.roles || [];
+        const newRoles: Roles[] = isAdminEmail ? ["admin", "user"] : ["user"];
+        if (JSON.stringify(existingRoles) !== JSON.stringify(newRoles)) {
+          await client.users.updateUser(data.user.clerkId, {
+            publicMetadata: { roles: newRoles },
+          });
+        }
       }
 
       return NextResponse.json({ messsage: "OK", user: data?.user });
