@@ -17,11 +17,11 @@ BookNest is a modern e-commerce platform built with Next.js and TypeScript, desi
 ## ✨ Features
 
 - **Browse and Search:** Easily browse books by category or search for specific titles.
-- **Product Details:** View detailed information about each book, including descriptions, images, and reviews. (TODO: Add reviews functionality)
+- **Product Details:** View detailed information about each book, including descriptions, images, and reviews.
 - **Shopping Cart:** Add books to a shopping cart and manage your order before checkout.
-- **Secure Checkout:** A secure and streamlined checkout process. (TODO: Implement secure checkout)
-- **User Accounts:** Create and manage user accounts to save preferences and track orders. (TODO: Implement user account management)
-- **Admin Panel:** (TODO: Implement admin panel for inventory and order management)
+- **Secure Checkout:** A secure and streamlined checkout process.
+- **User Accounts:** Create and manage user accounts to save preferences and track orders.
+- **Admin Panel:** Implement admin panel for inventory and order management.
 
 ## 🛠️ Tech Stack
 
