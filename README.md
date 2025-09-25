@@ -23,11 +23,6 @@ BookNest is a modern e-commerce platform built with Next.js and TypeScript, desi
 - **User Accounts:** Create and manage user accounts to save preferences and track orders. (TODO: Implement user account management)
 - **Admin Panel:** (TODO: Implement admin panel for inventory and order management)
 
-<!--  ## 🖥️ Screenshots -->
-<!-- [Screenshot 1](path-to-screenshot) -->
-
-<!--[Screenshot 2](path-to-screenshot)  -->
-
 ## 🛠️ Tech Stack
 
 **Frontend:**
@@ -137,6 +132,40 @@ booknest/
 ## 🚀 Deployment
 
 The application is currently deployed on Vercel. Instructions for deploying your own version are forthcoming.
+
+## 🖥️ Screenshots
+
+<!-- [Screenshot 1](path-to-screenshot) -->
+
+#### Home Page
+
+![Logo](/public/images/book-nest-banner.png)
+
+#### Books Page
+
+![Books Page](/public/images/booknest-books.png)
+
+#### Customer Order Page
+
+![Customer Order Page](/public/images/booknest-orders.png)
+
+<!--[Screenshot 2](path-to-screenshot)  -->
+
+#### User Dashboard Page
+
+![User Dashboard](/public/images/booknest-user-dashboard.png)
+
+#### Admin Dashboard Page
+
+![Admin Dashboard](/public/images/booknest-admin-dashboard.png)
+
+#### Admin Manage Orders Page
+
+![Admin Manage Orders Page](/public/images/booknest-admin-orders.png)
+
+#### Admin Manage Book Page
+
+![Admin Manage Book Page](/public/images/booknest-admin-books.png)
 
 <!--
 ## 🤝 Contributing
